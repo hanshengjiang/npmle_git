@@ -1,0 +1,25 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Mixture of regressions}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Related work}{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.3}{Main results}{section.1}% 4
+\BOOKMARK [2][-]{subsection.1.4}{Notation and Organization}{section.1}% 5
+\BOOKMARK [1][-]{section.2}{Existence and computation of NPMLEs}{}% 6
+\BOOKMARK [2][-]{subsection.2.1}{Existence}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.2}{Computation of NPMLEs via iterative approximations}{section.2}% 8
+\BOOKMARK [1][-]{section.3}{Bounds on prediction error}{}% 9
+\BOOKMARK [2][-]{subsection.3.1}{Random design}{section.3}% 10
+\BOOKMARK [1][-]{section.4}{Numerical experiments in simulated settings}{}% 11
+\BOOKMARK [2][-]{subsection.4.1}{Overview of simulations}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.2}{Discrete mixture}{section.4}% 13
+\BOOKMARK [2][-]{subsection.4.3}{Non-discrete mixture}{section.4}% 14
+\BOOKMARK [2][-]{subsection.4.4}{Nonlinear regression}{section.4}% 15
+\BOOKMARK [1][-]{section.5}{Numerical experiments on real data}{}% 16
+\BOOKMARK [2][-]{subsection.5.1}{Tone perception data}{section.5}% 17
+\BOOKMARK [2][-]{subsection.5.2}{Aphids data}{section.5}% 18
+\BOOKMARK [1][-]{section.6}{Conclusions}{}% 19
+\BOOKMARK [1][-]{section*.11}{Appendices}{}% 20
+\BOOKMARK [1][-]{Appendix.1.A}{Existence of NPMLEs}{}% 21
+\BOOKMARK [1][-]{Appendix.1.B}{Algorithm convergence}{}% 22
+\BOOKMARK [1][-]{Appendix.1.C}{Hellinger accuracy}{}% 23
+\BOOKMARK [1][-]{Appendix.1.D}{Random design}{}% 24
+\BOOKMARK [1][-]{Appendix.1.E}{Metric entropy results}{}% 25
