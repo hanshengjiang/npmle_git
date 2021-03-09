@@ -6,7 +6,7 @@ Created on Fri Mar  5 16:12:07 2021
 """
 
 #read tonedata into file
-with open('data/tonedata.csv', newline='') as csvfile:
+with open('./../data/tonedata.csv', newline='') as csvfile:
     data = np.array(list(csv.reader(csvfile)))
     data = data[1:] # remove row containing column name
 dataf = data.astype(np.float)
@@ -42,7 +42,8 @@ index_sorted = np.argsort(-np.reshape(alpha,(len(alpha),)))
 for i in index_sorted:
     b = B[:,i]
     if alpha[i] >threprob:
-        plt.plot(t,b[0]+b[1]*t, color = str((1-alpha[i][0])/100),linewidth = alpha[i][0]*8 ,label = 'y = %.4f + %.4f x with prob %.2f' %(b[0], b[1], alpha[i]) )
+        plt.plot(t,b[0]+b[1]*t, color = str((1-alpha[i][0])/100),linewidth = alpha[i][0]*8 ,\
+                 label = 'y = %.4f + %.4f x with probability %.2f' %(b[0], b[1], alpha[i]) )
         print("coefficients", b, "with probability", alpha[i])
 #plt.plot(t,beta_ols[0]+beta_ols[1]*t,'green')  
 #plt.legend(custom_lines, ['Noisy data'#,'True mixture'# 
@@ -52,6 +53,6 @@ ax = plt.gca()
 lgd = ax.legend(loc=9, bbox_to_anchor=(1.32, 1),borderaxespad=0.) 
 ax.set_xlabel('Stretching ratio',size = 20)
 ax.set_ylabel('Adjusted ratio', size = 20)
-plt.savefig('./pics/tone.png', dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+plt.savefig('./../pics/tone.png', dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 plt.show();
 

@@ -3,6 +3,10 @@
 """
 @author: hanshengjiang
 """
+'''
+Test Algorithm 1 in simulated settings and make visualization plots
+
+'''
 
 #test function with synthetic data
 def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
@@ -80,7 +84,7 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     ax.set_xlabel(r'x')
     ax.set_ylabel(r'y')
     lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
-    plt.savefig('./pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.show();
     
     #**************************************************
@@ -111,9 +115,9 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
                         ]
-        lgd = plt.legend(custom_lines, ['y = %.1f + %.1f x with probility %.2f' %(b1[0], b1[1], pi1), #,'True mixture'# 
-                                  'y = %.1f + %.1f x with probility %.2f' %(b2[0], b2[1], pi2),
-                                  'y = %.1f + %.1f x with probility %.2f' %(b3[0], b3[1], 1-pi1-pi2),
+        lgd = plt.legend(custom_lines, ['y = %.1f + %.1f x with probability %.2f' %(b1[0], b1[1], pi1), #,'True mixture'# 
+                                  'y = %.1f + %.1f x with probability %.2f' %(b2[0], b2[1], pi2),
+                                  'y = %.1f + %.1f x with probability %.2f' %(b3[0], b3[1], 1-pi1-pi2),
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc = 2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
     else:
@@ -124,8 +128,8 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
                         ]
-        lgd = plt.legend(custom_lines, ['y = %.1f + %.1f x with probility %.2f' %(b1[0], b1[1], pi1), #,'True mixture'# 
-                                  'y = %.1f + %.1f x with probility %.2f' %(b2[0], b2[1], pi2),
+        lgd = plt.legend(custom_lines, ['y = %.1f + %.1f x with probability %.2f' %(b1[0], b1[1], pi1), #,'True mixture'# 
+                                  'y = %.1f + %.1f x with probability %.2f' %(b2[0], b2[1], pi2),
                                 
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc=2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
@@ -134,7 +138,7 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     ax.set_ylim([-3,8])
     ax.set_xlabel('x')
     ax.set_ylabel('y')
-    plt.savefig('./pics/%s_true.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig('./../pics/%s_true.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.show();
     
     #*******************************************
@@ -165,12 +169,14 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
         if alpha[i] >threprob:
             component_plot.append(i)
             component_color.append(temp)
-            plt.plot(t,b[0]+b[1]*t, color = tuple( np.array(RGB_tuples[temp])/255),linestyle = line_styles[int(count%4)],linewidth = alpha[i][0]*8 ,label = 'y = %.4f + %.4f x with probility %.2f' %(b[0], b[1], alpha[i]))
+            plt.plot(t,b[0]+b[1]*t, color = tuple( np.array(RGB_tuples[temp])/255),\
+                     linestyle = line_styles[int(count%4)],linewidth = alpha[i][0]*8 ,\
+                     label = 'y = %.4f + %.4f x with probability %.2f' %(b[0], b[1], alpha[i]))
             temp = temp + 1
             print("coefficients", b, "with probability", alpha[i])
             count = count + 1
     
-    # we ONLY do clustering based on plotted components, i.e. components with high probability (>threprob)
+    # ONLY clustering based on plotted components, i.e. components with high probability (>threprob)
     C_cluster = np.zeros((n,1))
     for i in range(len(y)):
         prob = np.zeros((N,1))
@@ -195,52 +201,52 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
-    plt.savefig('./pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.show();
     
-    #***************************************************************
-    #plot density function
-    
-    ####################test
-    #sigma = sigma_est
-    ##########################
-    
-    fig2 = plt.figure(figsize = (20,3))
-    x_list = [-3,-1,1,3,5] #List of x values
-    i = 0
-    for i in range(len(x_list)):
-        x = x_list[i]
-        y = np.linspace(- 15, 15, 100)
-           
-        #calculate difference of suqre root of density functions
-        #dist_fit = lambda y: (np.sqrt(0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x), 0, sigma)+0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x),0, sigma)) \
-        #- np.sqrt(sum(alpha[i]*scipy.stats.norm.pdf( y - (B[0,i]+B[1,i]*x), 0, sigma) for i in range(len(alpha)))))**2
-        
-        #print("Fix x = %.1f, squared Hellinger distance for NPMLE is %.5f" % (x, quad(dist_fit, -np.inf, np.inf)[0]))
-
-        
-        plt.subplot(1,len(x_list),i+1)
-        plt.plot(y,pi1*scipy.stats.norm.pdf(y - (b1[0]+b1[1]*x), 0, sigma)+pi2*scipy.stats.norm.pdf(y-(b2[0]+b2[1]*x),0, sigma)+(1-pi1-pi2)*scipy.stats.norm.pdf(y-(b3[0]+b3[1]*x),0, sigma),'red',label = 'True distribution',linestyle ='-')
-        plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) for i in range(len(alpha))),'black',label = 'NPMLE distribution',linestyle ='--')
-        plt.title("x = %.1f"%x)
-        
-        plt.xlabel('y')
-        if i == 0:
-            plt.ylabel('pdf')
-        
-        
-           
-    custom_lines = [
-                Line2D([0], [0], color= 'red', linestyle = '-'),
-                Line2D([0], [0], color='black',linestyle = '--'),
-                Line2D([0], [0], color='green')#
-        ]
-    ax = plt.gca()
-    lgd = ax.legend(custom_lines, ['True mixture', 'Fitted mixture'#, 'OLS'#
-                             ], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-    plt.savefig('./pics/%s_density.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
-    plt.show();
-    
+    #-----------------------------------#
+    #
+    #  plot density function            #
+    #
+    #-----------------------------------#
+  
+#-----------------------------------------------------------------   
+#    fig2 = plt.figure(figsize = (20,3))
+#    x_list = [-3,-1,1,3,5] #List of x values
+#    i = 0
+#    for i in range(len(x_list)):
+#        x = x_list[i]
+#        y = np.linspace(- 15, 15, 100)
+#           
+#        #calculate difference of suqre root of density functions
+#        #dist_fit = lambda y: (np.sqrt(0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x), 0, sigma)+0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x),0, sigma)) \
+#        #- np.sqrt(sum(alpha[i]*scipy.stats.norm.pdf( y - (B[0,i]+B[1,i]*x), 0, sigma) for i in range(len(alpha)))))**2
+#        
+#        #print("Fix x = %.1f, squared Hellinger distance for NPMLE is %.5f" % (x, quad(dist_fit, -np.inf, np.inf)[0]))
+#
+#        
+#        plt.subplot(1,len(x_list),i+1)
+#        plt.plot(y,pi1*scipy.stats.norm.pdf(y - (b1[0]+b1[1]*x), 0, sigma)+pi2*scipy.stats.norm.pdf(y-(b2[0]+b2[1]*x),0, sigma)+(1-pi1-pi2)*scipy.stats.norm.pdf(y-(b3[0]+b3[1]*x),0, sigma),'red',label = 'True distribution',linestyle ='-')
+#        plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) for i in range(len(alpha))),'black',label = 'NPMLE distribution',linestyle ='--')
+#        plt.title("x = %.1f"%x)
+#        
+#        plt.xlabel('y')
+#        if i == 0:
+#            plt.ylabel('pdf')
+#        
+#        
+#           
+#    custom_lines = [
+#                Line2D([0], [0], color= 'red', linestyle = '-'),
+#                Line2D([0], [0], color='black',linestyle = '--'),
+#                Line2D([0], [0], color='green')#
+#        ]
+#    ax = plt.gca()
+#    lgd = ax.legend(custom_lines, ['True mixture', 'Fitted mixture'#, 'OLS'#
+#                             ], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+#    plt.savefig('./../pics/%s_density.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+#    plt.show();
+#---------------------------------------------------------------------------------
     
     #MLE 
     fig3 = plt.figure(figsize = (6,5))
@@ -253,5 +259,5 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     ax = plt.gca()
     ax.set_xlabel(r"index of mixing components $\beta$'s")
     ax.set_ylabel(r'mixing weights')
-    plt.savefig('./pics/%s_alpha.png'%fname, dpi = 300, bbox_inches='tight')
+    plt.savefig('./../pics/%s_alpha.png'%fname, dpi = 300, bbox_inches='tight')
     
