@@ -53,8 +53,8 @@ for i in index_sorted:
                          #],loc=2);
 ax = plt.gca()
 lgd = ax.legend(loc=9, bbox_to_anchor=(1.45, 1),borderaxespad=0.) 
-ax.set_xlabel(r'$x$: stretching ratio')
-ax.set_ylabel(r'$y$: djusted ratio')
+ax.set_xlabel(r'$x$ (stretching ratio)')
+ax.set_ylabel(r'$y$ (adjusted ratio)')
 plt.savefig('./../pics/tone.png', dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 plt.show();
 

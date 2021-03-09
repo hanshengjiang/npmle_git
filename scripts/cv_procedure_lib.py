@@ -7,11 +7,12 @@
 Cross-Validation procedure for choosing sigma
 '''
 
+
+
 def cross_validation(X,y,sigma,k):
     '''
-    k - fold cross-validation
-    
-    
+    k - fold cross-validation for one sigma value
+
     '''
     n = len(X[:,0])
     m = int(n/k)
@@ -24,7 +25,7 @@ def cross_validation(X,y,sigma,k):
     error = 0
     
     for idex in range(k):
-        print(idex)
+        # print(idex)
         if idex == 0:
             error = error + estimate_then_test(X_rdn[(idex+1)*m+1:,:], \
                                            y_rdn[(idex+1)*m+1:],\

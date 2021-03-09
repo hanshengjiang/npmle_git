@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+
 @author: hanshengjiang
+
 """
+
+
 
 #colorful
 test(500,50,(1,1),(4,-1),(-1,0.5),0.5,0.5,sigma = 0.8,sigma_est=0.8)

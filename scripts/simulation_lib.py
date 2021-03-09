@@ -8,10 +8,58 @@ Test Algorithm 1 in simulated settings and make visualization plots
 
 '''
 
-#test function with synthetic data
+def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma):
+    '''
+    generate testing data
+    
+    '''
+    p = 2 
+
+    #parameters for generating synthetic data
+    sigma1 = sigma  # variance of 1st component
+    sigma2 = sigma      #variance of 2nd component
+    sigma3 = sigma
+    
+    #sigma_est is what we use for Frank-Wofle method
+    
+    # synthesize two component data
+    b1 = np.reshape(b1,(2,1))
+    b2 = np.reshape(b2,(2,1))
+    b3 = np.reshape(b3,(2,1))
+
+    X = np.zeros((n,2))
+    y = np.zeros((n,1))
+    
+    # C denots the true class of each data point
+    C = np.zeros((n,1)) 
+    
+    # np.random.seed(26)
+    for i in range(n):
+        X[i] = np.reshape([1,np.random.uniform(-1,3)],(1,2))
+        z = np.random.uniform(0,1)
+        if z < pi1:
+            y[i] = np.dot(X[i],b1) + np.random.normal(0,sigma1)
+            C[i] = 1
+        elif z < pi1 + pi2 :
+            y[i] = np.dot(X[i],b2) + np.random.normal(0,sigma2)
+            C[i] = 2
+        else:
+            y[i] = np.dot(X[i],b3) + np.random.normal(0,sigma3)
+            C[i] = 3
+    return X,y
+
+
 def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
-    # n : number of samples
-    # iter : number of iterations in Frank-Wofle method
+    
+    '''
+    test function with synthetic data
+    
+    Input
+    n : number of samples
+    iter : number of iterations in Frank-Wofle method
+    
+    '''
+
     
     #set parameters
     p =2    #number of components (currently we only consider 2 component)
@@ -40,7 +88,7 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     # C denots the true class of each data point
     C = np.zeros((n,1)) 
     
-    np.random.seed(26)
+    # np.random.seed(26)
     for i in range(n):
         X[i] = np.reshape([1,np.random.uniform(-1,3)],(1,2))
         z = np.random.uniform(0,1)
@@ -89,6 +137,8 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     
     #**************************************************
     fig0 = plt.figure(figsize = (8,8))
+    line_styles = ['-','-','-','-']
+    # line_styles = ['-','--',':','-.']
     for i in range(len(y)):
         if C[i] == 1:
             plt.scatter(X[i][1],y[i],color = 'red',marker = 'o',label = 'Class 1', facecolors = 'None');
@@ -108,9 +158,9 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
             
     #plt.plot(t,beta_ols[0]+beta_ols[1]*t,'green')  
     if pi1 + pi2 <1:
-        custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle='-',linewidth = 8*pi1),Line2D([], [], color='red')),
-                        (Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle='--',linewidth = 8*pi2),Line2D([], [], color='blue')),
-                         (Line2D([], [], color='green', marker='o',markerfacecolor = 'None', linestyle=':',linewidth = 8*(1-pi1-pi2)),Line2D([], [], color='green'))
+        custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle=line_styles[0],linewidth = 8*pi1),Line2D([], [], color='red')),
+                        (Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle=line_styles[1],linewidth = 8*pi2),Line2D([], [], color='blue')),
+                         (Line2D([], [], color='green', marker='o',markerfacecolor = 'None', linestyle=line_styles[2],linewidth = 8*(1-pi1-pi2)),Line2D([], [], color='green'))
                         #Line2D([0], [0], color= 'red'# ),
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
@@ -121,8 +171,8 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc = 2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
     else:
-        custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle='-',linewidth = 8*pi1),Line2D([], [], color='red')),
-                        (Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle='--',linewidth = 8*pi2),Line2D([], [], color='blue')),
+        custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle=line_styles[0],linewidth = 8*pi1),Line2D([], [], color='red')),
+                        (Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle=line_styles[1],linewidth = 8*pi2),Line2D([], [], color='blue')),
                     
                         #Line2D([0], [0], color= 'red'# ),
                         #Line2D([0], [0], color='black')
@@ -162,7 +212,6 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     
     temp = 0
     index_sort = np.argsort(-np.reshape(alpha,(len(alpha),)))
-    line_styles = ['-','--',':','-.']
     count = 0 
     for i in index_sort:
         b = B[:,i]
@@ -204,11 +253,11 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.show();
     
-    #-----------------------------------#
-    #
-    #  plot density function            #
-    #
-    #-----------------------------------#
+#-----------------------------------#
+#
+#  plot density function            #
+#
+#-----------------------------------#
   
 #-----------------------------------------------------------------   
 #    fig2 = plt.figure(figsize = (20,3))
@@ -226,8 +275,10 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
 #
 #        
 #        plt.subplot(1,len(x_list),i+1)
-#        plt.plot(y,pi1*scipy.stats.norm.pdf(y - (b1[0]+b1[1]*x), 0, sigma)+pi2*scipy.stats.norm.pdf(y-(b2[0]+b2[1]*x),0, sigma)+(1-pi1-pi2)*scipy.stats.norm.pdf(y-(b3[0]+b3[1]*x),0, sigma),'red',label = 'True distribution',linestyle ='-')
-#        plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) for i in range(len(alpha))),'black',label = 'NPMLE distribution',linestyle ='--')
+#        plt.plot(y,pi1*scipy.stats.norm.pdf(y - (b1[0]+b1[1]*x), 0, sigma)+pi2*scipy.stats.norm.pdf(y-(b2[0]+b2[1]*x),0, sigma)+\
+#        (1-pi1-pi2)*scipy.stats.norm.pdf(y-(b3[0]+b3[1]*x),0, sigma),'red',label = 'True distribution',linestyle =line_styles[0])
+#        plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) \
+#        for i in range(len(alpha))),'black',label = 'NPMLE distribution',linestyle = line_styles[1])
 #        plt.title(r'$x = %.1f$'%x)
 #        
 #        plt.xlabel(r'$y$')
@@ -260,4 +311,4 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     ax.set_xlabel(r"index of mixing components $\beta$'s")
     ax.set_ylabel(r'mixing weights')
     plt.savefig('./../pics/%s_alpha.png'%fname, dpi = 300, bbox_inches='tight')
-    
+
