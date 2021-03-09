@@ -35,3 +35,10 @@ import pandas as pd
 
 np.random.seed(26)
 random.seed(26)
+
+# change plot fonts
+rc = {"font.family" : "serif", 
+      "mathtext.fontset" : "cm",
+     "font.size": 16}
+plt.rcParams.update(rc)
+plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]

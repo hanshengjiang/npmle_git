@@ -81,8 +81,8 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     ax = plt.gca()
     ax.set_xlim([-2,4])
     ax.set_ylim([-3,8])
-    ax.set_xlabel(r'x')
-    ax.set_ylabel(r'y')
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
     lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
     plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.show();
@@ -115,9 +115,9 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
                         ]
-        lgd = plt.legend(custom_lines, ['y = %.1f + %.1f x with probability %.2f' %(b1[0], b1[1], pi1), #,'True mixture'# 
-                                  'y = %.1f + %.1f x with probability %.2f' %(b2[0], b2[1], pi2),
-                                  'y = %.1f + %.1f x with probability %.2f' %(b3[0], b3[1], 1-pi1-pi2),
+        lgd = plt.legend(custom_lines, [r'$y = %.1f + %.1f x$ with probability $%.2f$' %(b1[0], b1[1], pi1), #,'True mixture'# 
+                                  r'$y = %.1f + %.1f x$ with probability $%.2f$' %(b2[0], b2[1], pi2),
+                                  r'$y = %.1f + %.1f x$ with probability $%.2f$' %(b3[0], b3[1], 1-pi1-pi2),
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc = 2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
     else:
@@ -128,16 +128,16 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
                         ]
-        lgd = plt.legend(custom_lines, ['y = %.1f + %.1f x with probability %.2f' %(b1[0], b1[1], pi1), #,'True mixture'# 
-                                  'y = %.1f + %.1f x with probability %.2f' %(b2[0], b2[1], pi2),
+        lgd = plt.legend(custom_lines, [r'$y = %.1f + %.1f x$ with probability $%.2f$' %(b1[0], b1[1], pi1), #,'True mixture'# 
+                                  r'$y = %.1f + %.1f x$ with probability $%.2f$' %(b2[0], b2[1], pi2),
                                 
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc=2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
     ax = plt.gca()
     ax.set_xlim([-2,4])
     ax.set_ylim([-3,8])
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
     plt.savefig('./../pics/%s_true.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.show();
     
@@ -171,7 +171,7 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
             component_color.append(temp)
             plt.plot(t,b[0]+b[1]*t, color = tuple( np.array(RGB_tuples[temp])/255),\
                      linestyle = line_styles[int(count%4)],linewidth = alpha[i][0]*8 ,\
-                     label = 'y = %.4f + %.4f x with probability %.2f' %(b[0], b[1], alpha[i]))
+                     label = r'$y = %.4f + %.4f x$ with probability $%.2f$'%(b[0], b[1], alpha[i]))
             temp = temp + 1
             print("coefficients", b, "with probability", alpha[i])
             count = count + 1
@@ -198,8 +198,8 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     ax = plt.gca()
     ax.set_xlim([-2,4])
     ax.set_ylim([-3,8])
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
     lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
     plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.show();
@@ -228,11 +228,11 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
 #        plt.subplot(1,len(x_list),i+1)
 #        plt.plot(y,pi1*scipy.stats.norm.pdf(y - (b1[0]+b1[1]*x), 0, sigma)+pi2*scipy.stats.norm.pdf(y-(b2[0]+b2[1]*x),0, sigma)+(1-pi1-pi2)*scipy.stats.norm.pdf(y-(b3[0]+b3[1]*x),0, sigma),'red',label = 'True distribution',linestyle ='-')
 #        plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) for i in range(len(alpha))),'black',label = 'NPMLE distribution',linestyle ='--')
-#        plt.title("x = %.1f"%x)
+#        plt.title(r'$x = %.1f$'%x)
 #        
-#        plt.xlabel('y')
+#        plt.xlabel(r'$y$')
 #        if i == 0:
-#            plt.ylabel('pdf')
+#            plt.ylabel(r'$\rm{pdf}$')
 #        
 #        
 #           

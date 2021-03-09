@@ -37,7 +37,7 @@ print("final neg log likelihood is ", L_final)
 print("number of components is", len(alpha))
 print("only components with probability at least ", threprob, " are shown below:")
 
-fig1, ax = plt.subplots(figsize = (12,8))
+fig1, ax = plt.subplots(figsize = (8,6))
 plt.scatter(X[:,1],y,color = 'blue',marker = 'o', facecolors = 'None',linewidths = 0.5);
 #label = 'Noisy data',
 
@@ -59,7 +59,7 @@ for i in index_sorted:
     b = B[:,i]
     if alpha[i] >threprob:
         plt.plot(t,b[0]+b[1]*t, color = str((1-alpha[i][0])/100),linewidth = alpha[i][0]*8 ,\
-                 label = 'y = %.4f + %.4f x with probability %.2f' %(b[0], b[1], alpha[i]) )
+                 label = '$y = %.4f + %.4f x$ with probability $%.2f$' %(b[0], b[1], alpha[i]) )
         print("coefficients", b, "with probability", alpha[i])
 # custom_lines = [Line2D([], [], color='gray', marker='o',markerfacecolor = 'None', linestyle='None'),
 #                 Line2D([0], [0], color='black')
@@ -68,7 +68,7 @@ for i in index_sorted:
 #                           , 'NPMLE component'
 #                          ],loc=9);
 ax = plt.gca()
-ax.set_xlabel(r'$\rm{GDP}$', size = 20)
-ax.set_ylabel(r'$\rm{CO_2}$', size = 20)
-lgd = ax.legend(loc=9, bbox_to_anchor=(1.2, 1),borderaxespad=0.) 
+ax.set_xlabel(r'$x$: $\rm{GDP}$')
+ax.set_ylabel(r'$y$: $\rm{CO_2}$')
+lgd = ax.legend(loc=9, bbox_to_anchor=(1.45, 1),borderaxespad=0.) 
 plt.savefig('./../pics/co2_gdp.png', dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
