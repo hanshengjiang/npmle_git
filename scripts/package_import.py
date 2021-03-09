@@ -33,9 +33,6 @@ from scipy.integrate import dblquad
 from sympy import sin, cos, symbols
 import pandas as pd
 
-np.random.seed(26)
-random.seed(26)
-
 # change plot fonts
 rc = {"font.family" : "serif", 
       "mathtext.fontset" : "cm",
