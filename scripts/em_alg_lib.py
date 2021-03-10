@@ -4,10 +4,10 @@
 @author: hanshengjiang
 """
 
-def EMA(X,y,k,iter,BL,BR,sigma):
+def EMA_sigma(X,y,k,iter,BL,BR,sigma):
     '''
     Use EM algorithm to fit (fixed component number) mixture of linear regression  
-    Use known sigma value
+    Use known fixed sigma value
     ---------------------------------------------
     Input
     X: n * p, covariate matrix
@@ -82,7 +82,7 @@ def EMA(X,y,k,iter,BL,BR,sigma):
     return f, B, alpha, sigma_array, L_rec, temp
 
 
-def EMA_sigma(X,y,k,iter,BL,BR,sigmaL,sigmaR):
+def EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
     '''
     Use EM algorithm to fit (fixed component number) mixture of linear regression  
     Use known sigma value
