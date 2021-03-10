@@ -42,7 +42,7 @@ def hessian(beta,X,y,sigma,f):
 
 
 #===============================================================================================
-def sollmo(X,y,sigma,f):
+def sollmo(X,y,sigma,f,BL,BR):
     '''solve linear minimization oracle
     this is an nonconvex problem with respect to beta, the result is approximal
     return a new supporting vector g and corresponding beta
@@ -55,7 +55,7 @@ def sollmo(X,y,sigma,f):
     #initialize beta0 with OLS solution or 0 or random
     #beta0 = np.reshape(np.dot( np.matmul(linalg.inv(np.matmul(X.T,X)),X.T),y),(p,1)) 
     #beta0 = np.zeros((p,1))
-    beta0 = np.reshape(np.random.uniform(-10,10,p),(p,1))
+    beta0 = np.reshape(np.random.uniform(BL,BR,p),(p,1))
     
     #minimize exponential sum approximately
     #nonconvex problem
@@ -69,7 +69,7 @@ def sollmo(X,y,sigma,f):
     opt_fun = np.zeros(num_rdn)
     opt_x = np.zeros((num_rdn,p))
     for rdn in range(num_rdn):
-        beta0 = np.reshape(np.random.uniform(-10,10,p),(p,1))
+        beta0 = np.reshape(np.random.uniform(BL,BR,p),(p,1))
         OptResult = minimize(lmo, beta0, args = (X,y,sigma,f),method = 'Powell')
         opt_fun[rdn] = OptResult.fun
         opt_x[rdn] = OptResult.x
@@ -109,7 +109,7 @@ def FW_FC(f,alpha,P,n):
         alpha = (1-gamma)*np.reshape(alpha,(k,1))+gamma*temp
     return f,alpha
 
-def NPMLE_FW(X,y,iter,sigma):
+def NPMLE_FW(X,y,iter,sigma,BL,BR):
     '''
     Use FW algorithm to solve NPMLE problem of MLR  
     sigma is estimated before
@@ -155,7 +155,7 @@ def NPMLE_FW(X,y,iter,sigma):
     
     for t in range(1,iter):
         #solve LMO
-        g, beta_sol = sollmo(X,y,sigma,f)
+        g, beta_sol = sollmo(X,y,sigma,f,BL,BR)
         
         #check stopping criterion
         dual_gap_rec[t] = np.dot(g.T,1/f) -np.dot(f.T,1/f)

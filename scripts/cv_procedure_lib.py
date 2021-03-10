@@ -7,9 +7,10 @@
 Cross-Validation procedure for choosing sigma
 '''
 
+from package_import import *
+from alg1_lib import *
 
-
-def cross_validation(X,y,sigma,k):
+def cross_validation(X,y,sigma,k,BL,BR):
     '''
     k - fold cross-validation for one sigma value
 
@@ -29,19 +30,19 @@ def cross_validation(X,y,sigma,k):
         if idex == 0:
             error = error + estimate_then_test(X_rdn[(idex+1)*m+1:,:], \
                                            y_rdn[(idex+1)*m+1:],\
-                                           X_rdn[:(idex+1)*m+1,:],y_rdn[:(idex+1)*m+1],sigma)
+                                           X_rdn[:(idex+1)*m+1,:],y_rdn[:(idex+1)*m+1],sigma,BL,BR)
         elif idex == k-1:
             error = error + estimate_then_test(X_rdn[:idex*m,:], \
                                            y_rdn[:idex*m],\
-                                           X_rdn[idex*m:,:],y_rdn[idex*m:],sigma)
+                                           X_rdn[idex*m:,:],y_rdn[idex*m:],sigma,BL,BR)
         else:
             error = error + estimate_then_test(np.concatenate((X_rdn[:idex*m,:],X_rdn[(idex+1)*m+1:,:])), \
                                            np.concatenate((y_rdn[:idex*m],y_rdn[(idex+1)*m+1:])),\
-                                           X_rdn[idex*m:(idex+1)*m+1,:],y_rdn[idex*m :(idex+1)*m+1],sigma)
+                                           X_rdn[idex*m:(idex+1)*m+1,:],y_rdn[idex*m :(idex+1)*m+1],sigma,BL,BR)
     return error/k
 
 
-def estimate_then_test(X_train,y_train,X_test,y_test,sigma):
+def estimate_then_test(X_train,y_train,X_test,y_test,sigma, BL,BR):
     
     '''
     Input:
@@ -54,7 +55,7 @@ def estimate_then_test(X_train,y_train,X_test,y_test,sigma):
     iter = 36
     
     #run Frank-Wofle
-    f, B, alpha, L_rec, L_final = NPMLE_FW(X_train,y_train,iter,sigma)
+    f, B, alpha, L_rec, L_final = NPMLE_FW(X_train,y_train,iter,sigma,BL,BR)
     
     cluster_test = np.zeros((len(y_test),1),dtype = int)
     N = len(B[0])
@@ -76,7 +77,10 @@ def estimate_then_test(X_train,y_train,X_test,y_test,sigma):
 #        y_predict[i] = np.dot(X_test[i],B[:,cluster_test[i]])
         #---------------------------------------------#
         error = error + (y_test[i] - y_predict[i])**2
-        
+    
+    beta0 = np.reshape(np.dot( np.matmul(linalg.inv(np.matmul(X_train.T,X_train)),X_train.T),y_train),(p,1)) 
+    y_ols = np.matmul(X_test,beta0)
+    print("difference of y_ols and y_predict",np.linalg.norm(y_ols.ravel()-y_predict.ravel(),ord = 1))
     return error/len(y_test) 
 
 

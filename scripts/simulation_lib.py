@@ -7,6 +7,8 @@
 Test Algorithm 1 in simulated settings and make visualization plots
 
 '''
+from package_import import *
+from alg1_lib import *
 
 def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma):
     '''
@@ -48,7 +50,7 @@ def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma):
             C[i] = 3
     return X,y
 
-def test(X,y,sigma,sigma_est):
+def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     
     '''
     
@@ -63,7 +65,7 @@ def test(X,y,sigma,sigma_est):
 
     
     #run Frank-Wofle
-    f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma_est)
+    f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma_est,BL,BR)
     
     
     beta_ave = np.matmul(B,alpha)
@@ -168,7 +170,7 @@ def test(X,y,sigma,sigma_est):
 
 
 
-def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
+def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     
     '''
     test function with synthetic data
@@ -226,7 +228,7 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     #sigma_est = np.sqrt(pi* sigma1**2 + (1-pi)*sigma2**2)
     
     #run Frank-Wofle
-    f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma_est)
+    f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma_est,BL,BR)
     
     
     beta_ave = np.matmul(B,alpha)
@@ -386,7 +388,7 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
 #        x = x_list[i]
 #        y = np.linspace(- 15, 15, 100)
 #           
-#        #calculate difference of suqre root of density functions
+#        #calculate difference of square root of density functions
 #        #dist_fit = lambda y: (np.sqrt(0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x), 0, sigma)+0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x),0, sigma)) \
 #        #- np.sqrt(sum(alpha[i]*scipy.stats.norm.pdf( y - (B[0,i]+B[1,i]*x), 0, sigma) for i in range(len(alpha)))))**2
 #        

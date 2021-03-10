@@ -3,6 +3,7 @@
 """
 @author: hanshengjiang
 """
+from package_import import *
 
 def EMA_sigma(X,y,k,iter,BL,BR,sigma):
     '''
@@ -85,7 +86,7 @@ def EMA_sigma(X,y,k,iter,BL,BR,sigma):
 def EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
     '''
     Use EM algorithm to fit (fixed component number) mixture of linear regression  
-    Use known sigma value
+    without knowing sigma value
     ---------------------------------------------
     Input
     X: n * p, covariate matrix
