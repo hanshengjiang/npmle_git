@@ -6,13 +6,167 @@
 
 """
 
+'''
+1. simulations of discrete mixtures
+2. density plots that compare EM, CGM, with or without knowing sigma
+
+'''
 
 
-#colorful
-test(500,50,(1,1),(4,-1),(-1,0.5),0.5,0.5,sigma = 0.8,sigma_est=0.8)
+from package_import import *
+from simulation_lib import *
+from cv_procedure_lib import *
+import sys
 
-#colorful
-test(300,100,(0,1),(1,1),(0,1),0.3,0.7,sigma = 0.3,sigma_est = 0.3)
 
-#colorful
-test(500,100,(3,-1),(1,1.5),(-1,0.5),0.3,0.3,sigma = 0.5,sigma_est = 0.5)
+if __name__ == "__main__":
+    sigma = float(sys.argv[1]) #sys_argv[0] is the name of the .py file
+    n = int(sys.argv[2])
+    config = sys.argv[3]
+
+if config == '1':
+    #----------- configuration 1-----#
+    b1 = (1,1)
+    b2 = (4,-1)
+    b3 = (-1,0.5)
+    pi1 = 0.5
+    pi2 = 0.5
+elif config == '2':
+    #----------- configuration 2-----#
+    b1 = (0,1)
+    b2 = (1,1)
+    b3 = (0,1)
+    pi1 = 0.3
+    pi2 = 0.7
+elif config == '3':
+    #----------- configuration 3-----#
+    b1 = (3,-1)
+    b2 = (1,1.5)
+    b3 = (-1,0.5)
+    pi1 = 0.3
+    pi2 = 0.3
+else:
+    sys.exit("Wrong configuration number!")
+
+# range of regression coefficients
+BL = -10
+BR = 10
+
+
+fname = str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
++'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
+
+# generate simulated dataset
+X,y = generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma)
+
+#------------------------run CV-------------#
+#define a range of candidate sigma values
+sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
+sigma_min = sigma/2
+sigma_list = np.arange(sigma_min, sigma_max, 0.02)
+
+kfold = 5 # number of fold in CV procedure
+CV_result = np.zeros(len(sigma_list))
+for i in range(len(sigma_list)):
+    CV_result[i] = cross_validation(X,y,sigma_list[i],kfold,BL,BR)
+pd.DataFrame(CV_result).to_csv("./../data/CV_result_{}.csv".format(fname))
+
+idx = np.argmin(CV_result)
+sigma_cv = sigma_list[idx]
+#--------------------------------------------#
+
+
+# paramters of b's and pi's are only for plotting purposes
+test(X, y, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_cv)
+
+#------------------------------------------------------------#    
+#    
+#-------------------1: CGM with known sigma----------------#
+# needs sigma as input
+f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR)
+    
+    
+#------------------------------------------------------------#    
+#    
+#-------------------2: CGM without knowing sigma----------------#
+
+f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR)
+    
+
+#------------------------------------------------------------#    
+#    
+#-------------------3: EMA with known sigma----------------#
+# needs sigma as input
+f3, B3, alpha3, sigma_array3, L_rec3, L_final3 = EMA_sigma(X,y,k,iter,BL,BR,sigma)
+
+
+#------------------------------------------------------------#    
+#    
+#-------------------4: EMA_sigma without knowing sigma----------------#
+
+# need specification on the range of sigma
+sigmaL = sigma_min # sigma_min sigma_max are also used in the cross-validation procedure
+sigmaR = sigma_max
+f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR)
+
+#-----------------------------------#
+#
+#  plot density function            #
+#
+#-----------------------------------#
+  
+#-----------------------------------------------------------------   
+line_styles = ['-','-','-','-']
+# line_styles = ['-','--',':','-.']
+fig = plt.figure(figsize = (16,5))
+x_list = [-3,0,3] #List of x values
+i = 0
+for i in range(len(x_list)):
+    x = x_list[i]
+    y = np.linspace(- 15, 15, 100)
+       
+    #calculate difference of square root of density functions
+    #dist_fit = lambda y: (np.sqrt(0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x), 0, sigma)+0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x),0, sigma)) \
+    #- np.sqrt(sum(alpha[i]*scipy.stats.norm.pdf( y - (B[0,i]+B[1,i]*x), 0, sigma) for i in range(len(alpha)))))**2
+    
+    #print("Fix x = %.1f, squared Hellinger distance for NPMLE is %.5f" % (x, quad(dist_fit, -np.inf, np.inf)[0]))
+
+    
+    plt.subplot(1,len(x_list),i+1)
+    plt.plot(y,pi1*scipy.stats.norm.pdf(y - (b1[0]+b1[1]*x), 0, sigma)+pi2*scipy.stats.norm.pdf(y-(b2[0]+b2[1]*x),0, sigma)+\
+    (1-pi1-pi2)*scipy.stats.norm.pdf(y-(b3[0]+b3[1]*x),0, sigma),color = 'gray',label = 'Truth',linestyle =line_styles[0])
+    plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) \
+    for i in range(len(alpha))),color = 'tab:blue',label = 'NPMLE_sigma',linestyle = line_styles[0])
+    plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) \
+    for i in range(len(alpha))),color = 'tab:orange',label = 'NPMLE',linestyle = line_styles[1])
+        
+    plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) \
+    for i in range(len(alpha))),color = 'tab:green',label = 'EM_sigma',linestyle = line_styles[2])
+        
+    plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) \
+    for i in range(len(alpha))),color = 'tab:red',label = 'EM',linestyle = line_styles[3])
+    plt.title(r'$x = %.1f$'%x)
+    plt.xlabel(r'$y$')
+    if i == 0:
+        plt.ylabel(r'$\rm{pdf}$')
+
+# legend      
+custom_lines = [
+            Line2D([0], [0], color= 'gray', linestyle = line_styles[0]),
+          Line2D([0], [0], color= 'tab:blue', linestyle = line_styles[0]),
+          Line2D([0], [0], color= 'tab:orange', linestyle = line_styles[1]),
+          Line2D([0], [0], color= 'tab:green', linestyle = line_styles[2]),
+          Line2D([0], [0], color= 'tab:red', linestyle = line_styles[3]),
+    ]
+ax = plt.gca()
+lgd = ax.legend(custom_lines, ['Truth','NPMLE_sigma','NPMLE','EM_sigma','EM' 
+                         ], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+plt.savefig('./../pics/%s_multi_density.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+plt.show();
+#---------------------------------------------------------------------------------
+  
+
+
+
+
+
