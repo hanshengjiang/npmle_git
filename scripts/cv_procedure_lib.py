@@ -60,11 +60,28 @@ def estimate_then_test(X_train,y_train,X_test,y_test,sigma):
     N = len(B[0])
     
     error = 0
+    
+    y_predict = np.zeros(len(y_test))
     for i in range(len(X_test[:,0])):
         prob = np.zeros(N)
         for j in range(N):
             prob[j] = alpha[j] * np.exp(-0.5*(y_test[i] - np.dot(X_test[i],B[:,j]))**2 /(sigma**2))
-        cluster_test[i] = np.argmax(prob)
-        #print(cluster_test[i])
-        error = error + (y_test[i] - np.dot(X_test[i],B[:,cluster_test[i]]))**2
+        prob_sum = np.sum(prob)
+        prob = prob/prob_sum
+        for j in range(N):
+            y_predict[i] = y_predict[i] + prob[j] * np.dot(X_test[i],B[:,j])
+            
+        #-----------another kind of CV criterion------#
+#        cluster_test[i] = np.argmax(prob)
+#        y_predict[i] = np.dot(X_test[i],B[:,cluster_test[i]])
+        #---------------------------------------------#
+        error = error + (y_test[i] - y_predict[i])**2
+        
     return error/len(y_test) 
+
+
+
+
+
+
+
