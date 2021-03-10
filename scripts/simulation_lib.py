@@ -48,8 +48,127 @@ def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma):
             C[i] = 3
     return X,y
 
+def test(X,y,sigma,sigma_est):
+    
+    '''
+    
+    
+    Input
+    X
+    y
+    sigma: ground truth sigma
+    sigma_est: sigma value selected 
+    
+    '''
 
-def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
+    
+    #run Frank-Wofle
+    f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma_est)
+    
+    
+    beta_ave = np.matmul(B,alpha)
+    print("averge beta is ", beta_ave)
+    #print("training error is ",train_error(X,y,B,alpha) )
+
+    beta_ols = np.reshape(np.dot(np.matmul(linalg.inv(np.matmul(X.T,X)),X.T),y),(p,1))
+    print("beta_ols",beta_ols)
+    #index = np.argwhere(alpha.ravel() == np.amax(alpha.ravel()))
+    
+    #plot
+    print("final neg log likelihood is ", L_final)
+    print("number of components is", len(alpha))
+    print("only components with probability at least ", threprob, " are shown below:")
+    
+    #**********************************************************
+    fig_raw = plt.figure(figsize = (8,8))
+    plt.scatter(X[:,1],y,color = 'black',marker = 'o',label = 'Noisy data', facecolors = 'None');
+    ax = plt.gca()
+    ax.set_xlim([-2,4])
+    ax.set_ylim([-3,8])
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+    plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.show();
+
+    #*******************************************
+    
+    fig1 = plt.figure(figsize = (8,8))
+
+    t = np.arange(np.amin(X[:,1])-0.5,np.amax(X[:,1])+0.5,1e-6)
+    
+    
+    #plt.plot(t,b1[0]+b1[1]*t,'r',t,b2[0]+b2[1]*t,'red')
+    
+    N = len(alpha)
+    
+    RGB_tuples = [(240,163,255),(0,117,220),(153,63,0),(76,0,92),(0,92,49),
+    (43,206,72),(255,204,153),(128,128,128),(148,255,181),(143,124,0),(157,204,0),
+    (194,0,136),(0,51,128),(255,164,5),(255,168,187),(66,102,0),(255,0,16),(94,241,242),(0,153,143),
+    ( 224,255,102),(116,10,255),(153,0,0),(255,255,128),(255,255,0),(25,25,25),(255,80,5)]
+    
+    component_plot = []
+    component_color = []
+    
+    temp = 0
+    index_sort = np.argsort(-np.reshape(alpha,(len(alpha),)))
+    count = 0 
+    for i in index_sort:
+        b = B[:,i]
+        if alpha[i] >threprob:
+            component_plot.append(i)
+            component_color.append(temp)
+            plt.plot(t,b[0]+b[1]*t, color = tuple( np.array(RGB_tuples[temp])/255),\
+                     linestyle = line_styles[int(count%4)],linewidth = alpha[i][0]*8 ,\
+                     label = r'$y = %.4f + %.4f x$ with probability $%.2f$'%(b[0], b[1], alpha[i]))
+            temp = temp + 1
+            print("coefficients", b, "with probability", alpha[i])
+            count = count + 1
+    
+    # ONLY clustering based on plotted components, i.e. components with high probability (>threprob)
+    C_cluster = np.zeros((n,1))
+    for i in range(len(y)):
+        prob = np.zeros((N,1))
+        for j in component_plot:
+            prob[j] = alpha[j] * np.exp(-0.5*(y[i] - np.dot(X[i],B[:,j]))**2 /(sigma**2))
+        C_cluster[i] = np.argmax(prob)
+        plt.scatter(X[i][1],y[i],color = tuple(np.array(RGB_tuples[component_color[component_plot.index(C_cluster[i])]])/255) ,marker = 'o', facecolors = 'None'); 
+            
+    #plt.plot(t,beta_ols[0]+beta_ols[1]*t,'green')  
+    
+    #custom_lines = [Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle='None'),
+                    #Line2D([0], [0], color= 'red'# ),
+                    #Line2D([0], [0], color='black')
+                    #,Line2D([0], [0], color='green')#
+                    #,]
+    #plt.legend(custom_lines, ['Noisy data'#,'True mixture'# 
+                            #  , 'NPMLE component'#, 'OLS'#
+                            # ],loc=0);
+    ax = plt.gca()
+    ax.set_xlim([-2,4])
+    ax.set_ylim([-3,8])
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+    plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.show();
+      
+    #MLE 
+    fig3 = plt.figure(figsize = (6,5))
+    plt.plot(L_rec);plt.title("neg-log likelihood over iterations");
+    
+    #mixing weights
+    fig4 = plt.figure(figsize = (6,5))
+    plt.plot(-np.sort(-alpha.ravel()),marker = 'o', linestyle = '--')
+    plt.title("mixing weights in descending order");
+    ax = plt.gca()
+    ax.set_xlabel(r"index of mixing components $\beta$'s")
+    ax.set_ylabel(r'mixing weights')
+    plt.savefig('./../pics/%s_alpha.png'%fname, dpi = 300, bbox_inches='tight')
+
+
+
+def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est):
     
     '''
     test function with synthetic data
