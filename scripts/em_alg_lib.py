@@ -49,40 +49,43 @@ def EMA_sigma(X,y,k,iter,BL,BR,sigma):
     
     for r in range(iter):
         
-        # Expectation step
+        # C step
         for i in range(n):
+            wden_temp = 0
             for j in range(k):
-                wden[i][j] = (alpha[j][0]*np.exp(-0.5*(y[i]- np.dot(B[:,j],X[i]))**2/(sigma_array[j]**2))/np.sqrt(2*np.pi)/sigma).ravel()
+                wden_temp = max(wden_temp, (y[i]- np.dot(B[:,j],X[i]))**2 )
+            for j in range(k):
+                if ((y[i]- np.dot(B[:,j],X[i]))**2-wden_temp) < -20:
+                    wden[i][j] = 0
+                else:
+                    wden[i][j] = (alpha[j]*np.exp(-0.5*((y[i]- np.dot(B[:,j],X[i]))**2 - wden_temp)/(sigma_array[j]**2))/np.sqrt(2*np.pi)/sigma).ravel()
+            f[i] = np.sum(wden[i])*np.exp(-wden_temp)
+        #record negative log likelihood
+        L_temp = np.sum(np.log(1/f))
+        L_rec.append(L_temp)
+        
         for i in range(n):
             temp = np.sum(wden[i])
             for j in range(k):
                 w[i][j] = wden[i][j]/temp
-            z[i] = np.argmax(np.reshape(w[i],(k,)))
-            
-        # record neg-log likelihood
-        for i in range(n):
-            f[i] = np.sum(wden[i])  
-        L_temp = np.sum(np.log(1/f))
-        # print(L_temp)
-        L_rec.append(L_temp)
+        
         
         #M step: update B, alpha, (and sigma)
         for j in range(k):
-            alpha[j] = sum(z == j)/n
-            X_temp = np.zeros((sum(z == j),p))
-            y_temp = np.zeros((sum(z == j),1))
-            W_temp = np.zeros((sum(z == j), sum(z == j)))
-            count = 0
-            for i in range(n):
-                if z[i] == j:
-                    X_temp[count] = X[i].ravel()
-                    y_temp[count] = y[i]
-                    W_temp[count][count] = w[i][j]
-                    count = count + 1
-            temp1 = np.copy(np.linalg.pinv(np.matmul(np.matmul(X_temp.T, W_temp),X_temp))) #used generalized inverse
-            temp2 = np.copy(np.matmul(np.matmul(X_temp.T, W_temp),y_temp))
-            B[:,j] = (np.matmul(temp1, temp2)).ravel()
-    return f, B, alpha, sigma_array, L_rec, temp
+            alpha[j] = np.sum(w[:,j])/n
+            w_diag = np.diag(w[:,j])
+            
+            #update B
+            temp1 = np.linalg.pinv(np.matmul(np.matmul(X.T, w_diag),X))
+            temp2 = np.matmul(np.matmul(X.T,w_diag),y)
+            B[:,j] = np.dot(temp1, temp2).ravel()
+            
+            #update sigma
+            #sigma_temp = 0
+            #for i in range(n):
+                #sigma_temp = sigma_temp + w[i][j]*(y[i] - np.dot(B[:,j],X[i]))**2
+            #sigma_array[j] = np.sqrt(sigma_temp/np.sum(w[:,j]))
+    return f, B, alpha, L_rec, temp
 
 
 def EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
@@ -128,48 +131,43 @@ def EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
     
     for r in range(iter):
         
-        # Expectation step
+        # C step
         for i in range(n):
+            wden_temp = 0
             for j in range(k):
-                wden[i][j] = (alpha[j][0]*np.exp(-0.5*(y[i]- np.dot(B[:,j],X[i]))**2/\
-                    (sigma_array[j]**2))/np.sqrt(2*np.pi)/sigma_array[j]).ravel()
+                wden_temp = max(wden_temp, (y[i]- np.dot(B[:,j],X[i]))**2 )
+            for j in range(k):
+                if ((y[i]- np.dot(B[:,j],X[i]))**2-wden_temp) < -20:
+                    wden[i][j] = 0
+                else:
+                    wden[i][j] = (alpha[j]*np.exp(-0.5*((y[i]- np.dot(B[:,j],X[i]))**2 - wden_temp)/(sigma_array[j]**2))/np.sqrt(2*np.pi)/sigma).ravel()
+            f[i] = np.sum(wden[i])*np.exp(-wden_temp)
+        #record negative log likelihood
+        L_temp = np.sum(np.log(1/f))
+        L_rec.append(L_temp)
+        
         for i in range(n):
             temp = np.sum(wden[i])
             for j in range(k):
                 w[i][j] = wden[i][j]/temp
-            z[i] = np.argmax(np.reshape(w[i],(k,)))
-            
-        # record neg-log likelihood
-        for i in range(n):
-            f[i] = np.sum(wden[i])  
-        L_temp = np.sum(np.log(1/f))
-        # print(L_temp)
-        L_rec.append(L_temp)
+        
         
         #M step: update B, alpha, (and sigma)
         for j in range(k):
-            alpha[j] = sum(z == j)/n # this is classification EM
-            X_temp = np.zeros((sum(z == j),p))
-            y_temp = np.zeros((sum(z == j),1))
-            W_temp = np.zeros((sum(z == j), sum(z == j)))
-            count = 0
-            for i in range(n):
-                if z[i] == j:
-                    X_temp[count] = X[i].ravel()
-                    y_temp[count] = y[i]
-                    W_temp[count][count] = w[i][j]
-                    count = count + 1
-            temp1 = np.copy(np.linalg.pinv(np.matmul(np.matmul(X_temp.T, W_temp),X_temp))) #used generalized inverse
-            temp2 = np.copy(np.matmul(np.matmul(X_temp.T, W_temp),y_temp))
-            B[:,j] = (np.matmul(temp1, temp2)).ravel()
+            alpha[j] = np.sum(w[:,j])/n
+            w_diag = np.diag(w[:,j])
             
+            #update B
+            temp1 = np.linalg.pinv(np.matmul(np.matmul(X.T, w_diag),X))
+            temp2 = np.matmul(np.matmul(X.T,w_diag),y)
+            B[:,j] = np.dot(temp1, temp2).ravel()
+            
+            # update sigma
             sigma_temp = 0
             for i in range(n):
-                sigma_temp = sigma_temp + w[i][j]*(y[i] - np.dot(B[:,j],X[i]))**2
-            if np.sum(w[:,j]) == 0:
-                sys.exit("CEMA believes number of components is less than {}".format(k))
+                #sigma_temp = sigma_temp + w[i][j]*(y[i] - np.dot(B[:,j],X[i]))**2
             sigma_array[j] = np.sqrt(sigma_temp/np.sum(w[:,j]))
-    return f, B, alpha, sigma_array, L_rec, temp
+    return f, B, alpha, L_rec, temp
 
     
 
@@ -336,12 +334,16 @@ def CEMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
             temp2 = np.copy(np.matmul(np.matmul(X_temp.T, W_temp),y_temp))
             B[:,j] = (np.matmul(temp1, temp2)).ravel()
             
-            sigma_temp = 0
-            for i in range(n):
-                sigma_temp = sigma_temp + w[i][j]*(y[i] - np.dot(B[:,j],X[i]))**2
-            if np.sum(w[:,j]) == 0:
-                sys.exit("CEMA believes number of components is less than {}".format(k))
-            sigma_array[j] = np.sqrt(sigma_temp/np.sum(w[:,j]))
+            if count == 0:
+                sys.exit("Opps, no data is assgined to component {}".format(beta))
+            else: 
+                sigma_temp = 0
+                w_sum = 0
+                for i in range(n):
+                    if z[i] == j:
+                        sigma_temp = sigma_temp + w[i][j]*(y[i] - np.dot(B[:,j],X[i]))**2
+                        w_sum = w_sum + w[i][j]
+                sigma_array[j] = np.sqrt(sigma_temp/w_sum)
     return f, B, alpha, sigma_array, L_rec, temp
 
     
