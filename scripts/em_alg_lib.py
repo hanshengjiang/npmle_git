@@ -85,7 +85,7 @@ def EMA_sigma(X,y,k,iter,BL,BR,sigma):
             #for i in range(n):
                 #sigma_temp = sigma_temp + w[i][j]*(y[i] - np.dot(B[:,j],X[i]))**2
             #sigma_array[j] = np.sqrt(sigma_temp/np.sum(w[:,j]))
-    return f, B, alpha, L_rec, temp
+    return f, B, alpha, sigma_array, L_rec, temp
 
 
 def EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
@@ -165,9 +165,9 @@ def EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
             # update sigma
             sigma_temp = 0
             for i in range(n):
-                #sigma_temp = sigma_temp + w[i][j]*(y[i] - np.dot(B[:,j],X[i]))**2
+                sigma_temp = sigma_temp + w[i][j]*(y[i] - np.dot(B[:,j],X[i]))**2
             sigma_array[j] = np.sqrt(sigma_temp/np.sum(w[:,j]))
-    return f, B, alpha, L_rec, temp
+    return f, B, alpha, sigma_array, L_rec, temp
 
     
 
