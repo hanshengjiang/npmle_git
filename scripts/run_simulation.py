@@ -26,10 +26,11 @@ if __name__ == "__main__":
         sigma = 0.8
         n = 500
         config = '1'
-        run_cv = 'yes'
+        run_cv = sigma
     else:
-        sigma = float(sys.argv[1]) #sys_argv[0] is the name of the .py file
-        n = int(sys.argv[2])
+        #sys_argv[0] is the name of the .py file
+        sigma = float(sys.argv[1]) 
+        n = int(sys.argv[2]) # number of data points
         config = sys.argv[3]
         run_cv = sys.argv[4]
 if config == '1':
@@ -71,7 +72,7 @@ if run_cv == 'yes':
     #------------------------run CV-------------#
     #define a range of candidate sigma values
     sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
-    sigma_min = sigma/2
+    sigma_min = 0.1
     sigma_list = np.arange(sigma_min, sigma_max, 0.02)
     
     kfold = 5 # number of fold in CV procedure
@@ -107,12 +108,17 @@ f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR)
 
 f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR)
     
+#-------------------------------------------------------------#
+# EM algorithms need to specify the number of 
+k = int(float(config)/3) + 2
+#-------------------------------------------------------------#
 
+iter_EM = 100 # EM needs more iterations
 #------------------------------------------------------------#    
 #    
-#-------------------3: EMA with known sigma----------------#
+#-------------------3: EMA with known sigma------------------#
 # needs sigma as input
-f3, B3, alpha3, sigma_array3, L_rec3, L_final3 = EMA_sigma(X,y,k,iter,BL,BR,sigma)
+f3, B3, alpha3, sigma_array3, L_rec3, L_final3 = EMA_sigma(X,y,k,iter_EM,BL,BR,sigma)
 
 
 #------------------------------------------------------------#    
@@ -120,9 +126,11 @@ f3, B3, alpha3, sigma_array3, L_rec3, L_final3 = EMA_sigma(X,y,k,iter,BL,BR,sigm
 #-------------------4: EMA_sigma without knowing sigma----------------#
 
 # need specification on the range of sigma
-sigmaL = sigma_min # sigma_min sigma_max are also used in the cross-validation procedure
-sigmaR = sigma_max
-f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR)
+sigmaL =  0.1# = sigma_min
+sigmaR = np.sqrt(stats.variance(np.reshape(y, (len(y),)))) # = sigma_max
+# sigma_min sigma_max are also used in the cross-validation procedure
+
+f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA(X,y,k,iter_EM,BL,BR,sigmaL,sigmaR)
 
 #-----------------------------------#
 #
@@ -150,16 +158,18 @@ for i in range(len(x_list)):
     plt.subplot(1,len(x_list),i+1)
     plt.plot(y,pi1*scipy.stats.norm.pdf(y - (b1[0]+b1[1]*x), 0, sigma)+pi2*scipy.stats.norm.pdf(y-(b2[0]+b2[1]*x),0, sigma)+\
     (1-pi1-pi2)*scipy.stats.norm.pdf(y-(b3[0]+b3[1]*x),0, sigma),color = 'gray',label = 'Truth',linestyle =line_styles[0])
-    plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) \
-    for i in range(len(alpha))),color = 'tab:blue',label = 'NPMLE_sigma',linestyle = line_styles[0])
-    plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) \
-    for i in range(len(alpha))),color = 'tab:orange',label = 'NPMLE',linestyle = line_styles[1])
+    
+    plt.plot(y, sum(alpha1[i]*scipy.stats.norm.pdf( y-(B1[0,i]+B1[1,i]*x), 0, sigma) \
+    for i in range(len(alpha1))),color = 'tab:blue',label = 'NPMLE_sigma',linestyle = line_styles[0])
+    
+    plt.plot(y, sum(alpha2[i]*scipy.stats.norm.pdf( y-(B2[0,i]+B2[1,i]*x), 0, sigma_cv) \
+    for i in range(len(alpha2))),color = 'tab:orange',label = 'NPMLE',linestyle = line_styles[1])
         
-    plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) \
-    for i in range(len(alpha))),color = 'tab:green',label = 'EM_sigma',linestyle = line_styles[2])
+    plt.plot(y, sum(alpha3[i]*scipy.stats.norm.pdf( y-(B3[0,i]+B3[1,i]*x), 0, sigma) \
+    for i in range(len(alpha3))),color = 'tab:green',label = 'EM_sigma',linestyle = line_styles[2])
         
-    plt.plot(y, sum(alpha[i]*scipy.stats.norm.pdf( y-(B[0,i]+B[1,i]*x), 0, sigma_est) \
-    for i in range(len(alpha))),color = 'tab:red',label = 'EM',linestyle = line_styles[3])
+    plt.plot(y, sum(alpha4[i]*scipy.stats.norm.pdf( y-(B4[0,i]+B4[1,i]*x), 0, sigma_arry4[i]) \
+    for i in range(len(alpha4))),color = 'tab:red',label = 'EM',linestyle = line_styles[3])
     plt.title(r'$x = %.1f$'%x)
     plt.xlabel(r'$y$')
     if i == 0:
