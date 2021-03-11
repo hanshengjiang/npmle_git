@@ -95,7 +95,7 @@ def test(X,y, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     ax.set_ylim([-3,8])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.2),borderaxespad=0.);
     plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.show();
 
@@ -159,7 +159,7 @@ def test(X,y, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     ax.set_ylim([-3,8])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.2),borderaxespad=0.);
     plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.show();
       
@@ -260,7 +260,7 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     ax.set_ylim([-3,8])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.2),borderaxespad=0.);
     plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.show();
     
