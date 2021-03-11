@@ -52,7 +52,7 @@ def estimate_then_test(X_train,y_train,X_test,y_test,sigma, BL,BR):
     sigma : estimation
     
     '''
-    iter = 36
+    iter = 50
     
     #run Frank-Wofle
     f, B, alpha, L_rec, L_final = NPMLE_FW(X_train,y_train,iter,sigma,BL,BR)
@@ -78,9 +78,9 @@ def estimate_then_test(X_train,y_train,X_test,y_test,sigma, BL,BR):
         #---------------------------------------------#
         error = error + (y_test[i] - y_predict[i])**2
     
-    beta0 = np.reshape(np.dot( np.matmul(linalg.inv(np.matmul(X_train.T,X_train)),X_train.T),y_train),(p,1)) 
+    beta0 = np.reshape(np.dot( np.matmul(linalg.inv(np.matmul(X_train.T,X_train)),X_train.T),y_train),(len(X_test[0]),1)) 
     y_ols = np.matmul(X_test,beta0)
-    print("difference of y_ols and y_predict",np.linalg.norm(y_ols.ravel()-y_predict.ravel(),ord = 1))
+    print("L1 distance of y_ols and y_predict",np.linalg.norm(y_ols.ravel()-y_predict.ravel(),ord = 1))
     return error/len(y_test) 
 
 

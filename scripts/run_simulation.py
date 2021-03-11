@@ -16,14 +16,22 @@
 from package_import import *
 from simulation_lib import *
 from cv_procedure_lib import *
+from em_alg_lib import *
 import sys
 
 
 if __name__ == "__main__":
-    sigma = float(sys.argv[1]) #sys_argv[0] is the name of the .py file
-    n = int(sys.argv[2])
-    config = sys.argv[3]
-
+    # default
+    if len(sys.argv) < 5:
+        sigma = 0.8
+        n = 500
+        config = '1'
+        run_cv = 'yes'
+    else:
+        sigma = float(sys.argv[1]) #sys_argv[0] is the name of the .py file
+        n = int(sys.argv[2])
+        config = sys.argv[3]
+        run_cv = sys.argv[4]
 if config == '1':
     #----------- configuration 1-----#
     b1 = (1,1)
@@ -59,25 +67,32 @@ fname = str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
 # generate simulated dataset
 X,y = generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma)
 
-#------------------------run CV-------------#
-#define a range of candidate sigma values
-sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
-sigma_min = sigma/2
-sigma_list = np.arange(sigma_min, sigma_max, 0.02)
+if run_cv == 'yes':
+    #------------------------run CV-------------#
+    #define a range of candidate sigma values
+    sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
+    sigma_min = sigma/2
+    sigma_list = np.arange(sigma_min, sigma_max, 0.02)
+    
+    kfold = 5 # number of fold in CV procedure
+    CV_result = np.zeros(len(sigma_list))
+    for i in range(len(sigma_list)):
+        CV_result[i] = cross_validation(X,y,sigma_list[i],kfold,BL,BR)
+    pd.DataFrame(CV_result).to_csv("./../data/CV_result_{}.csv".format(fname))
+    
+    idx = np.argmin(CV_result)
+    sigma_cv = sigma_list[idx]
+else:
+    #--------------------------------------------#
+    #otherwise take sigma value from command line
+    sigma_cv = float(run_cv)
+    #--------------------------------------------#
 
-kfold = 5 # number of fold in CV procedure
-CV_result = np.zeros(len(sigma_list))
-for i in range(len(sigma_list)):
-    CV_result[i] = cross_validation(X,y,sigma_list[i],kfold,BL,BR)
-pd.DataFrame(CV_result).to_csv("./../data/CV_result_{}.csv".format(fname))
+print("sigma:{},sigma_cv:{}".format(sigma,sigma_cv))
 
-idx = np.argmin(CV_result)
-sigma_cv = sigma_list[idx]
-#--------------------------------------------#
-
-
+iter = 50 
 # paramters of b's and pi's are only for plotting purposes
-test(X, y, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_cv)
+test(X, y, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_cv,-10,10)
 
 #------------------------------------------------------------#    
 #    

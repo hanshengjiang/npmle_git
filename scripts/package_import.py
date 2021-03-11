@@ -37,6 +37,6 @@ import pandas as pd
 # change plot fonts
 rc = {"font.family" : "serif", 
       "mathtext.fontset" : "cm",
-     "font.size": 16}
+     "font.size": 20}
 plt.rcParams.update(rc)
 plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]

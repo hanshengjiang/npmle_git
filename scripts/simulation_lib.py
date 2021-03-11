@@ -50,7 +50,7 @@ def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma):
             C[i] = 3
     return X,y
 
-def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
+def test(X,y, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     
     '''
     
@@ -63,6 +63,12 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     
     '''
 
+    #set parameters
+    p =2    #number of components (currently we only consider 2 component)
+    #sigma = 0.8 # standard deviation
+    threprob = 0.02
+    
+    fname = str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
     
     #run Frank-Wofle
     f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma_est,BL,BR)
@@ -94,6 +100,8 @@ def test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     plt.show();
 
     #*******************************************
+    line_styles = ['-','-','-','-']
+    # line_styles = ['-','--',':','-.']
     
     fig1 = plt.figure(figsize = (8,8))
 
