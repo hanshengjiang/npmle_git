@@ -23,7 +23,7 @@ threprob = 0.02
 
 #Use Frank-Wofle with an estimated sigma
 sigma = 0.05
-f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma)
+f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma,-10,10)
 
 
 #beta_ols = np.reshape(np.dot(np.matmul(linalg.inv(np.matmul(X.T,X)),X.T),y),(p,1))
@@ -33,7 +33,7 @@ print("final neg log likelihood is ", L_final)
 print("number of components is", len(alpha))
 print("only components with probability at least ", threprob, " are shown below:")
 
-fig1 = plt.figure(figsize = (8,8))
+fig1 = plt.figure(figsize = (10,10))
 # label = 'Original data',
 plt.scatter(X[:,1],y,color = 'blue',marker = 'o',linewidths=0.5, facecolors = 'None');
 t = np.arange(np.amin(X[:,1])-0.5,np.amax(X[:,1])+0.5,1e-6)
@@ -52,7 +52,7 @@ for i in index_sorted:
                          # , 'NPMLE component'#, 'OLS'#
                          #],loc=2);
 ax = plt.gca()
-lgd = ax.legend(loc=9, bbox_to_anchor=(1.45, 1),borderaxespad=0.) 
+lgd = ax.legend(loc=9, bbox_to_anchor=(1.43, 1),borderaxespad=0.) 
 ax.set_xlabel(r'$x$ (stretching ratio)')
 ax.set_ylabel(r'$y$ (adjusted ratio)')
 plt.savefig('./../pics/tone.png', dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')

@@ -23,10 +23,10 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 5:
-        sigma = 0.8
+        sigma = 0.5
         n = 500
         config = '1'
-        run_cv = sigma
+        run_cv = sigma # should be a value from cross-validation
     else:
         #sys_argv[0] is the name of the .py file
         sigma = float(sys.argv[1]) 
@@ -43,7 +43,7 @@ if config == '1':
 elif config == '2':
     #----------- configuration 2-----#
     b1 = (0,1)
-    b2 = (1,1)
+    b2 = (2,1)
     b3 = (0,1)
     pi1 = 0.3
     pi2 = 0.7
@@ -66,14 +66,14 @@ fname = str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
 +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
 
 # generate simulated dataset
-X,y = generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma)
+X,y,C = generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma)
 
 if run_cv == 'yes':
     #------------------------run CV-------------#
     #define a range of candidate sigma values
     sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
     sigma_min = 0.1
-    sigma_list = np.arange(sigma_min, sigma_max, 0.02)
+    sigma_list = np.arange(sigma_min, sigma_max, 0.08)
     
     kfold = 5 # number of fold in CV procedure
     CV_result = np.zeros(len(sigma_list))
@@ -92,8 +92,9 @@ else:
 print("sigma:{},sigma_cv:{}".format(sigma,sigma_cv))
 
 iter = 50 
+
 # paramters of b's and pi's are only for plotting purposes
-test(X, y, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_cv,-10,10)
+test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_cv,-10,10)
 
 #------------------------------------------------------------#    
 #    
@@ -142,11 +143,13 @@ f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA(X,y,k,iter_EM,BL,BR,sigmaL,
 line_styles = ['-','-','-','-']
 # line_styles = ['-','--',':','-.']
 fig = plt.figure(figsize = (16,5))
-x_list = [-3,0,3] #List of x values
+x_list = [-3,0,5] #List of x values
 i = 0
 for i in range(len(x_list)):
     x = x_list[i]
-    y = np.linspace(- 15, 15, 100)
+    min_ = min(b1[0]+b1[1]*x, b2[0]+b2[1]*x)
+    max_ = max(b1[0]+b1[1]*x, b2[0]+b2[1]*x)
+    y = np.linspace(min_ -2, max_ + 2, 100)
        
     #calculate difference of square root of density functions
     #dist_fit = lambda y: (np.sqrt(0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x), 0, sigma)+0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x),0, sigma)) \
@@ -157,18 +160,18 @@ for i in range(len(x_list)):
     
     plt.subplot(1,len(x_list),i+1)
     plt.plot(y,pi1*scipy.stats.norm.pdf(y - (b1[0]+b1[1]*x), 0, sigma)+pi2*scipy.stats.norm.pdf(y-(b2[0]+b2[1]*x),0, sigma)+\
-    (1-pi1-pi2)*scipy.stats.norm.pdf(y-(b3[0]+b3[1]*x),0, sigma),color = 'gray',label = 'Truth',linestyle =line_styles[0])
+    (1-pi1-pi2)*scipy.stats.norm.pdf(y-(b3[0]+b3[1]*x),0, sigma),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
     
     plt.plot(y, sum(alpha1[i]*scipy.stats.norm.pdf( y-(B1[0,i]+B1[1,i]*x), 0, sigma) \
-    for i in range(len(alpha1))),color = 'tab:blue',label = 'NPMLE_sigma',linestyle = line_styles[0])
+    for i in range(len(alpha1))),color = 'tab:orange',label = 'NPMLE_sigma',linestyle = line_styles[0])
     
     plt.plot(y, sum(alpha2[i]*scipy.stats.norm.pdf( y-(B2[0,i]+B2[1,i]*x), 0, sigma_cv) \
-    for i in range(len(alpha2))),color = 'tab:orange',label = 'NPMLE',linestyle = line_styles[1])
+    for i in range(len(alpha2))),color = 'tab:green',label = 'NPMLE',linestyle = line_styles[1])
         
     plt.plot(y, sum(alpha3[i]*scipy.stats.norm.pdf( y-(B3[0,i]+B3[1,i]*x), 0, sigma) \
-    for i in range(len(alpha3))),color = 'tab:green',label = 'EM_sigma',linestyle = line_styles[2])
+    for i in range(len(alpha3))),color = 'tab:purple',label = 'EM_sigma',linestyle = line_styles[2])
         
-    plt.plot(y, sum(alpha4[i]*scipy.stats.norm.pdf( y-(B4[0,i]+B4[1,i]*x), 0, sigma_arry4[i]) \
+    plt.plot(y, sum(alpha4[i]*scipy.stats.norm.pdf( y-(B4[0,i]+B4[1,i]*x), 0, sigma_array4[i]) \
     for i in range(len(alpha4))),color = 'tab:red',label = 'EM',linestyle = line_styles[3])
     plt.title(r'$x = %.1f$'%x)
     plt.xlabel(r'$y$')
@@ -177,17 +180,17 @@ for i in range(len(x_list)):
 
 # legend      
 custom_lines = [
-            Line2D([0], [0], color= 'gray', linestyle = line_styles[0]),
-          Line2D([0], [0], color= 'tab:blue', linestyle = line_styles[0]),
-          Line2D([0], [0], color= 'tab:orange', linestyle = line_styles[1]),
-          Line2D([0], [0], color= 'tab:green', linestyle = line_styles[2]),
+            Line2D([0], [0], color= 'tab:blue', linestyle = line_styles[0]),
+          Line2D([0], [0], color= 'tab:orange', linestyle = line_styles[0]),
+          Line2D([0], [0], color= 'tab:green', linestyle = line_styles[1]),
+          Line2D([0], [0], color= 'tab:purple', linestyle = line_styles[2]),
           Line2D([0], [0], color= 'tab:red', linestyle = line_styles[3]),
     ]
 ax = plt.gca()
 lgd = ax.legend(custom_lines, ['Truth','NPMLE_sigma','NPMLE','EM_sigma','EM' 
                          ], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 plt.savefig('./../pics/%s_multi_density.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
-plt.show();
+#plt.show();
 #---------------------------------------------------------------------------------
   
 

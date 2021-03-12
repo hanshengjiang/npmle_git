@@ -198,8 +198,8 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR):
         L_rec.append(temp)
         
         # early stopping
-        gap_thresh = n*0.1
-        if (dual_gap_rec[t] < gap_thresh) and (dual_gap_rec[t-1] < gap_thresh) and (dual_gap_rec[t-2] < gap_thresh):
+        gap_thresh = n*0.01
+        if (t>20) and (dual_gap_rec[t] < gap_thresh) and (dual_gap_rec[t-1] < gap_thresh) and (dual_gap_rec[t-2] < gap_thresh):
             print("stop at iteration", t)
             return f, B, alpha, L_rec, temp
     

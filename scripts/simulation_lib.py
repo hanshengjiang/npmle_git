@@ -66,7 +66,7 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     #set parameters
     p =2    #number of components (currently we only consider 2 component)
     #sigma = 0.8 # standard deviation
-    threprob = 0.0001
+    threprob = 0.01
     
     fname = str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
     
@@ -95,7 +95,7 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     ax.set_ylim([-3,8])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.15),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
     plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     #plt.show();
 
@@ -114,10 +114,10 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     t = np.arange(np.amin(X[:,1])-0.5,np.amax(X[:,1])+0.5,1e-6)
     #plt.plot(t,b1[0]+b1[1]*t,'r',t,b2[0]+b2[1]*t,'red')
     i = 0
-    plt.plot(t,b1[0]+b1[1]*t, color = 'red',linewidth = pi1*8,linestyle = '-')
-    plt.plot(t,b2[0]+b2[1]*t, color = 'blue',linewidth = pi2*8,linestyle = '-' )
+    plt.plot(t,b1[0]+b1[1]*t, color = 'red',linewidth = pi1*8,linestyle = line_styles[0])
+    plt.plot(t,b2[0]+b2[1]*t, color = 'blue',linewidth = pi2*8,linestyle = line_styles[1] )
     if pi1 + pi2 < 1:
-        plt.plot(t,b3[0]+b3[1]*t, color = 'green',linewidth = (1-pi2-pi2)*8 , linestyle = '-')
+        plt.plot(t,b3[0]+b3[1]*t, color = 'green',linewidth = (1-pi2-pi2)*8 , linestyle = line_styles[2])
            
             
     #plt.plot(t,beta_ols[0]+beta_ols[1]*t,'green')  
@@ -129,9 +129,9 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
                         ]
-        lgd = plt.legend(custom_lines, [r'$y = %.2f  %+.2f x$ with probability $%.3f$'%(b1[0], b1[1], pi1), #,'True mixture'# 
-                                  r'$y = %.2f  %+.2f x$ with probability $%.3f$' %(b2[0], b2[1], pi2),
-                                  r'$y = %.2f  %+.2f x$ with probability $%.3f$' %(b3[0], b3[1], 1-pi1-pi2),
+        lgd = plt.legend(custom_lines, [r'$y = %.2f  %+.2f x$ with probability $%.2f$'%(b1[0], b1[1], pi1), #,'True mixture'# 
+                                  r'$y = %.2f  %+.2f x$ with probability $%.2f$' %(b2[0], b2[1], pi2),
+                                  r'$y = %.2f  %+.2f x$ with probability $%.2f$' %(b3[0], b3[1], 1-pi1-pi2),
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc = 2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
     else:
@@ -142,8 +142,8 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
                         ]
-        lgd = plt.legend(custom_lines, [r'$y = %.2f  %+.2f x$ with probability $%.3f$' %(b1[0], b1[1], pi1), #,'True mixture'# 
-                                  r'$y = %.2f  %+.2f x$ with probability $%.3f$' %(b2[0], b2[1], pi2),
+        lgd = plt.legend(custom_lines, [r'$y = %.2f  %+.2f x$ with probability $%.2f$' %(b1[0], b1[1], pi1), #,'True mixture'# 
+                                  r'$y = %.2f  %+.2f x$ with probability $%.2f$' %(b2[0], b2[1], pi2),
                                 
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc=2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
@@ -184,7 +184,7 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
             component_color.append(temp)
             plt.plot(t,b[0]+b[1]*t, color = tuple( np.array(RGB_tuples[temp])/255),\
                      linestyle = line_styles[int(count%4)],linewidth = alpha[i][0]*8 ,\
-                     label = r'$y = %.2f %+.2f x$ with probability $%.3f$'%(b[0], b[1], alpha[i]))
+                     label = r'$y = %.2f %+.2f x$ with probability $%.2f$'%(b[0], b[1], alpha[i]))
             temp = temp + 1
             print("coefficients", b, "with probability", alpha[i])
             count = count + 1
@@ -213,7 +213,7 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     ax.set_ylim([-3,8])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.15),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
     plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     # plt.show();
       
@@ -247,7 +247,7 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     #set parameters
     p =2    #number of components (currently we only consider 2 component)
     #sigma = 0.8 # standard deviation
-    threprob = 0.0001
+    threprob = 0.01
     #pi1 = 0.5 # first componrnt has probability pi
     #pi2 = 0.25
     
@@ -314,7 +314,7 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     ax.set_ylim([-3,8])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.15),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
     plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     # plt.show();
     
@@ -333,10 +333,10 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     t = np.arange(np.amin(X[:,1])-0.5,np.amax(X[:,1])+0.5,1e-6)
     #plt.plot(t,b1[0]+b1[1]*t,'r',t,b2[0]+b2[1]*t,'red')
     i = 0
-    plt.plot(t,b1[0]+b1[1]*t, color = 'red',linewidth = pi1*8,linestyle = '-')
-    plt.plot(t,b2[0]+b2[1]*t, color = 'blue',linewidth = pi2*8,linestyle = '--' )
+    plt.plot(t,b1[0]+b1[1]*t, color = 'red',linewidth = pi1*8,linestyle = line_styles[0])
+    plt.plot(t,b2[0]+b2[1]*t, color = 'blue',linewidth = pi2*8,linestyle = line_styles[1] )
     if pi1 + pi2 < 1:
-        plt.plot(t,b3[0]+b3[1]*t, color = 'green',linewidth = (1-pi2-pi2)*8 , linestyle = ':')
+        plt.plot(t,b3[0]+b3[1]*t, color = 'green',linewidth = (1-pi2-pi2)*8 , linestyle = line_styles[2])
            
             
     #plt.plot(t,beta_ols[0]+beta_ols[1]*t,'green')  
@@ -348,9 +348,9 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
                         ]
-        lgd = plt.legend(custom_lines, [r'$y = %.2f  %+.2f x$ with probability $%.3f$' %(b1[0], b1[1], pi1), #,'True mixture'# 
-                                  r'$y = %.2f %+.2f x$ with probability $%.3f$' %(b2[0], b2[1], pi2),
-                                  r'$y = %.2f %+.2f x$ with probability $%.3f$' %(b3[0], b3[1], 1-pi1-pi2),
+        lgd = plt.legend(custom_lines, [r'$y = %.2f  %+.2f x$ with probability $%.2f$' %(b1[0], b1[1], pi1), #,'True mixture'# 
+                                  r'$y = %.2f %+.2f x$ with probability $%.2f$' %(b2[0], b2[1], pi2),
+                                  r'$y = %.2f %+.2f x$ with probability $%.2f$' %(b3[0], b3[1], 1-pi1-pi2),
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc = 2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
     else:
@@ -361,8 +361,8 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
                         ]
-        lgd = plt.legend(custom_lines, [r'$y = %.2f  %+.2f x$ with probability $%.3f$' %(b1[0], b1[1], pi1), #,'True mixture'# 
-                                  r'$y = %.2f  %+.2f x$ with probability $%.3f$' %(b2[0], b2[1], pi2),
+        lgd = plt.legend(custom_lines, [r'$y = %.2f  %+.2f x$ with probability $%.2f$' %(b1[0], b1[1], pi1), #,'True mixture'# 
+                                  r'$y = %.2f  %+.2f x$ with probability $%.2f$' %(b2[0], b2[1], pi2),
                                 
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc=2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
@@ -403,7 +403,7 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
             component_color.append(temp)
             plt.plot(t,b[0]+b[1]*t, color = tuple( np.array(RGB_tuples[temp])/255),\
                      linestyle = line_styles[int(count%4)],linewidth = alpha[i][0]*8 ,\
-                     label = r'$y = %.2f %+.2f x$ with probability $%.3f$'%(b[0], b[1], alpha[i]))
+                     label = r'$y = %.2f %+.2f x$ with probability $%.2f$'%(b[0], b[1], alpha[i]))
             temp = temp + 1
             print("coefficients", b, "with probability", alpha[i])
             count = count + 1

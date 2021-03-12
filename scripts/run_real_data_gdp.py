@@ -28,7 +28,7 @@ threprob = 1e-2
 #Use Algorithm 1
 sigma = 0.31 # chosen by cross-validation procedure
 np.random.seed(26)
-f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma)
+f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma, -10, 10)
 print("number of components", len(alpha))
 ##########IMPORTANT subproblem initializes with beta = 0
 
@@ -37,7 +37,7 @@ print("final neg log likelihood is ", L_final)
 print("number of components is", len(alpha))
 print("only components with probability at least ", threprob, " are shown below:")
 
-fig1, ax = plt.subplots(figsize = (8,6))
+fig1, ax = plt.subplots(figsize = (10,7.5))
 plt.scatter(X[:,1],y,color = 'blue',marker = 'o', facecolors = 'None',linewidths = 0.5);
 #label = 'Noisy data',
 
@@ -69,6 +69,6 @@ for i in index_sorted:
 #                          ],loc=9);
 ax = plt.gca()
 ax.set_xlabel(r'$x$ ($\rm{GDP}$)')
-ax.set_ylabel(r'$y$: ($\rm{CO_2}$)')
-lgd = ax.legend(loc=9, bbox_to_anchor=(1.45, 1),borderaxespad=0.) 
+ax.set_ylabel(r'$y$ ($\rm{CO_2}$)')
+lgd = ax.legend(loc=9, bbox_to_anchor=(1.43, 1),borderaxespad=0.) 
 plt.savefig('./../pics/co2_gdp.png', dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')

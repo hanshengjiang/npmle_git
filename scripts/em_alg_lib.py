@@ -70,7 +70,7 @@ def EMA_sigma(X,y,k,iter,BL,BR,sigma):
                 w[i][j] = wden[i][j]/temp
         
         
-        #M step: update B, alpha, (and sigma)
+        #M step: update B, alpha
         for j in range(k):
             alpha[j] = np.sum(w[:,j])/n
             w_diag = np.diag(w[:,j])
@@ -131,28 +131,27 @@ def EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
     
     for r in range(iter):
         
-        # C step
         for i in range(n):
-            wden_temp = 0
             for j in range(k):
-                wden_temp = max(wden_temp, (y[i]- np.dot(B[:,j],X[i]))**2 )
-            for j in range(k):
-                if ((y[i]- np.dot(B[:,j],X[i]))**2-wden_temp) < -20:
+                if (y[i]- np.dot(B[:,j],X[i]))**2 >100:
                     wden[i][j] = 0
                 else:
-                    wden[i][j] = (alpha[j]*np.exp(-0.5*((y[i]- np.dot(B[:,j],X[i]))**2 - wden_temp)/(sigma_array[j]**2))/np.sqrt(2*np.pi)/sigma).ravel()
-            f[i] = np.sum(wden[i])*np.exp(-wden_temp)
+                    wden[i][j] = (alpha[j]*np.exp(-0.5*((y[i]- np.dot(B[:,j],X[i]))**2\
+                        )/(sigma_array[j]**2))/np.sqrt(2*np.pi)/sigma_array[j]).ravel()
+            f[i] = np.sum(wden[i])
+            
         #record negative log likelihood
         L_temp = np.sum(np.log(1/f))
         L_rec.append(L_temp)
         
+        # normalize
         for i in range(n):
             temp = np.sum(wden[i])
             for j in range(k):
                 w[i][j] = wden[i][j]/temp
         
         
-        #M step: update B, alpha, (and sigma)
+        #M step: update B, alpha, and sigma
         for j in range(k):
             alpha[j] = np.sum(w[:,j])/n
             w_diag = np.diag(w[:,j])
