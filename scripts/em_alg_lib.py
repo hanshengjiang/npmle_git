@@ -143,6 +143,8 @@ def EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
         #record negative log likelihood
         L_temp = np.sum(np.log(1/f))
         L_rec.append(L_temp)
+        if r> 0:
+            print("recent log likelihood difference (should <=0)" L_rec[-1] - L_rec[-2])
         
         # normalize
         for i in range(n):
