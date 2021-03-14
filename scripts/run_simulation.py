@@ -23,7 +23,7 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 5:
-        sigma = 0.5
+        sigma = 0.05
         n = 500
         config = '1'
         run_cv = sigma # should be a value from cross-validation
@@ -76,12 +76,14 @@ if run_cv == 'yes':
     sigma_list = np.arange(sigma_min, sigma_max, 0.08)
     
     kfold = 5 # number of fold in CV procedure
-    CV_result = np.zeros(len(sigma_list))
+    CV_result = np.zeros((len(sigma_list),2))
+    CV_result[:,0] = sigma_list
+    np.random.seed(626)
     for i in range(len(sigma_list)):
-        CV_result[i] = cross_validation(X,y,sigma_list[i],kfold,BL,BR)
+        CV_result[i,1] = cross_validation(X,y,sigma_list[i],kfold,BL,BR)
     pd.DataFrame(CV_result).to_csv("./../data/CV_result_{}.csv".format(fname))
     
-    idx = np.argmin(CV_result)
+    idx = np.argmin(CV_result[:,1])
     sigma_cv = sigma_list[idx]
 else:
     #--------------------------------------------#

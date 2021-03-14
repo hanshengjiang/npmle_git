@@ -12,7 +12,10 @@ def lmo(beta,X,y,sigma,f):
     p = len(X[0])
     obj = 0
     for i in range(n):
-        obj = obj - np.exp(-0.5*(y[i] - np.dot(X[i],beta))**2 /(sigma**2))/f[i]
+        temp = np.exp(-0.5*(y[i] - np.dot(X[i],beta))**2 /(sigma**2))
+        if temp > 0:
+            inv_f = 1/(f[i]*1e+10)
+            obj = obj - np.exp(-0.5*(y[i] - np.dot(X[i],beta))**2 /(sigma**2))*inv_f
     return obj  
 
 def jacobian(beta,X,y,sigma,f):
