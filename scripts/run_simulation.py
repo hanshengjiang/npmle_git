@@ -159,20 +159,24 @@ for i in range(len(x_list)):
 
     
     plt.subplot(1,len(x_list),i+1)
+    
+    plt.plot(y, sum(alpha4[i]*scipy.stats.norm.pdf( y-(B4[0,i]+B4[1,i]*x), 0, sigma_array4[i]) \
+    for i in range(len(alpha4))),color = 'tab:red',label = 'EM',linestyle = line_styles[3])
+    
     plt.plot(y,pi1*scipy.stats.norm.pdf(y - (b1[0]+b1[1]*x), 0, sigma)+pi2*scipy.stats.norm.pdf(y-(b2[0]+b2[1]*x),0, sigma)+\
     (1-pi1-pi2)*scipy.stats.norm.pdf(y-(b3[0]+b3[1]*x),0, sigma),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
-    
-    plt.plot(y, sum(alpha1[i]*scipy.stats.norm.pdf( y-(B1[0,i]+B1[1,i]*x), 0, sigma) \
-    for i in range(len(alpha1))),color = 'tab:orange',label = 'NPMLE_sigma',linestyle = line_styles[0])
-    
+
     plt.plot(y, sum(alpha2[i]*scipy.stats.norm.pdf( y-(B2[0,i]+B2[1,i]*x), 0, sigma_cv) \
     for i in range(len(alpha2))),color = 'tab:green',label = 'NPMLE',linestyle = line_styles[1])
         
-    plt.plot(y, sum(alpha3[i]*scipy.stats.norm.pdf( y-(B3[0,i]+B3[1,i]*x), 0, sigma) \
-    for i in range(len(alpha3))),color = 'tab:purple',label = 'EM_sigma',linestyle = line_styles[2])
+    plt.plot(y, sum(alpha1[i]*scipy.stats.norm.pdf( y-(B1[0,i]+B1[1,i]*x), 0, sigma) \
+    for i in range(len(alpha1))),color = 'tab:orange',label = 'NPMLE_sigma',linestyle = line_styles[0])
+    
+    
+#    plt.plot(y, sum(alpha3[i]*scipy.stats.norm.pdf( y-(B3[0,i]+B3[1,i]*x), 0, sigma) \
+#    for i in range(len(alpha3))),color = 'tab:purple',label = 'EM_sigma',linestyle = line_styles[2])
         
-    plt.plot(y, sum(alpha4[i]*scipy.stats.norm.pdf( y-(B4[0,i]+B4[1,i]*x), 0, sigma_array4[i]) \
-    for i in range(len(alpha4))),color = 'tab:red',label = 'EM',linestyle = line_styles[3])
+
     plt.title(r'$x = %.1f$'%x)
     plt.xlabel(r'$y$')
     if i == 0:
@@ -183,7 +187,7 @@ custom_lines = [
             Line2D([0], [0], color= 'tab:blue', linestyle = line_styles[0]),
           Line2D([0], [0], color= 'tab:orange', linestyle = line_styles[0]),
           Line2D([0], [0], color= 'tab:green', linestyle = line_styles[1]),
-          Line2D([0], [0], color= 'tab:purple', linestyle = line_styles[2]),
+          # Line2D([0], [0], color= 'tab:purple', linestyle = line_styles[2]),
           Line2D([0], [0], color= 'tab:red', linestyle = line_styles[3]),
     ]
 ax = plt.gca()
