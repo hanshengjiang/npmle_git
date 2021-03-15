@@ -11,12 +11,22 @@ from package_import import *
 from alg1_lib import *
 
 
-def cross_validation(X,y,sigma,k,BL,BR):
+def cross_validation(X,y,sigma_list,k,BL,BR):
     '''
     k - fold cross-validation for one sigma value
     
     Based on total likelihood value
-
+    
+    ---------------------------------------------
+    Input:
+        X: design points
+        y: data
+        sigma_list: a list of candidate sigma values
+        k: number of folds
+        [BL,BR]: parameter range
+    ---------------------------------------------
+    Output:
+        CV criterion for the given list of sigma
     '''
     n = len(X[:,0])
     m = int(n/k)
@@ -27,23 +37,27 @@ def cross_validation(X,y,sigma,k,BL,BR):
     X_rdn = np.array(X[rdn_index,:])
     y_rdn = np.array(y[rdn_index])
     
-    log_L = 0
+    CV_result = np.zeros((len(sigma_list),2))
+    CV_result[:,0] = sigma_list
     
-    for idex in range(k):
-        if idex == 0:
-            log_L = log_L + estimate_then_testlikelihood(X_rdn[(idex+1)*m:,:], \
-                                           y_rdn[(idex+1)*m:],\
-                                           X_rdn[:(idex+1)*m,:],y_rdn[:(idex+1)*m],sigma,BL,BR)
-        elif idex == k-1:
-            log_L = log_L + estimate_then_testlikelihood(X_rdn[:idex*m,:], \
-                                           y_rdn[:idex*m],\
-                                           X_rdn[idex*m:,:],y_rdn[idex*m:],sigma,BL,BR)
-        else:
-            log_L = log_L + estimate_then_testlikelihood(np.concatenate((X_rdn[:idex*m,:],X_rdn[(idex+1)*m:,:])), \
-                                           np.concatenate((y_rdn[:idex*m],y_rdn[(idex+1)*m:])),\
-                                           X_rdn[idex*m:(idex+1)*m,:],y_rdn[idex*m :(idex+1)*m],sigma,BL,BR)
-    # return negative log likelihood
-    return -log_L/k
+    for sigma in sigma_list:
+        log_L = 0
+        for idex in range(k):
+            if idex == 0:
+                log_L = log_L + estimate_then_testlikelihood(X_rdn[(idex+1)*m:,:], \
+                                               y_rdn[(idex+1)*m:],\
+                                               X_rdn[:(idex+1)*m,:],y_rdn[:(idex+1)*m],sigma,BL,BR)
+            elif idex == k-1:
+                log_L = log_L + estimate_then_testlikelihood(X_rdn[:idex*m,:], \
+                                               y_rdn[:idex*m],\
+                                               X_rdn[idex*m:,:],y_rdn[idex*m:],sigma,BL,BR)
+            else:
+                log_L = log_L + estimate_then_testlikelihood(np.concatenate((X_rdn[:idex*m,:],X_rdn[(idex+1)*m:,:])), \
+                                               np.concatenate((y_rdn[:idex*m],y_rdn[(idex+1)*m:])),\
+                                               X_rdn[idex*m:(idex+1)*m,:],y_rdn[idex*m :(idex+1)*m],sigma,BL,BR)
+        # negative log likelihood
+        CV_result[i,1] = -log_L/k
+    return CV_result
 
 
 def estimate_then_testlikelihood(X_train,y_train,X_test,y_test,sigma, BL,BR):
