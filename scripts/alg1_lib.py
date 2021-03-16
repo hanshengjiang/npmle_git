@@ -12,10 +12,7 @@ def lmo(beta,X,y,sigma,f):
     p = len(X[0])
     obj = 0
     for i in range(n):
-        temp = np.exp(-0.5*(y[i] - np.dot(X[i],beta))**2 /(sigma**2))
-        if temp > 0:
-            inv_f = 1/(f[i]*1e+10)
-            obj = obj - np.exp(-0.5*(y[i] - np.dot(X[i],beta))**2 /(sigma**2))*inv_f
+        obj = obj - np.exp(-0.5*(y[i] - np.dot(X[i],beta))**2 /(sigma**2))/f[i]
     return obj  
 
 def jacobian(beta,X,y,sigma,f):
@@ -58,7 +55,7 @@ def sollmo(X,y,sigma,f,BL,BR):
     #initialize beta0 with OLS solution or 0 or random
     #beta0 = np.reshape(np.dot( np.matmul(linalg.inv(np.matmul(X.T,X)),X.T),y),(p,1)) 
     #beta0 = np.zeros((p,1))
-    beta0 = np.reshape(np.random.uniform(BL,BR,p),(p,1))
+    #beta0 = np.reshape(np.random.uniform(BL,BR,p),(p,1))
     
     #minimize exponential sum approximately
     #nonconvex problem
@@ -74,14 +71,16 @@ def sollmo(X,y,sigma,f,BL,BR):
     for rdn in range(num_rdn):
         beta0 = np.reshape(np.random.uniform(BL,BR,p),(p,1))
         OptResult = minimize(lmo, beta0, args = (X,y,sigma,f),method = 'Powell')
-        opt_fun[rdn] = OptResult.fun
-        opt_x[rdn] = OptResult.x
+        if OptResult.success == False:
+            opt_fun[rdn] = np.inf
+            opt_x[rdn] = beta0.ravel()
+        else:
+            opt_fun[rdn] = OptResult.fun
+            opt_x[rdn] = OptResult.x
     print(opt_fun)
-    #print(np.where(opt_fun == opt_fun.min()))
-    min_rdn = np.where(opt_fun == opt_fun.min())[0][0]  
+    min_rdn = np.argmin(opt_fun)
     #print(min_rdn)
-   
-    beta_sol = opt_x[min_rdn]
+    beta_sol = np.reshape(opt_x[min_rdn],(p,1))
     
     g = np.zeros((n,1))
     for i in range(n):
@@ -112,6 +111,8 @@ def FW_FC(f,alpha,P,n):
         alpha = (1-gamma)*np.reshape(alpha,(k,1))+gamma*temp
     return f,alpha
 
+#===========================================================================================================
+    
 def NPMLE_FW(X,y,iter,sigma,BL,BR):
     '''
     Use FW algorithm to solve NPMLE problem of MLR  
@@ -122,6 +123,7 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR):
     y: response variable
     iter: number of iterations
     sigma: std of noise (estimated)
+    BL,BR
     
     Output
     f: n * J, atomic likelihood vectors in active set
@@ -142,10 +144,11 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR):
     f = np.zeros((n,1))
     for i in range(n):
         f[i] = 1/(np.sqrt(2*np.pi)*sigma)* np.exp(-0.5*(y[i] - np.dot(X[i],beta0))**2 /(sigma**2))
+    # print("min f:", np.min(f))
     
     # initialize P,B
-    # P active set
-    # B beta's corresponding to columns of P
+    # P active set: (n,k)
+    # B beta's corresponding to columns of P :(p,k)
     P = np.zeros((n,1))
     P[:,0] = f.ravel()
     B = np.zeros((p,1))
@@ -164,8 +167,8 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR):
         dual_gap_rec[t] = np.dot(g.T,1/f) -np.dot(f.T,1/f)
         print("dual_gap", t,":",dual_gap_rec[t])
         
-        if t%10 == 0:
-            print("beta_sol",beta_sol)
+#        if t%10 == 0:
+#            print("beta_sol",beta_sol)
         
         g = np.reshape(g,(n,1))
         beta_sol = np.reshape(beta_sol,(p,1))

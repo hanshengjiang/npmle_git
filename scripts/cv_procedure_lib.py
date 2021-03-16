@@ -19,15 +19,16 @@ def cross_validation_parallel(X,y,sigma_list,k,BL,BR):
     
     Based on total likelihood value
     
-    ---------------------------------------------
-    Input:
+    Input
+    -----
         X: design points
         y: data
         sigma_list: a list of candidate sigma values
         k: number of folds
         [BL,BR]: parameter range
-    ---------------------------------------------
-    Output:
+  
+    Output
+    ------
         CV criterion for the given list of sigma
     '''
     n = len(X[:,0])

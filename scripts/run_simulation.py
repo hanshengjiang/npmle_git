@@ -23,10 +23,10 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 5:
-        sigma = 0.05
+        sigma = 0.5
         n = 500
-        config = '1'
-        run_cv = sigma # should be a value from cross-validation
+        config = '3'
+        run_cv = 'yes' # should be a value from cross-validation
     else:
         #sys_argv[0] is the name of the .py file
         sigma = float(sys.argv[1]) 
@@ -60,11 +60,12 @@ else:
 # range of regression coefficients
 BL = -10
 BR = 10
-
+iter = 50
 
 fname = str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
 +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
 
+np.random.seed(626)
 # generate simulated dataset
 X,y,C = generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma)
 
@@ -73,18 +74,14 @@ if run_cv == 'yes':
     #define a range of candidate sigma values
     sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
     sigma_min = 0.1
-    sigma_list = np.arange(sigma_min, sigma_max, 0.08)
+    sigma_list = np.arange(sigma_min, sigma_max, 0.02)
     
     kfold = 5 # number of fold in CV procedure
-    CV_result = np.zeros((len(sigma_list),2))
-    CV_result[:,0] = sigma_list
-    np.random.seed(626)
-    for i in range(len(sigma_list)):
-        CV_result[i,1] = cross_validation(X,y,sigma_list[i],kfold,BL,BR)
-    pd.DataFrame(CV_result).to_csv("./../data/CV_result_{}.csv".format(fname))
+    CV_result = cross_validation_parallel(X,y,sigma_list,kfold,BL,BR)
+    pd.DataFrame(CV_result).to_csv("./../data/CV_result_{}.csv".format(fname), index = False)
     
-    idx = np.argmin(CV_result[:,1])
-    sigma_cv = sigma_list[idx]
+    idx_min = np.argmin(CV_result[:,1])
+    sigma_cv = sigma_list[idx_min]
 else:
     #--------------------------------------------#
     #otherwise take sigma value from command line
@@ -189,11 +186,12 @@ custom_lines = [
             Line2D([0], [0], color= 'tab:blue', linestyle = line_styles[0]),
           Line2D([0], [0], color= 'tab:orange', linestyle = line_styles[0]),
           Line2D([0], [0], color= 'tab:green', linestyle = line_styles[1]),
-          # Line2D([0], [0], color= 'tab:purple', linestyle = line_styles[2]),
           Line2D([0], [0], color= 'tab:red', linestyle = line_styles[3]),
+          # Line2D([0], [0], color= 'tab:purple', linestyle = line_styles[2]),
     ]
 ax = plt.gca()
-lgd = ax.legend(custom_lines, ['Truth','NPMLE_sigma','NPMLE','EM_sigma','EM' 
+lgd = ax.legend(custom_lines, ['Truth','NPMLE_sigma','NPMLE', 'EM',
+                                #'EM_sigma'
                          ], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 plt.savefig('./../pics/%s_multi_density.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 #plt.show();
