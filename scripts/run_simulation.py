@@ -7,6 +7,7 @@
 """
 
 '''
+
 1. simulations of discrete mixtures
 2. density plots that compare EM, CGM, with or without knowing sigma
 
@@ -25,14 +26,16 @@ if __name__ == "__main__":
     if len(sys.argv) < 5:
         sigma = 0.5
         n = 500
-        config = '3'
-        run_cv = 'yes' # should be a value from cross-validation
+        config = '1'
+        run_cv = 0.5 
+    # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
         sigma = float(sys.argv[1]) 
         n = int(sys.argv[2]) # number of data points
         config = sys.argv[3]
         run_cv = sys.argv[4]
+        
 if config == '1':
     #----------- configuration 1-----#
     b1 = (1,1)
@@ -66,8 +69,12 @@ fname = str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
 +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
 
 np.random.seed(626)
+
+#-----------------------------------------------------------#
 # generate simulated dataset
 X,y,C = generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma)
+#-----------------------------------------------------------#
+
 
 if run_cv == 'yes':
     #------------------------run CV-------------#
@@ -90,13 +97,14 @@ else:
 
 print("sigma:{},sigma_cv:{}".format(sigma,sigma_cv))
 
-iter = 50 
 
+#------------------------------------------------------------#  
 # paramters of b's and pi's are only for plotting purposes
 test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_cv,-10,10)
-
 #------------------------------------------------------------#    
-#    
+
+#--------------------density plots--------------------------#
+  
 #-------------------1: CGM with known sigma----------------#
 # needs sigma as input
 f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR)

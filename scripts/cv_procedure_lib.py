@@ -42,8 +42,8 @@ def cross_validation_parallel(X,y,sigma_list,k,BL,BR):
     CV_result = np.zeros((len(sigma_list),2))
     CV_result[:,0] = sigma_list
     
-    pool = multiprocessing.Pool(8)
-    CV_result[:,1] = pool.starmap(cross_validation, \
+    with multiprocessing.Pool(8) as pool:
+        CV_result[:,1] = pool.starmap(cross_validation, \
             zip(repeat(X_rdn), repeat(y_rdn), sigma_list, repeat(k), repeat(BL), repeat(BR)))
     return CV_result
 
