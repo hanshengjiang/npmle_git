@@ -15,18 +15,18 @@ if __name__ == "__main__":
 
 if exp_type == 'discrete':
     # directly run with reported sigma value chosen by cross-validation
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '1' + ' ' + '0.4'
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '1' + ' ' + '0.42'
     os.system("python " + filename + params_ + '&')
-    params_ = ' '+'0.3' + ' ' + '300' + ' ' + '2' + ' ' + '0.2'
+    params_ = ' '+'0.5' + ' ' + '300' + ' ' + '2' + ' ' + '0.34'
     os.system("python " + filename + params_ + '&')
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '3' + ' ' + '0.4'
-    os.system("python " + filename + params_ + '&')
+#    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '3' + ' ' + '0.4'
+#    os.system("python " + filename + params_ + '&')
     
-elif exp_type == 'discrete_cv":
+elif exp_type == 'discrete_cv':
     # re-run cross-validation
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '1' + ' ' + 'yes'
     os.system("python " + filename + params_ + '&')
-    params_ = ' '+'0.3' + ' ' + '300' + ' ' + '2' + ' ' + 'yes'
+    params_ = ' '+'0.5' + ' ' + '300' + ' ' + '2' + ' ' + 'yes'
     os.system("python " + filename + params_ + '&')
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '3' + ' ' + 'yes'
     os.system("python " + filename + params_ + '&')
