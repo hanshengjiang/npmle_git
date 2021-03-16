@@ -95,7 +95,7 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     ax.set_ylim([-3,8])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     #plt.show();
 
@@ -133,7 +133,7 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
                                   r'$y = %.2f  %+.2f x$ with probability $%.2f$' %(b2[0], b2[1], pi2),
                                   r'$y = %.2f  %+.2f x$ with probability $%.2f$' %(b3[0], b3[1], 1-pi1-pi2),
                                    #'NPMLE component'#, 'OLS'#
-                                 ],loc = 2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+                                 ],loc = 2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     else:
         custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle=line_styles[0],linewidth = 8*pi1),Line2D([], [], color='red')),
                         (Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle=line_styles[1],linewidth = 8*pi2),Line2D([], [], color='blue')),
@@ -146,7 +146,7 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
                                   r'$y = %.2f  %+.2f x$ with probability $%.2f$' %(b2[0], b2[1], pi2),
                                 
                                    #'NPMLE component'#, 'OLS'#
-                                 ],loc=2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+                                 ],loc=2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     ax = plt.gca()
     ax.set_xlim([-2,4])
     ax.set_ylim([-3,8])
@@ -179,6 +179,7 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     count = 0 
     for i in index_sort:
         b = B[:,i]
+        # select component with mixing probability above certain thresholds
         if alpha[i] >threprob:
             component_plot.append(i)
             component_color.append(temp)
@@ -213,7 +214,7 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     ax.set_ylim([-3,8])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     # plt.show();
       
@@ -314,7 +315,7 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     ax.set_ylim([-3,8])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     # plt.show();
     
@@ -352,7 +353,7 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
                                   r'$y = %.2f %+.2f x$ with probability $%.2f$' %(b2[0], b2[1], pi2),
                                   r'$y = %.2f %+.2f x$ with probability $%.2f$' %(b3[0], b3[1], 1-pi1-pi2),
                                    #'NPMLE component'#, 'OLS'#
-                                 ],loc = 2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+                                 ],loc = 2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     else:
         custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle=line_styles[0],linewidth = 8*pi1),Line2D([], [], color='red')),
                         (Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle=line_styles[1],linewidth = 8*pi2),Line2D([], [], color='blue')),
@@ -365,7 +366,7 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
                                   r'$y = %.2f  %+.2f x$ with probability $%.2f$' %(b2[0], b2[1], pi2),
                                 
                                    #'NPMLE component'#, 'OLS'#
-                                 ],loc=2,bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+                                 ],loc=2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     ax = plt.gca()
     ax.set_xlim([-2,4])
     ax.set_ylim([-3,8])
@@ -432,7 +433,7 @@ def generate_and_test(n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR):
     ax.set_ylim([-3,8])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.1),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     # plt.show();
     

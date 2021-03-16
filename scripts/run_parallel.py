@@ -14,7 +14,8 @@ if __name__ == "__main__":
     exp_type = sys.argv[2]
 
 if exp_type == 'discrete':
-    # directly run with reported sigma value chosen by cross-validation
+    # directly run with reported sigma value 
+    # (reported sigma were previously chosen by cross-validation)
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '1' + ' ' + '0.42'
     os.system("python " + filename + params_ + '&')
     params_ = ' '+'0.5' + ' ' + '300' + ' ' + '2' + ' ' + '0.34'

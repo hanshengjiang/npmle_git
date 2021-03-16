@@ -178,13 +178,13 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR):
         #fully corrective step wrt current active set P
         f, alpha = FW_FC(f,alpha,P,n)
         
-        #prune P by deleting columns corresponding to zero alpha
+        #prune P by deleting columns corresponding to very small alpha
         P_prune = np.zeros((n,1))
         B_prune = np.zeros((p,1))
         alpha_prune = np.zeros((1,))
         flag = 0
         for i in range(len(P[0])):
-            if alpha[i] > 0:
+            if alpha[i] > 0.01:
                 if flag == 0:
                     P_prune[:,0] = P[:,i].ravel()
                     B_prune[:,0] = B[:,i].ravel()
