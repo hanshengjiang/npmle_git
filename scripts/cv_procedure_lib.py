@@ -11,9 +11,10 @@ from package_import import *
 from alg1_lib import *
 import multiprocessing 
 from itertools import repeat
+from multiprocessing import Pool
+from regression_func_lib import *
 
-
-def cross_validation_parallel(X,y,sigma_list,k,BL,BR):
+def cross_validation_parallel(X,y,sigma_list,k,BL,BR,func=lin_func):
     '''
     k - fold cross-validation for one sigma value
     
@@ -42,12 +43,12 @@ def cross_validation_parallel(X,y,sigma_list,k,BL,BR):
     CV_result = np.zeros((len(sigma_list),2))
     CV_result[:,0] = sigma_list
     
-    with multiprocessing.Pool(8) as pool:
-        CV_result[:,1] = pool.starmap(cross_validation, \
-            zip(repeat(X_rdn), repeat(y_rdn), sigma_list, repeat(k), repeat(BL), repeat(BR)))
+    with Pool(8) as cv_pool:
+        CV_result[:,1] = cv_pool.starmap(cross_validation, \
+            zip(repeat(X_rdn), repeat(y_rdn), sigma_list, repeat(k), repeat(BL), repeat(BR), repeat(func)))
     return CV_result
 
-def cross_validation(X,y,sigma,k,BL,BR):
+def cross_validation(X,y,sigma,k,BL,BR,func=lin_func):
     '''
     k - fold cross-validation for one sigma value
     
@@ -66,21 +67,20 @@ def cross_validation(X,y,sigma,k,BL,BR):
         if idex == 0:
             log_L = log_L + estimate_then_testlikelihood(X_rdn[(idex+1)*m:,:], \
                                            y_rdn[(idex+1)*m:],\
-                                           X_rdn[:(idex+1)*m,:],y_rdn[:(idex+1)*m],sigma,BL,BR)
+                                           X_rdn[:(idex+1)*m,:],y_rdn[:(idex+1)*m],sigma,BL,BR,func)
         elif idex == k-1:
             log_L = log_L + estimate_then_testlikelihood(X_rdn[:idex*m,:], \
                                            y_rdn[:idex*m],\
-                                           X_rdn[idex*m:,:],y_rdn[idex*m:],sigma,BL,BR)
+                                           X_rdn[idex*m:,:],y_rdn[idex*m:],sigma,BL,BR,func)
         else:
             log_L = log_L + estimate_then_testlikelihood(np.concatenate((X_rdn[:idex*m,:],X_rdn[(idex+1)*m:,:])), \
                                            np.concatenate((y_rdn[:idex*m],y_rdn[(idex+1)*m:])),\
-                                           X_rdn[idex*m:(idex+1)*m,:],y_rdn[idex*m :(idex+1)*m],sigma,BL,BR)
+                            X_rdn[idex*m:(idex+1)*m,:],y_rdn[idex*m :(idex+1)*m],sigma,BL,BR,func)
     # return negative log likelihood
     return -log_L/k
 
 
-
-def estimate_then_testlikelihood(X_train,y_train,X_test,y_test,sigma, BL,BR):
+def estimate_then_testlikelihood(X_train,y_train,X_test,y_test,sigma, BL,BR,func=lin_func):
     
     '''
     Input:
@@ -105,7 +105,7 @@ def estimate_then_testlikelihood(X_train,y_train,X_test,y_test,sigma, BL,BR):
         y_L = 0
         for j in range(N):
             y_L = y_L + alpha[j] * 1/(np.sqrt(2*np.pi)*sigma)* \
-            np.exp(-0.5*(y_test[i] - np.dot(X_test[i],B[:,j]))**2 /(sigma**2))
+            np.exp(-0.5*(y_test[i] - func(X_test[i],B[:,j]))**2 /(sigma**2))
         log_L = log_L + np.log(y_L)
     return log_L
 

@@ -27,7 +27,7 @@ elif exp_type == 'discrete_cv':
     # re-run cross-validation
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '1' + ' ' + 'yes'
     os.system("python " + filename + params_ + '&')
-    params_ = ' '+'0.5' + ' ' + '300' + ' ' + '2' + ' ' + 'yes'
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '2' + ' ' + 'yes'
     os.system("python " + filename + params_ + '&')
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '3' + ' ' + 'yes'
     os.system("python " + filename + params_ + '&')

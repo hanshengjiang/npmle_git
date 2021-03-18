@@ -5,44 +5,20 @@
 """
 
 from package_import import *
+from regression_func_lib import *
 
-def lmo(beta,X,y,sigma,f):
+def lmo(beta,X,y,sigma,f,func = lin_func):
     #return the objective funciton of the linear oprimization problem
     n = len(X)
     p = len(X[0])
     obj = 0
     for i in range(n):
-        obj = obj - np.exp(-0.5*(y[i] - np.dot(X[i],beta))**2 /(sigma**2))/f[i]
+        obj = obj - np.exp(-0.5*(y[i] - func(X[i],beta))**2 /(sigma**2))/f[i]
     return obj  
-
-def jacobian(beta,X,y,sigma,f):
-    #return gradient of the linear objective function
-    n = len(X)
-    p = len(X[0])
-    jac = np.zeros((p,1))
-    for i in range(n):
-        temp = (y[i] - np.dot(X[i],beta))**2 /(sigma**2)
-        jac = jac - np.exp(-0.5*temp)*temp/f[i]/(sigma**2) * np.reshape(X[i],(p,1))
-        jac = np.reshape(jac,(p,1))
-    jac = np.reshape(jac, (p,))
-    return jac
-
-def hessian(beta,X,y,sigma,f):
-    #return Hessian of the linear objetive function
-    n = len(X)
-    p = len(X[0])
-    hess = np.zeros((p,p))
-    for i in range(n):
-        temp = (y[i] - np.dot(X[i],beta))**2 /(sigma**2)
-        x1 = np.reshape(X[i],(p,1))
-        x2 = np.reshape(X[i],(1,p))
-        temp2 = np.matmul(x1,x2)
-        hess = hess - (np.exp(-0.5*temp)*temp**2/(sigma** 4) -np.exp(-0.5*temp)/(sigma**2))/f[i]*temp2
-    return hess
 
 
 #===============================================================================================
-def sollmo(X,y,sigma,f,BL,BR):
+def sollmo(X,y,sigma,f,BL,BR,func = lin_func):
     '''solve linear minimization oracle
     this is an nonconvex problem with respect to beta, the result is approximal
     return a new supporting vector g and corresponding beta
@@ -70,7 +46,7 @@ def sollmo(X,y,sigma,f,BL,BR):
     opt_x = np.zeros((num_rdn,p))
     for rdn in range(num_rdn):
         beta0 = np.reshape(np.random.uniform(BL,BR,p),(p,1))
-        OptResult = minimize(lmo, beta0, args = (X,y,sigma,f),method = 'Powell')
+        OptResult = minimize(lmo, beta0, args = (X,y,sigma,f,func),method = 'Powell')
         if OptResult.success == False:
             opt_fun[rdn] = np.inf
             opt_x[rdn] = beta0.ravel()
@@ -84,10 +60,9 @@ def sollmo(X,y,sigma,f,BL,BR):
     
     g = np.zeros((n,1))
     for i in range(n):
-        g[i] = 1/(np.sqrt(2*np.pi)*sigma)* np.exp(-0.5*(y[i] - np.dot(X[i],beta_sol))**2 /(sigma**2))
+        g[i] = 1/(np.sqrt(2*np.pi)*sigma)* np.exp(-0.5*(y[i] - func(X[i],beta_sol))**2 /(sigma**2))
     return g,beta_sol
 #===========================================================================================================
-
 
 
 def FW_FC(f,alpha,P,n):
@@ -110,10 +85,9 @@ def FW_FC(f,alpha,P,n):
         temp[s] = 1
         alpha = (1-gamma)*np.reshape(alpha,(k,1))+gamma*temp
     return f,alpha
-
 #===========================================================================================================
     
-def NPMLE_FW(X,y,iter,sigma,BL,BR):
+def NPMLE_FW(X,y,iter,sigma,BL,BR, func = lin_func):
     '''
     Use FW algorithm to solve NPMLE problem of MLR  
     sigma is estimated before
@@ -138,13 +112,17 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR):
     
     L_rec = []
     
-    #initialize beta0 and f
+    #------------initialize beta0 and f-------------#
     beta0 = np.reshape(np.dot(np.matmul(linalg.inv(np.matmul(X.T,X)),X.T),y),(p,1)) #beta0 is OLS solution
+    # caution ols might not be the best choice for initialization
+    # in case of nonlinear regrression func
+    
     #beta0 = np.zeros((p,1))
     f = np.zeros((n,1))
     for i in range(n):
-        f[i] = 1/(np.sqrt(2*np.pi)*sigma)* np.exp(-0.5*(y[i] - np.dot(X[i],beta0))**2 /(sigma**2))
+        f[i] = 1/(np.sqrt(2*np.pi)*sigma)* np.exp(-0.5*(y[i] - func(X[i],beta0))**2 /(sigma**2))
     # print("min f:", np.min(f))
+    #-----------------------------------------------#
     
     # initialize P,B
     # P active set: (n,k)
@@ -161,7 +139,7 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR):
     
     for t in range(1,iter):
         #solve LMO
-        g, beta_sol = sollmo(X,y,sigma,f,BL,BR)
+        g, beta_sol = sollmo(X,y,sigma,f,BL,BR,func)
         
         #check stopping criterion
         dual_gap_rec[t] = np.dot(g.T,1/f) -np.dot(f.T,1/f)
@@ -211,3 +189,30 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR):
     
     return f, B, alpha, L_rec, temp
 
+
+
+#===========================================================================================================
+def jacobian(beta,X,y,sigma,f):
+    #return gradient of the linear objective function
+    n = len(X)
+    p = len(X[0])
+    jac = np.zeros((p,1))
+    for i in range(n):
+        temp = (y[i] - np.dot(X[i],beta))**2 /(sigma**2)
+        jac = jac - np.exp(-0.5*temp)*temp/f[i]/(sigma**2) * np.reshape(X[i],(p,1))
+        jac = np.reshape(jac,(p,1))
+    jac = np.reshape(jac, (p,))
+    return jac
+
+def hessian(beta,X,y,sigma,f):
+    #return Hessian of the linear objetive function
+    n = len(X)
+    p = len(X[0])
+    hess = np.zeros((p,p))
+    for i in range(n):
+        temp = (y[i] - np.dot(X[i],beta))**2 /(sigma**2)
+        x1 = np.reshape(X[i],(p,1))
+        x2 = np.reshape(X[i],(1,p))
+        temp2 = np.matmul(x1,x2)
+        hess = hess - (np.exp(-0.5*temp)*temp**2/(sigma** 4) -np.exp(-0.5*temp)/(sigma**2))/f[i]*temp2
+    return hess
