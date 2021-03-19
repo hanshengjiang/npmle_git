@@ -10,6 +10,7 @@ def EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
     '''
     Use EM algorithm to fit (fixed component number) mixture of linear regression  
     without knowing sigma value
+    test multiple random initializations
     ---------------------------------------------
     Input
     X: n * p, covariate matrix
@@ -42,27 +43,31 @@ def EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
     #intialization
     B = np.zeros((p,k))
     alpha = np.zeros((k,1))
-    for j in range(k):
-        B[:,j] = np.random.uniform(BL,BR,(p,))
-        alpha[j][0] = 1/k  
-        sigma_array[j] = np.random.uniform(sigmaL,sigmaR)
+    
+    while min(f) == 0:
+        for j in range(k):
+            B[:,j] = np.random.uniform(BL,BR,(p,))
+            alpha[j][0] = 1/k  
+            sigma_array[j] = np.random.uniform(sigmaL,sigmaR)
+        for i in range(n):
+                for j in range(k):
+                    wden[i][j] = (alpha[j]*np.exp(-0.5*((y[i]- np.dot(B[:,j],X[i]))**2\
+                            )/(sigma_array[j]**2))/np.sqrt(2*np.pi)/sigma_array[j]).ravel()
+                f[i] = np.sum(wden[i])
     
     for r in range(iter):
-        
+        # update posteriors
         for i in range(n):
-            for j in range(k):
-                if (y[i]- np.dot(B[:,j],X[i]))**2 >100:
-                    wden[i][j] = 0
-                else:
+                for j in range(k):
                     wden[i][j] = (alpha[j]*np.exp(-0.5*((y[i]- np.dot(B[:,j],X[i]))**2\
-                        )/(sigma_array[j]**2))/np.sqrt(2*np.pi)/sigma_array[j]).ravel()
-            f[i] = np.sum(wden[i])
+                            )/(sigma_array[j]**2))/np.sqrt(2*np.pi)/sigma_array[j]).ravel()
+                f[i] = np.sum(wden[i])
             
         #record negative log likelihood
         L_temp = np.sum(np.log(1/f))
         L_rec.append(L_temp)
         if r> 1:
-            print("recent EM log likelihood difference (should <=0)", L_rec[-1] - L_rec[-2])
+            print("recent EM neg-log likelihood difference", L_rec[-1] - L_rec[-2])
         
         # normalize
         for i in range(n):
@@ -77,7 +82,7 @@ def EMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
             w_diag = np.diag(w[:,j])
             
             #update B
-            temp1 = np.linalg.pinv(np.matmul(np.matmul(X.T, w_diag),X))
+            temp1 = np.linalg.inv(np.matmul(np.matmul(X.T, w_diag),X))
             temp2 = np.matmul(np.matmul(X.T,w_diag),y)
             B[:,j] = np.dot(temp1, temp2).ravel()
             
@@ -159,7 +164,7 @@ def EMA_sigma(X,y,k,iter,BL,BR,sigma):
             w_diag = np.diag(w[:,j])
             
             #update B
-            temp1 = np.linalg.pinv(np.matmul(np.matmul(X.T, w_diag),X))
+            temp1 = np.linalg.inv(np.matmul(np.matmul(X.T, w_diag),X))
             temp2 = np.matmul(np.matmul(X.T,w_diag),y)
             B[:,j] = np.dot(temp1, temp2).ravel()
             
@@ -251,7 +256,7 @@ def CEMA_sigma(X,y,k,iter,BL,BR,sigma):
                     y_temp[count] = y[i]
                     W_temp[count][count] = w[i][j]
                     count = count + 1
-            temp1 = np.copy(np.linalg.pinv(np.matmul(np.matmul(X_temp.T, W_temp),X_temp))) #used generalized inverse
+            temp1 = np.copy(np.linalg.inv(np.matmul(np.matmul(X_temp.T, W_temp),X_temp))) #used generalized inverse
             temp2 = np.copy(np.matmul(np.matmul(X_temp.T, W_temp),y_temp))
             B[:,j] = (np.matmul(temp1, temp2)).ravel()
     return f, B, alpha, sigma_array, L_rec, temp
@@ -331,7 +336,7 @@ def CEMA(X,y,k,iter,BL,BR,sigmaL,sigmaR):
                     y_temp[count] = y[i]
                     W_temp[count][count] = w[i][j]
                     count = count + 1
-            temp1 = np.copy(np.linalg.pinv(np.matmul(np.matmul(X_temp.T, W_temp),X_temp))) #used generalized inverse
+            temp1 = np.copy(np.linalg.inv(np.matmul(np.matmul(X_temp.T, W_temp),X_temp))) #used generalized inverse
             temp2 = np.copy(np.matmul(np.matmul(X_temp.T, W_temp),y_temp))
             B[:,j] = (np.matmul(temp1, temp2)).ravel()
             
