@@ -27,7 +27,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 5:
         sigma = 0.5
         n = 500
-        config = '5'
+        config = '3'
         run_cv = '0.52'
         cv_granuality = 0.04
     # otherwise take argyments from command line
@@ -110,10 +110,10 @@ else:
 
 
 iter = 100 # iterations of NPMLE_FW
-fname = func.__name__ + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
+fname = func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
 +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
 
-
+fname = fname.replace('.','dot')
 
 #-----------------------------------------------------------#
 # generate simulated dataset
@@ -147,7 +147,7 @@ print("sigma:{},sigma_cv:{}".format(sigma,sigma_cv))
 
 #------------------------------------------------------------#  
 # paramters of b's and pi's are only for plotting purposes
-test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_cv,-10,10,func)
+# test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_cv,-10,10,func)
 #------------------------------------------------------------#    
 
 #--------------------density plots--------------------------#
@@ -168,7 +168,7 @@ f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
 num_component = int(float(config)/3) + 2
 #-------------------------------------------------------------#
 
-iter_EM = 100 # EM needs more iterations
+iter_EM = 200 # EM needs more iterations
 #------------------------------------------------------------#    
 #    
 #-------------------3: EMA with known sigma------------------#
@@ -187,11 +187,15 @@ sigmaL =  0.1 # = sigma_min
 sigmaR = np.sqrt(stats.variance(np.reshape(y, (len(y),)))) # = sigma_max
 # sigma_min sigma_max are also used in the cross-validation procedure
 
-# set up a random seed for EM 
-# because EM does not converge from time to time
-np.random.seed(626)
 # only for linear model
-# f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA(X,y,num_component,iter_EM,BL,BR,sigmaL,sigmaR)
+# set up a random seed for EM 
+# sometimes EM takes a long time to converge, so we records
+# random seed that makes sense for EM
+if config == '3':
+    np.random.seed(620)
+else:
+    np.random.seed(626)
+f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA(X,y,num_component,iter_EM,BL,BR,sigmaL,sigmaR)
 
 #-----------------------------------#
 #
