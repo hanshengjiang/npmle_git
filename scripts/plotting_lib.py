@@ -74,9 +74,9 @@ def lin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func = li
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc = 2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     else:
-        custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle=line_styles[0],linewidth = 8*pi1),Line2D([], [], color='red')),
-                        (Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle=line_styles[1],linewidth = 8*pi2),Line2D([], [], color='blue')),
-                    
+        custom_lines = [(Line2D([], [], color='red',markerfacecolor = 'None', linestyle=line_styles[0],linewidth = 8*pi1),Line2D([], [], color='red')),
+                        (Line2D([], [], color='blue',markerfacecolor = 'None', linestyle=line_styles[1],linewidth = 8*pi2),Line2D([], [], color='blue')),
+                    #marker='o'
                         #Line2D([0], [0], color= 'red'# ),
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
@@ -91,6 +91,7 @@ def lin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func = li
     ax.set_ylim([-3,8])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
+    
     plt.savefig('./../pics/%s_true.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     #*******************************************
     line_styles = ['-','-','-','-']
@@ -153,7 +154,7 @@ def lin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func = li
     ax.set_ylim([-3,8])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(1.05,1.0),borderaxespad=0.);
     plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     # plt.show();
       
@@ -229,8 +230,8 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc = 2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     else:
-        custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi1),Line2D([], [], color='red')),
-                        (Line2D([], [],  color='blue', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi2),Line2D([], [], color='blue')),
+        custom_lines = [(Line2D([], [], color='red',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi1),Line2D([], [], color='red')),
+                        (Line2D([], [],  color='blue',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi2),Line2D([], [], color='blue')),
                     
                         #Line2D([0], [0], color= 'red'# ),
                         #Line2D([0], [0], color='black')
@@ -246,7 +247,9 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     ax.set_ylim([-3,12])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    plt.savefig('./../pics/%s_true.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig('./../pics/%s_true.png'%fname, dpi = 300,\
+               bbox_extra_artists=(lgd,), \
+              bbox_inches='tight')
     
 
     
@@ -306,7 +309,8 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     ax.set_ylim([-3,12])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(1.05,1.0),borderaxespad=0.);
+    #lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
     fig3 = plt.figure(figsize = (6,5))
@@ -334,7 +338,7 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
 def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     
     n = len(X)
-    fname = 'poly'+fname
+    fname = 'exp'+fname
     fig_raw = plt.figure(figsize = (8,8))
     plt.scatter(X[:,1],y,color = 'black',marker = 'o',label = 'Noisy data', facecolors = 'None');
     ax = plt.gca()
@@ -379,8 +383,8 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc = 2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     else:
-        custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi1),Line2D([], [], color='red')),
-                        (Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi2),Line2D([], [], color='blue')),
+        custom_lines = [(Line2D([], [], color='red',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi1),Line2D([], [], color='red')),
+                        (Line2D([], [], color='blue',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi2),Line2D([], [], color='blue')),
                     
                         #Line2D([0], [0], color= 'red'# ),
                         #Line2D([0], [0], color='black')
@@ -395,7 +399,9 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     ax.set_ylim([-4,6])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    plt.savefig('./../pics/%s_true.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig('./../pics/%s_true.png'%fname, dpi = 300, \
+                 bbox_extra_artists=(lgd,), \
+                bbox_inches='tight')
     #plt.show();
 
     
@@ -455,7 +461,7 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     ax.set_ylim([-4,6])
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
+    lgd = ax.legend(loc=2, bbox_to_anchor=(1.05, 1.0),borderaxespad=0.);
     plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     #plt.show();
 
