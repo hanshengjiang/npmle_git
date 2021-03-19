@@ -5,13 +5,26 @@
 """
 from package_import import *
 from alg1_lib import *
+from cv_procedure_lib import *
+from em_alg_lib import *
+from regression_func_lib import *
+
+import sys
+
+
+if __name__ == "__main__":
+    # default
+    if len(sys.argv) < 2:
+        run_cv = 'yes'
+        cv_granuality = 0.02
+    # otherwise take argyments from command line
+    else:
+        #sys_argv[0] is the name of the .py file
+        run_cv = sys_argv[1]
+        cv_granuality = sys_argv[1]
 
 # read data
 df = pd.read_csv('./../data/co2-emissions-vs-gdp.csv')
-df = df[df['Code']!='TTO']
-df = df[df['Code']!='QAT']
-df = df[df['Entity']!='Taiwan']
-df = df[df['Entity']!='Hong Kong']
 dfs = df.dropna()
 dataf = dfs.iloc[:,[5,6]].values.astype(np.float)
 # 5 population in billions; 8: CO2 in millions ; GDP percapita in 1000USD 
@@ -22,13 +35,39 @@ ones = np.ones((n,1))
 X = np.concatenate((ones, np.reshape(dataf[:,0],(n,1))/10000 ), axis = 1) #GDP per capita (1000 USD)
 y = np.reshape(dataf[:,1]/10,(n,1)) #CO2 per capita (10 ton)
 
+
+if run_cv == 'yes':
+    #------------------------run CV-------------#
+    #define a range of candidate sigma values
+    # sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
+    sigma_max = 0.5
+    sigma_min = 0.1
+    sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
+    
+    kfold = 3 # number of fold in CV procedure
+    CV_result = cross_validation_parallel(X,y,sigma_list,kfold,-10,10)
+    pd.DataFrame(CV_result).to_csv("./../data/CV_result_gdp.csv", index = False)
+    
+    idx_min = np.argmin(CV_result[:,1])
+    sigma_cv = sigma_list[idx_min]
+else:
+    #--------------------------------------------#
+    #otherwise take sigma value from command line
+    sigma_cv = float(run_cv)
+    #--------------------------------------------#
+
+print("sigma_cv:{}".format(sigma_cv))
+
+
+
+
 iter = 200
 threprob = 1e-2
 
 #Use Algorithm 1
 sigma = 0.31 # chosen by cross-validation procedure
 np.random.seed(26)
-f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma, -10, 10)
+f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma_cv, -10, 10)
 print("number of components", len(alpha))
 ##########IMPORTANT subproblem initializes with beta = 0
 
