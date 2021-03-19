@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Wed Mar 17 23:47:31 2021
+
+@author: hanshengjiang
+"""
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
 
 @author: hanshengjiang
 
@@ -24,20 +32,23 @@ import sys
 
 if __name__ == "__main__":
     # default
-    if len(sys.argv) < 5:
-        sigma = 0.5
+    if len(sys.argv) < 6:
+        sigma_list = [0.5,0.8,1] # hetero errors
         n = 500
-        config = '2'
-        run_cv = '0.52'
-        cv_granuality = 0.04
+        config = '1'
+        run_cv = '0.54'
+        cv_granuality = 0.01
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
-        sigma = float(sys.argv[1]) 
-        n = int(sys.argv[2]) # number of data points
-        config = sys.argv[3]
-        run_cv = sys.argv[4]
-        cv_granuality = 0.01
+        sigma_list = []
+        sigma_list.append(float(sys.argv[1]))
+        sigma_list.append(float(sys.argv[2]))
+        sigma_list.append(float(sys.argv[3]))
+        n = int(sys.argv[4]) # number of data points
+        config = sys.argv[5]
+        run_cv = sys.argv[6]
+        cv_granuality = 0.04
 # preset configurations      
 if config == '1':
     #----------- configuration 1-----#
@@ -72,53 +83,25 @@ elif config == '3':
     BL = -10
     BR = 10
     x_list = [-3,0,5] 
-elif config == '4':
-    #----------- configuration 4-----# 
-    b1 = (0.5,2)
-    b2 = (1,2.5)
-    b3 = (0,0)
-    pi1 = 0.5
-    pi2 = 0.5
-    func = poly_func
-    BL = -10
-    BR = 10
-elif config == '5':
-    #----------- configuration 5-----#
-
-    b1 = (-0.5,-1)
-    b2 = (-1.5,-1.5)
-    b3 = (0,0)
-    pi1 = 0.5
-    pi2 = 0.5
-    func = exp_func
-    BL = -10 #BL 
-    BR = 10
-    x_list = [-1.5,0,1.5]
-elif config == '6':
-    #----------- configuration 5-----#
-    b1 = (-0.5,1)
-    b2 = (-1.5,1.5)
-    b3 = (0,0)
-    pi1 = 0.5
-    pi2 = 0.5
-    func = exp_func
-    BL = -10
-    BR = 10
 else:
     sys.exit("Wrong configuration number!")
 
 
 
 iter = 100 # iterations of NPMLE_FW
-fname = func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
-+'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
 
+
+fname = 'hetero' + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
++'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
 fname = fname.replace('.','dot')
+
 
 #-----------------------------------------------------------#
 # generate simulated dataset
 np.random.seed(626)
-sigma_list = [sigma,sigma,sigma] # homo errors
+#----------------------------
+
+#-----------------------------
 X,y,C = generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func)
 #-----------------------------------------------------------#
 
@@ -142,7 +125,7 @@ else:
     sigma_cv = float(run_cv)
     #--------------------------------------------#
 
-print("sigma:{},sigma_cv:{}".format(sigma,sigma_cv))
+print("sigma_cv:{}".format(sigma_cv))
 
 
 #------------------------------------------------------------#  
@@ -154,26 +137,25 @@ test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_cv,-10,10,fname,func)
   
 #-------------------1: CGM with known sigma----------------#
 # needs sigma as input
-f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR,func)
+# f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR)
     
     
 #------------------------------------------------------------#    
 #    
 #-------------------2: CGM without knowing sigma----------------#
 
-f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
+f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR)
     
 #-------------------------------------------------------------#
 # EM algorithms need to specify the number of vomponents
 num_component = int(float(config)/3) + 2
 #-------------------------------------------------------------#
 
-iter_EM = 200 # EM needs more iterations
+iter_EM = 100 # EM needs more iterations
 #------------------------------------------------------------#    
 #    
 #-------------------3: EMA with known sigma------------------#
 # needs sigma as input
-# only for linear model
 # f3, B3, alpha3, sigma_array3, L_rec3, L_final3 = EMA_sigma(X,y,num_component,iter_EM,BL,BR,sigma)
 
 
@@ -183,18 +165,13 @@ iter_EM = 200 # EM needs more iterations
 #-------------------4: EMA_sigma without knowing sigma----------------#
 
 # need specification on the range of sigma
-sigmaL =  0.1 # = sigma_min
+sigmaL =  0.1# = sigma_min
 sigmaR = np.sqrt(stats.variance(np.reshape(y, (len(y),)))) # = sigma_max
 # sigma_min sigma_max are also used in the cross-validation procedure
 
-# only for linear model
 # set up a random seed for EM 
-# sometimes EM takes a long time to converge, so we records
-# random seed that makes sense for EM
-if config == '3':
-    np.random.seed(620)
-else:
-    np.random.seed(626)
+# because EM does not converge from time to time
+np.random.seed(626)
 f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA(X,y,num_component,iter_EM,BL,BR,sigmaL,sigmaR)
 
 #-----------------------------------#
@@ -213,10 +190,7 @@ for i in range(len(x_list)):
     x = x_list[i]
     min_ = min(func([1,x],b1), func([1,x],b2))
     max_ = max(func([1,x],b1), func([1,x],b2))
-    if func.__name__ == 'lin_func':
-        y = np.linspace(min_ -3, max_ + 3, 100)
-    else:
-        y = np.linspace(min_ -6, max_ + 6, 100)
+    y = np.linspace(min_ -3, max_ + 3, 100)
        
     #calculate difference of square root of density functions
     #dist_fit = lambda y: (np.sqrt(0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x), 0, sigma)+0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x),0, sigma)) \
@@ -231,15 +205,16 @@ for i in range(len(x_list)):
         plt.plot(y, sum(alpha4[i]*scipy.stats.norm.pdf( y-func([1,x],B4[:,i]), 0, sigma_array4[i]) \
                for i in range(len(alpha4))),color = 'tab:red',label = 'EM',linestyle = line_styles[3])
 
-    plt.plot(y, sum(alpha1[i]*scipy.stats.norm.pdf( y-func([1,x],B1[:,i]), 0, sigma) \
-    for i in range(len(alpha1))),color = 'tab:cyan',label = 'NPMLE_sigma',linestyle = line_styles[0])
-     
     plt.plot(y, sum(alpha2[i]*scipy.stats.norm.pdf( y-func([1,x],B2[:,i]), 0, sigma_cv) \
     for i in range(len(alpha2))),color = 'tab:orange',label = 'NPMLE',linestyle = line_styles[1])
         
+#    plt.plot(y, sum(alpha1[i]*scipy.stats.norm.pdf( y-func([1,x],B1[:,i]), 0, sigma) \
+#    for i in range(len(alpha1))),color = 'tab:cyan',label = 'NPMLE_sigma',linestyle = line_styles[0])
     
-    plt.plot(y,pi1*scipy.stats.norm.pdf(y - func([1,x],b1), 0, sigma)+pi2*scipy.stats.norm.pdf(y-func([1,x],b2),0, sigma)+\
-    (1-pi1-pi2)*scipy.stats.norm.pdf(y-func([1,x],b3),0, sigma),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
+        
+    plt.plot(y,pi1*scipy.stats.norm.pdf(y - func([1,x],b1), 0, sigma_list[0])+pi2*scipy.stats.norm.pdf(y-func([1,x],b2),0, sigma_list[1])+\
+    (1-pi1-pi2)*scipy.stats.norm.pdf(y-func([1,x],b3),0, sigma_list[2]),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
+
     
 #    plt.plot(y, sum(alpha3[i]*scipy.stats.norm.pdf( y-(B3[0,i]+B3[1,i]*x), 0, sigma) \
 #    for i in range(len(alpha3))),color = 'tab:purple',label = 'EM_sigma',linestyle = line_styles[2])
@@ -253,15 +228,17 @@ for i in range(len(x_list)):
 # legend      
 custom_lines = [
             Line2D([0], [0], color= 'tab:blue', linestyle = line_styles[0]),
-          Line2D([0], [0], color= 'tab:cyan', linestyle = line_styles[0]),
+          # Line2D([0], [0], color= 'tab:cyan', linestyle = line_styles[0]),
           Line2D([0], [0], color= 'tab:orange', linestyle = line_styles[1])
           # Line2D([0], [0], color= 'tab:purple', linestyle = line_styles[2]),
     ]
 if func.__name__ == 'lin_func':
     custom_lines.append( Line2D([0], [0], color= 'tab:red', linestyle = line_styles[3]))
+
 ax = plt.gca()
-lgd = ax.legend(custom_lines, ['Truth','NPMLE_sigma','NPMLE', 'EM',
-                                #'EM_sigma'
+lgd = ax.legend(custom_lines, ['Truth', # 'NPMLE_sigma',
+                               'NPMLE', #'EM_sigma'
+                               'EM'
                          ], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 plt.savefig('./../pics/%s_multi_density.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 #plt.show();
