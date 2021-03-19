@@ -12,7 +12,7 @@ from alg1_lib import *
 from plotting_lib import *
 import os
 
-def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma,func=lin_func):
+def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func=lin_func):
     '''
     generate testing data
     
@@ -20,9 +20,9 @@ def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma,func=lin_func):
     p = len(b1)
 
     #parameters for generating synthetic data
-    sigma1 = sigma  # variance of 1st component
-    sigma2 = sigma      #variance of 2nd component
-    sigma3 = sigma
+    sigma1 = sigma_list[0]  # variance of 1st component
+    sigma2 = sigma_list[1]      #variance of 2nd component
+    sigma3 = sigma_list[2]
     
     #sigma_est is what we use for Frank-Wofle method
     
@@ -52,7 +52,7 @@ def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma,func=lin_func):
             C[i] = 3
     return X,y,C
 
-def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR,func=lin_func):
+def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_est,BL,BR,func=lin_func):
     
     '''
     
@@ -72,7 +72,8 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR,func=lin_func):
     threprob = 0.01
     
     fname = str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
-    
+    fname = fname.replace('.','dot')
+
     #run Frank-Wofle
     f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma_est,BL,BR,func)
     
@@ -97,7 +98,13 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma,sigma_est,BL,BR,func=lin_func):
     pd.DataFrame(y).to_csv('./../data/{}/y.csv'.format(fname), index = False)
     pd.DataFrame(B).to_csv('./../data/{}/B.csv'.format(fname), index = False)
     pd.DataFrame(alpha).to_csv('./../data/{}/alpha.csv'.format(fname), index = False)
+    pd.DataFrame(L_rec).to_csv('./../data/{}/L_rec.csv'.format(fname), index = False)
     
+    X = pd.read_csv('./../data/{}/X.csv'.format(fname)).values
+    y = pd.read_csv('./../data/{}/y.csv'.format(fname)).values
+    B = pd.read_csv('./../data/{}/B.csv'.format(fname)).values
+    alpha = pd.read_csv('./../data/{}/alpha.csv'.format(fname)).values
+    L_rec = pd.read_csv('./../data/{}/L_rec.csv'.format(fname)).values
     #------------make plots-----------------#
     plot_func_name = func.__name__[:-4] + 'plot'
     eval(plot_func_name + '(X,y,C,b1,b2,b3,pi1,pi2,sigma_est,B,alpha,L_rec,fname,threprob,func)')
