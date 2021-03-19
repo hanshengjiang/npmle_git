@@ -12,9 +12,10 @@ Plotting library that generates nice scatter and line plots
 
 IMPORTANT
 ---------
-Some plot legends does not automatically changes as the definition 
-which needs to be manually recalibrated
-whenever funcrions in regression_func_lib changed
+Some plot legends does not automatically changes atogether with r(x,beta)
+therefore need to be manually recalibrated
+whenever funcrions in regression_func_lib changes
+
 '''
 
 from package_import import *
@@ -188,7 +189,9 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     ax = plt.gca()
     ax.set_xlim([-2,4])
     ax.set_ylim([-3,12])
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.05),borderaxespad=0.);
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     #plt.show();
     
@@ -224,7 +227,7 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
                                   r'$y = %.2f %+.2fx%+.2fx^2$ with probability $%.2f$'%(b1[0]**2+b1[0]*b1[1], 0.5*b1[0]*b1[1],0.5*b1[1], pi2),
                                   r'$y =  %.2f %+.2fx%+.2fx^2$ with probability $%.2f$'%(b1[0]**2+b1[0]*b1[1], 0.5*b1[0]*b1[1],0.5*b1[1], 1- pi1 - pi2),
                                    #'NPMLE component'#, 'OLS'#
-                                 ],loc = 2,bbox_to_anchor=(0., -0.05),borderaxespad=0.);
+                                 ],loc = 2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     else:
         custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi1),Line2D([], [], color='red')),
                         (Line2D([], [],  color='blue', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi2),Line2D([], [], color='blue')),
@@ -237,10 +240,12 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
                                   r'$y = %.2f %+.2fx%+.2fx^2$ with probability $%.2f$' %(b2[0]**2+b2[0]*b2[1], 0.5*b2[0]*b2[1],0.5*b2[1], pi2),
                                 
                                    #'NPMLE component'#, 'OLS'#
-                                 ],loc=2,bbox_to_anchor=(0., -0.05),borderaxespad=0.);
+                                 ],loc=2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     ax = plt.gca()
     ax.set_xlim([-2,4])
     ax.set_ylim([-3,12])
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
     plt.savefig('./../pics/%s_true.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     
 
@@ -295,11 +300,13 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     #plt.legend(custom_lines, ['Noisy data'#,'True mixture'# 
                             #  , 'NPMLE component'#, 'OLS'#
                             # ],loc=0);
-    plt.legend(bbox_to_anchor=(0., -0.05), loc=2, borderaxespad=0.)
+    plt.legend(bbox_to_anchor=(0., -0.11), loc=2, borderaxespad=0.)
     ax = plt.gca()
     ax.set_xlim([-2,4])
     ax.set_ylim([-3,12])
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.05),borderaxespad=0.);
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
     fig3 = plt.figure(figsize = (6,5))
@@ -332,8 +339,10 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     plt.scatter(X[:,1],y,color = 'black',marker = 'o',label = 'Noisy data', facecolors = 'None');
     ax = plt.gca()
     ax.set_xlim([-2,4])
-    ax.set_ylim([-3,12])
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.05),borderaxespad=0.);
+    ax.set_ylim([-4,6])
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     #plt.show();
     
@@ -351,9 +360,9 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     #plt.plot(t,b1[0]+b1[1]*t,'r',t,b2[0]+b2[1]*t,'red')
     i = 0
     plt.plot(t,func([1,t],b1), color = 'red',linewidth = pi1*8 )
-    plt.plot(t,func([1,t],b1), color = 'blue',linewidth = pi2*8 )
+    plt.plot(t,func([1,t],b2), color = 'blue',linewidth = pi2*8 )
     if pi1 + pi2 < 1:
-        plt.plot(t,func([1,t],b1), color = 'green',linewidth = (1-pi2-pi2)*8 )
+        plt.plot(t,func([1,t],b3), color = 'green',linewidth = (1-pi2-pi2)*8 )
            
     #plt.plot(t,beta_ols[0]+beta_ols[1]*t,'green')  
     if pi1 + pi2 <1:
@@ -368,7 +377,7 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
                                   r'$y = %.2f + {\rm exp}(%+.2f x)}$ with probility $%.2f$' %(b2[0], b2[1], pi2),
                                   r'$y = %.2f + {\rm exp}(%+.2f x)}$ with probility $%.2f$' %(b3[0], b3[1], 1-pi1-pi2),
                                    #'NPMLE component'#, 'OLS'#
-                                 ],loc = 2,bbox_to_anchor=(0., -0.05),borderaxespad=0.);
+                                 ],loc = 2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     else:
         custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi1),Line2D([], [], color='red')),
                         (Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi2),Line2D([], [], color='blue')),
@@ -380,10 +389,12 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
         lgd = plt.legend(custom_lines, [r'$y = %.2f + {\rm exp}(%+.2f x)}$ with probility $%.2f$' %(b1[0], b1[1], pi1), #,'True mixture'# 
                                   r'$y = %.2f + {\rm exp}(%+.2f x)}$ with probility $%.2f$' %(b2[0], b2[1], pi2)
                                    #'NPMLE component'#, 'OLS'#
-                                 ],loc=2,bbox_to_anchor=(0., -0.05),borderaxespad=0.);
+                                 ],loc=2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     ax = plt.gca()
     ax.set_xlim([-2,4])
-    ax.set_ylim([-3,12])
+    ax.set_ylim([-4,6])
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
     plt.savefig('./../pics/%s_true.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     #plt.show();
 
@@ -438,11 +449,13 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     #plt.legend(custom_lines, ['Noisy data'#,'True mixture'# 
                             #  , 'NPMLE component'#, 'OLS'#
                             # ],loc=0);
-    plt.legend(bbox_to_anchor=(0., -0.05), loc=2, borderaxespad=0.)
+    plt.legend(bbox_to_anchor=(0., -0.11), loc=2, borderaxespad=0.)
     ax = plt.gca()
     ax.set_xlim([-2,4])
-    ax.set_ylim([-3,12])
-    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.05),borderaxespad=0.);
+    ax.set_ylim([-4,6])
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
     #plt.show();
 
