@@ -52,7 +52,7 @@ def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func=lin_func):
             C[i] = 3
     return X,y,C
 
-def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_est,BL,BR,func=lin_func):
+def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_est,BL,BR,fname,func=lin_func):
     
     '''
     
@@ -71,8 +71,8 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_est,BL,BR,func=lin_func):
     #sigma = 0.8 # standard deviation
     threprob = 0.01
     
-    fname = str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
-    fname = fname.replace('.','dot')
+#    fname = str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
+#    fname = fname.replace('.','dot')
 
     #run Frank-Wofle
     f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma_est,BL,BR,func)

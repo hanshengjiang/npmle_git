@@ -24,7 +24,7 @@ from regression_func_lib import *
 def lin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func = lin_func):
     
     n = len(X)
-    fname = 'lin'+fname
+    
 #**********************************************************
     fig_raw = plt.figure(figsize = (8,8))
     plt.scatter(X[:,1],y,color = 'black',marker = 'o',label = 'Noisy data', facecolors = 'None');
@@ -61,9 +61,9 @@ def lin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func = li
             
     #plt.plot(t,beta_ols[0]+beta_ols[1]*t,'green')  
     if pi1 + pi2 <1:
-        custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle=line_styles[0],linewidth = 8*pi1),Line2D([], [], color='red')),
-                        (Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle=line_styles[1],linewidth = 8*pi2),Line2D([], [], color='blue')),
-                         (Line2D([], [], color='green', marker='o',markerfacecolor = 'None', linestyle=line_styles[2],linewidth = 8*(1-pi1-pi2)),Line2D([], [], color='green'))
+        custom_lines = [(Line2D([], [], color='red',markerfacecolor = 'None', linestyle=line_styles[0],linewidth = 8*pi1),Line2D([], [], color='red')),
+                        (Line2D([], [], color='blue',markerfacecolor = 'None', linestyle=line_styles[1],linewidth = 8*pi2),Line2D([], [], color='blue')),
+                         (Line2D([], [], color='green',markerfacecolor = 'None', linestyle=line_styles[2],linewidth = 8*(1-pi1-pi2)),Line2D([], [], color='green'))
                         #Line2D([0], [0], color= 'red'# ),
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
@@ -184,7 +184,7 @@ def lin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func = li
 def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     
     n = len(X)
-    fname = 'poly'+fname
+    
     fig_raw = plt.figure(figsize = (8,8))
     plt.scatter(X[:,1],y,color = 'black',marker = 'o',label = 'Noisy data', facecolors = 'None');
     ax = plt.gca()
@@ -217,9 +217,9 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
             
     #plt.plot(t,beta_ols[0]+beta_ols[1]*t,'green')  
     if pi1 + pi2 <1:
-        custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi1),Line2D([], [], color='red')),
-                        (Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi2),Line2D([], [], color='blue')),
-                         (Line2D([], [], color='green', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*(1-pi1-pi2)),Line2D([], [], color='green'))
+        custom_lines = [(Line2D([], [], color='red',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi1),Line2D([], [], color='red')),
+                        (Line2D([], [], color='blue',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi2),Line2D([], [], color='blue')),
+                         (Line2D([], [], color='green', markerfacecolor = 'None', linestyle='None',linewidth = 8*(1-pi1-pi2)),Line2D([], [], color='green'))
                         #Line2D([0], [0], color= 'red'# ),
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
@@ -338,7 +338,7 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
 def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     
     n = len(X)
-    fname = 'exp'+fname
+    
     fig_raw = plt.figure(figsize = (8,8))
     plt.scatter(X[:,1],y,color = 'black',marker = 'o',label = 'Noisy data', facecolors = 'None');
     ax = plt.gca()
@@ -370,9 +370,9 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
            
     #plt.plot(t,beta_ols[0]+beta_ols[1]*t,'green')  
     if pi1 + pi2 <1:
-        custom_lines = [(Line2D([], [], color='red', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi1),Line2D([], [], color='red')),
-                        (Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi2),Line2D([], [], color='blue')),
-                         (Line2D([], [], color='green', marker='o',markerfacecolor = 'None', linestyle='None',linewidth = 8*(1-pi1-pi2)),Line2D([], [], color='green'))
+        custom_lines = [(Line2D([], [], color='red',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi1),Line2D([], [], color='red')),
+                        (Line2D([], [], color='blue', markerfacecolor = 'None', linestyle='None',linewidth = 8*pi2),Line2D([], [], color='blue')),
+                         (Line2D([], [], color='green',markerfacecolor = 'None', linestyle='None',linewidth = 8*(1-pi1-pi2)),Line2D([], [], color='green'))
                         #Line2D([0], [0], color= 'red'# ),
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
@@ -433,6 +433,158 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
             plt.plot(t,func([1,t],b), color = tuple( np.array(RGB_tuples[temp])/255)\
                      ,linewidth = alpha[i][0]*8 ,\
                      label = r'$y = %.2f + {\rm exp}(%+.2f x)}$ with probility $%.2f$' %(b[0], b[1], alpha[i]))
+            temp = temp + 1
+            print("coefficients", b, "with probability", alpha[i])
+    
+    # we ONLY do clustering based on plotted components, i.e. components with high probability (>threprob)
+    C_cluster = np.zeros((n,1))
+    for i in range(len(y)):
+        prob = np.zeros((N,1))
+        for j in component_plot:
+            prob[j] = alpha[j] * np.exp(-0.5*(y[i] - func(X[i],B[:,j]))**2 /(sigma**2))
+        C_cluster[i] = np.argmax(prob)
+        plt.scatter(X[i][1],y[i],color = tuple(np.array(RGB_tuples[component_color[component_plot.index(C_cluster[i])]])/255) ,marker = 'o', facecolors = 'None'); 
+            
+    #plt.plot(t,beta_ols[0]+beta_ols[1]*t,'green')  
+    
+    #custom_lines = [Line2D([], [], color='blue', marker='o',markerfacecolor = 'None', linestyle='None'),
+                    #Line2D([0], [0], color= 'red'# ),
+                    #Line2D([0], [0], color='black')
+                    #,Line2D([0], [0], color='green')#
+                    #,]
+    #plt.legend(custom_lines, ['Noisy data'#,'True mixture'# 
+                            #  , 'NPMLE component'#, 'OLS'#
+                            # ],loc=0);
+    plt.legend(bbox_to_anchor=(0., -0.11), loc=2, borderaxespad=0.)
+    ax = plt.gca()
+    ax.set_xlim([-2,4])
+    ax.set_ylim([-4,6])
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
+    lgd = ax.legend(loc=2, bbox_to_anchor=(1.05, 1.0),borderaxespad=0.);
+    plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+    #plt.show();
+
+    
+    fig3 = plt.figure(figsize = (6,5))
+    plt.plot(L_rec);plt.title("neg-log likelihood over iterations");    
+    
+    fig4 = plt.figure(figsize = (6,5))
+    plt.plot(-np.sort(-alpha.ravel()),marker = 'o', linestyle = '--')
+    plt.title("mixing weights in descending order");
+    ax = plt.gca()
+    ax.set_xlabel(r"index of mixing components $\beta$'s")
+    ax.set_ylabel(r'mixing weights')
+    plt.savefig('./../pics/%s_alpha.png'%fname, dpi = 300, bbox_inches='tight')
+    
+#-------------------------------------------------------------------#
+#
+#
+#
+#
+#
+#-------------------------------------------------------------------#
+    
+    
+    
+def sin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
+    
+    n = len(X)
+    
+    fig_raw = plt.figure(figsize = (8,8))
+    plt.scatter(X[:,1],y,color = 'black',marker = 'o',label = 'Noisy data', facecolors = 'None');
+    ax = plt.gca()
+    ax.set_xlim([-2,4])
+    ax.set_ylim([-4,6])
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
+    lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
+    plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+    #plt.show();
+    
+    
+    fig0 = plt.figure(figsize = (8,8))
+    for i in range(len(y)):
+        if C[i] == 1:
+            plt.scatter(X[i][1],y[i],color = 'red',marker = 'o',label = 'Class 1', facecolors = 'None');
+        elif C[i] == 2:
+            plt.scatter(X[i][1],y[i],color = 'blue',marker = 'o',label = 'Class 2', facecolors = 'None');
+        else:
+            plt.scatter(X[i][1],y[i],color = 'green',marker = 'o',label = 'Class 3', facecolors = 'None');
+            
+    t = np.arange(np.amin(X[:,1])-0.5,np.amax(X[:,1])+0.5,1e-6)
+    #plt.plot(t,b1[0]+b1[1]*t,'r',t,b2[0]+b2[1]*t,'red')
+    i = 0
+    plt.plot(t,func([1,t],b1), color = 'red',linewidth = pi1*8 )
+    plt.plot(t,func([1,t],b2), color = 'blue',linewidth = pi2*8 )
+    if pi1 + pi2 < 1:
+        plt.plot(t,func([1,t],b3), color = 'green',linewidth = (1-pi2-pi2)*8 )
+           
+    #plt.plot(t,beta_ols[0]+beta_ols[1]*t,'green')  
+    if pi1 + pi2 <1:
+        custom_lines = [(Line2D([], [], color='red',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi1),Line2D([], [], color='red')),
+                        (Line2D([], [], color='blue', markerfacecolor = 'None', linestyle='None',linewidth = 8*pi2),Line2D([], [], color='blue')),
+                         (Line2D([], [], color='green',markerfacecolor = 'None', linestyle='None',linewidth = 8*(1-pi1-pi2)),Line2D([], [], color='green'))
+                        #Line2D([0], [0], color= 'red'# ),
+                        #Line2D([0], [0], color='black')
+                        #,Line2D([0], [0], color='green')#
+                        ]
+        lgd = plt.legend(custom_lines, [r'$y = %.2f + {\rm sin}(%+.2f x)}$ with probility $%.2f$' %(b1[0], b1[1], pi1), #,'True mixture'# 
+                                  r'$y = %.2f + {\rm sin}(%+.2f x)}$ with probility $%.2f$' %(b2[0], b2[1], pi2),
+                                  r'$y = %.2f + {\rm sin}(%+.2f x)}$ with probility $%.2f$' %(b3[0], b3[1], 1-pi1-pi2),
+                                   #'NPMLE component'#, 'OLS'#
+                                 ],loc = 2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
+    else:
+        custom_lines = [(Line2D([], [], color='red',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi1),Line2D([], [], color='red')),
+                        (Line2D([], [], color='blue',markerfacecolor = 'None', linestyle='None',linewidth = 8*pi2),Line2D([], [], color='blue')),
+                    
+                        #Line2D([0], [0], color= 'red'# ),
+                        #Line2D([0], [0], color='black')
+                        #,Line2D([0], [0], color='green')#
+                        ]
+        lgd = plt.legend(custom_lines, [r'$y = %.2f + {\rm sin}(%+.2f x)}$ with probility $%.2f$' %(b1[0], b1[1], pi1), #,'True mixture'# 
+                                  r'$y = %.2f + {\rm sin}(%+.2f x)}$ with probility $%.2f$' %(b2[0], b2[1], pi2)
+                                   #'NPMLE component'#, 'OLS'#
+                                 ],loc=2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
+    ax = plt.gca()
+    ax.set_xlim([-2,4])
+    ax.set_ylim([-4,6])
+    ax.set_xlabel(r'$x$')
+    ax.set_ylabel(r'$y$')
+    plt.savefig('./../pics/%s_true.png'%fname, dpi = 300, \
+                 bbox_extra_artists=(lgd,), \
+                bbox_inches='tight')
+    #plt.show();
+
+    
+    
+    fig1 = plt.figure(figsize = (8,8))
+
+    t = np.arange(np.amin(X[:,1])-0.5,np.amax(X[:,1])+0.5,1e-6)
+    
+    
+    #plt.plot(t,b1[0]+b1[1]*t,'r',t,b2[0]+b2[1]*t,'red')
+    
+    N = len(alpha)
+    
+    RGB_tuples = [(240,163,255),(0,117,220),(153,63,0),(76,0,92),(0,92,49),
+    (43,206,72),(255,204,153),(128,128,128),(148,255,181),(143,124,0),(157,204,0),
+    (194,0,136),(0,51,128),(255,164,5),(255,168,187),(66,102,0),(255,0,16),(94,241,242),(0,153,143),
+    ( 224,255,102),(116,10,255),(153,0,0),(255,255,128),(255,255,0),(25,25,25),(255,80,5)]
+    
+    component_plot = []
+    component_color = []
+    
+    temp = 0
+    index_sort = np.argsort(-np.reshape(alpha,(len(alpha),)))
+    for i in index_sort:
+        b = B[:,i]
+        if alpha[i] >threprob:
+            component_plot.append(i)
+            component_color.append(temp)
+            plt.plot(t,func([1,t],b), color = tuple( np.array(RGB_tuples[temp])/255)\
+                     ,linewidth = alpha[i][0]*8 ,\
+                     label = r'$y = %.2f + {\rm sin}(%+.2f x)}$ with probility $%.2f$' %(b[0], b[1], alpha[i]))
             temp = temp + 1
             print("coefficients", b, "with probability", alpha[i])
     

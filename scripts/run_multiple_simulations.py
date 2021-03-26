@@ -16,12 +16,12 @@ if __name__ == "__main__":
 if exp_type == 'discrete':
     # directly run with reported sigma value 
     # (reported sigma were previously chosen by cross-validation)
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '1' + ' ' + '0.42'
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '1' + ' ' + '0.47'
     os.system("python " + filename + params_ + '&')
-    params_ = ' '+'0.5' + ' ' + '300' + ' ' + '2' + ' ' + '0.34'
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '2' + ' ' + '0.47'
     os.system("python " + filename + params_ + '&')
-#    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '3' + ' ' + '0.4'
-#    os.system("python " + filename + params_ + '&')
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '3' + ' ' + '0.48'
+    os.system("python " + filename + params_ + '&')
     
 elif exp_type == 'discrete_cv':
     # re-run cross-validation
@@ -30,4 +30,26 @@ elif exp_type == 'discrete_cv':
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '2' + ' ' + 'yes'
     os.system("python " + filename + params_ + '&')
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '3' + ' ' + 'yes'
+    os.system("python " + filename + params_ + '&')
+
+
+elif exp_type == 'hetero_discrete':
+    # re-run cross-validation
+    params_ = ' '+'0.5' + ' '+'0.8' + ' '+'1.0' + ' ' + \
+    '500' + ' ' + '1' + ' ' + '0.54'
+    os.system("python " + filename + params_ + '&')
+    params_ = ' '+'0.5' + ' ' + '0.8' + ' '+'1.0' + ' ' +\
+    '500' + ' ' + '2' + ' ' + '0.54'
+    os.system("python " + filename + params_ + '&')
+    params_ = ' '+'0.5' + ' ' + '0.8' + ' '+'1.0' + ' ' +\
+    '500' + ' ' + '3' + ' ' + '0.58'
+    os.system("python " + filename + params_ + '&')
+    
+elif exp_type == 'hetero_discrete_cv':
+    # re-run cross-validation
+    params_ = ' '+'0.5' + ' '+'0.8' + ' '+'1.0' + ' ' + '500' + ' ' + '1' + ' ' + 'yes'
+    os.system("python " + filename + params_ + '&')
+    params_ = ' '+'0.5' + ' ' + '0.8' + ' '+'1.0' + ' ' +'500' + ' ' + '2' + ' ' + 'yes'
+    os.system("python " + filename + params_ + '&')
+    params_ = ' '+'0.5' + ' ' + '0.8' + ' '+'1.0' + ' ' +'500' + ' ' + '3' + ' ' + 'yes'
     os.system("python " + filename + params_ + '&')

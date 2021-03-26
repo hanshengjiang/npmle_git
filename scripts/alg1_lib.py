@@ -30,7 +30,7 @@ def sollmo(X,y,sigma,f,BL,BR,func = lin_func):
     #nonconvex algorithms are sensitive to initialization!!!!
     #initialize beta0 with OLS solution or 0 or random
     #beta0 = np.reshape(np.dot( np.matmul(linalg.inv(np.matmul(X.T,X)),X.T),y),(p,1)) 
-    #beta0 = np.zeros((p,1))
+    #beta0 = np.zeros((p,1)) 
     #beta0 = np.reshape(np.random.uniform(BL,BR,p),(p,1))
     
     #minimize exponential sum approximately
@@ -145,8 +145,8 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR, func = lin_func):
         dual_gap_rec[t] = np.dot(g.T,1/f) -np.dot(f.T,1/f)
         print("dual_gap", t,":",dual_gap_rec[t])
         
-#        if t%10 == 0:
-#            print("beta_sol",beta_sol)
+        if t%10 == 0:
+            print("beta_sol",beta_sol)
         
         g = np.reshape(g,(n,1))
         beta_sol = np.reshape(beta_sol,(p,1))
@@ -182,8 +182,8 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR, func = lin_func):
         L_rec.append(temp)
         
         # early stopping
-        gap_thresh = n*0.01
-        if (t>20) and (dual_gap_rec[t] < gap_thresh) and (dual_gap_rec[t-1] < gap_thresh) and (dual_gap_rec[t-2] < gap_thresh):
+        gap_thresh = n*0.001
+        if (t>50) and (dual_gap_rec[t] < gap_thresh) and (dual_gap_rec[t-1] < gap_thresh) and (dual_gap_rec[t-2] < gap_thresh):
             print("stop at iteration", t)
             return f, B, alpha, L_rec, temp
     

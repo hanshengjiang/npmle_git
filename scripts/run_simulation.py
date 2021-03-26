@@ -27,8 +27,8 @@ if __name__ == "__main__":
     if len(sys.argv) < 5:
         sigma = 0.5
         n = 500
-        config = '2'
-        run_cv = '0.52'
+        config = '6'
+        run_cv = '0.46'
         cv_granuality = 0.04
     # otherwise take argyments from command line
     else:
@@ -46,6 +46,8 @@ if config == '1':
     b3 = (-1,0.5)
     pi1 = 0.5
     pi2 = 0.5
+    B_true = [[1,4],[1,-1]]
+    alpha_true = [0.5,0.5]
     func = lin_func
     BL = -10
     BR = 10
@@ -57,6 +59,8 @@ elif config == '2':
     b3 = (0,1)
     pi1 = 0.3
     pi2 = 0.7
+    B_true = [[0,1],[2,1]]
+    alpha_true = [0.3,0.7]
     func = lin_func
     BL = -10
     BR = 10
@@ -68,6 +72,8 @@ elif config == '3':
     b3 = (-1,0.5)
     pi1 = 0.3
     pi2 = 0.3
+    B_true = [[4,1,-1],[-1,1.5,0.5]]
+    alpha_true = [0.3,0.3,0.4]
     func = lin_func
     BL = -10
     BR = 10
@@ -101,7 +107,7 @@ elif config == '6':
     b3 = (0,0)
     pi1 = 0.5
     pi2 = 0.5
-    func = exp_func
+    func = sin_func
     BL = -10
     BR = 10
 else:
@@ -128,10 +134,10 @@ if run_cv == 'yes':
     #define a range of candidate sigma values
     sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
     sigma_min = 0.1
-    sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
+    cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
     
     kfold = 5 # number of fold in CV procedure
-    CV_result = cross_validation_parallel(X,y,sigma_list,kfold,BL,BR)
+    CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
     pd.DataFrame(CV_result).to_csv("./../data/CV_result_{}.csv".format(fname), index = False)
     
     idx_min = np.argmin(CV_result[:,1])
@@ -195,9 +201,9 @@ if config == '3':
     np.random.seed(620)
 else:
     np.random.seed(626)
-f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA(X,y,num_component,iter_EM,BL,BR,sigmaL,sigmaR)
+f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA_true(X,y,num_component,B_true, alpha_true,[sigma,sigma,sigma],iter_EM)
 
-#-----------------------------------#
+#-----------------------------------# 
 #
 #  plot density function            #
 #
@@ -229,13 +235,13 @@ for i in range(len(x_list)):
     
     if func.__name__ == 'lin_func':
         plt.plot(y, sum(alpha4[i]*scipy.stats.norm.pdf( y-func([1,x],B4[:,i]), 0, sigma_array4[i]) \
-               for i in range(len(alpha4))),color = 'tab:red',label = 'EM',linestyle = line_styles[3])
+               for i in range(len(alpha4))),color = 'tab:red',label = 'EM_true',linestyle = line_styles[3])
 
     plt.plot(y, sum(alpha1[i]*scipy.stats.norm.pdf( y-func([1,x],B1[:,i]), 0, sigma) \
-    for i in range(len(alpha1))),color = 'tab:cyan',label = 'NPMLE_sigma',linestyle = line_styles[0])
+    for i in range(len(alpha1))),color = 'tab:cyan',label = r'NPMLE_$\sigma$',linestyle = line_styles[0])
      
     plt.plot(y, sum(alpha2[i]*scipy.stats.norm.pdf( y-func([1,x],B2[:,i]), 0, sigma_cv) \
-    for i in range(len(alpha2))),color = 'tab:orange',label = 'NPMLE',linestyle = line_styles[1])
+    for i in range(len(alpha2))),color = 'tab:orange',label = 'NPMLE_CV',linestyle = line_styles[1])
         
     
     plt.plot(y,pi1*scipy.stats.norm.pdf(y - func([1,x],b1), 0, sigma)+pi2*scipy.stats.norm.pdf(y-func([1,x],b2),0, sigma)+\

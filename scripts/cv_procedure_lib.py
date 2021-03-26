@@ -93,7 +93,7 @@ def estimate_then_testlikelihood(X_train,y_train,X_test,y_test,sigma, BL,BR,func
     iter = 50
     
     #run Frank-Wofle
-    f, B, alpha, L_rec, L_final = NPMLE_FW(X_train,y_train,iter,sigma,BL,BR)
+    f, B, alpha, L_rec, L_final = NPMLE_FW(X_train,y_train,iter,sigma,BL,BR, func)
     
     cluster_test = np.zeros((len(y_test),1),dtype = int)
     N = len(B[0])

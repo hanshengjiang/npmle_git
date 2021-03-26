@@ -44,7 +44,7 @@ if run_cv == 'yes':
     sigma_min = 0.1
     sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
     
-    kfold = 3 # number of fold in CV procedure
+    kfold = 10 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,sigma_list,kfold,-10,10)
     pd.DataFrame(CV_result).to_csv("./../data/CV_result_gdp.csv", index = False)
     
