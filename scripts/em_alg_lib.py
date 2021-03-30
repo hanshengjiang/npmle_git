@@ -3,14 +3,21 @@
 """
 @author: hanshengjiang
 """
+
+
+'''
+---------------------------------------------
+We deprecate this script as of March 30, 2021
+The EM algorithm is now implemented by R package
+---------------------------------------------
+'''
 from package_import import *
 import sys
 
-def EMA_true(X,y,k,B_true,alpha_true,sigma_list,iter_EM,BL,BR,sigmaL,sigmaR):
+def EMA_true(X,y,k,B_true,alpha_true,sigma_list,iter,BL,BR,sigmaL,sigmaR):
     '''
     Use EM algorithm to fit (fixed component number) mixture of linear regression  
-    without knowing sigma value
-    test multiple random initializations
+    Initialized with true parameters
     ---------------------------------------------
     Input
     X: n * p, covariate matrix
@@ -45,7 +52,7 @@ def EMA_true(X,y,k,B_true,alpha_true,sigma_list,iter_EM,BL,BR,sigmaL,sigmaR):
     # initialize with true values
     B = np.array(B_true)
     alpha = np.array(alpha_true)  
-    sigma_array[j] = np.array(sigma_list)
+    sigma_array = np.array(sigma_list)
     
     for r in range(iter):
         # update posteriors
@@ -59,12 +66,14 @@ def EMA_true(X,y,k,B_true,alpha_true,sigma_list,iter_EM,BL,BR,sigmaL,sigmaR):
         L_temp = np.sum(np.log(1/f))
         L_rec.append(L_temp)
         if r> 1:
+            print("EM iteration {}:".format(r))
             print("recent EM neg-log likelihood difference", L_rec[-1] - L_rec[-2])
         
         # normalize
         for i in range(n):
             temp = np.sum(wden[i])
             for j in range(k):
+                # caution! potential underflow might happen at this step
                 w[i][j] = wden[i][j]/temp
         
         
@@ -76,7 +85,7 @@ def EMA_true(X,y,k,B_true,alpha_true,sigma_list,iter_EM,BL,BR,sigmaL,sigmaR):
             #update B
             temp1 = np.linalg.inv(np.matmul(np.matmul(X.T, w_diag),X))
             temp2 = np.matmul(np.matmul(X.T,w_diag),y)
-            B[:,j] = np.dot(temp1, temp2).ravel()
+            B[:,j] = np.matmul(temp1, temp2).ravel()
             
             # update sigma
             sigma_temp = 0
