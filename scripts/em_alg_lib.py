@@ -42,7 +42,7 @@ def EMA_true(X,y,k,B_true,alpha_true,sigma_list,iter_EM,BL,BR,sigmaL,sigmaR):
     B = np.zeros((p,k))
     alpha = np.zeros(k)
     
-    
+    # initialize with true values
     B = np.array(B_true)
     alpha = np.array(alpha_true)  
     sigma_array[j] = np.array(sigma_list)
