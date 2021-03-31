@@ -27,8 +27,8 @@ if __name__ == "__main__":
     if len(sys.argv) < 5:
         sigma = 0.5
         n = 500
-        config = '6'
-        run_cv = '0.46'
+        config = '1'
+        run_cv = 'yes'
         cv_granuality = 0.04
     # otherwise take argyments from command line
     else:
@@ -59,7 +59,7 @@ elif config == '2':
     b3 = (0,1)
     pi1 = 0.3
     pi2 = 0.7
-    B_true = [[0,1],[2,1]]
+    B_true = [[0,2],[1,1]]
     alpha_true = [0.3,0.7]
     func = lin_func
     BL = -10
@@ -118,7 +118,6 @@ else:
 iter = 100 # iterations of NPMLE_FW
 fname = func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
 +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
-
 fname = fname.replace('.','dot')
 
 #-----------------------------------------------------------#
@@ -128,6 +127,23 @@ sigma_list = [sigma,sigma,sigma] # homo errors
 X,y,C = generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func)
 #-----------------------------------------------------------#
 
+
+#-------------------------------------------------------------#
+# EM algorithms need to specify the number of vomponents
+num_component = int(float(config)/3) + 2
+#-------------------------------------------------------------#
+
+#-----------------------------------------------------------#
+# storage dataset
+if not os.path.exists('./../data/{}'.format(fname)):
+    os.mkdir('./../data/{}'.format(fname))
+pd.DataFrame(X).to_csv('./../data/{}/X.csv'.format(fname), index = False, header = False)
+pd.DataFrame(y).to_csv('./../data/{}/y.csv'.format(fname), index = False, header = False)
+pd.DataFrame(np.reshape(np.array(num_component), (1,1))).to_csv('./../data/{}/num_component.csv'.format(fname), index = False, header = False)
+pd.DataFrame(alpha_true).to_csv('./../data/{}/alpha_true.csv'.format(fname), index = False, header = False)
+pd.DataFrame(B_true).to_csv('./../data/{}/B_true.csv'.format(fname), index = False, header = False)
+pd.DataFrame(sigma_list).to_csv('./../data/{}/sigma_true.csv'.format(fname), index = False, header = False)
+#-----------------------------------------------------------#    
 
 if run_cv == 'yes':
     #------------------------run CV-------------#
@@ -153,7 +169,7 @@ print("sigma:{},sigma_cv:{}".format(sigma,sigma_cv))
 
 #------------------------------------------------------------#  
 # paramters of b's and pi's are only for plotting purposes
-test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_cv,-10,10,fname,func)
+test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_cv,BL,BR,fname,func)
 #------------------------------------------------------------#    
 
 #--------------------density plots--------------------------#
@@ -169,39 +185,37 @@ f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR,func)
 
 f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
     
-#-------------------------------------------------------------#
-# EM algorithms need to specify the number of vomponents
-num_component = int(float(config)/3) + 2
-#-------------------------------------------------------------#
 
-iter_EM = 200 # EM needs more iterations
-#------------------------------------------------------------#    
-#    
-#-------------------3: EMA with known sigma------------------#
-# needs sigma as input
-# only for linear model
-# f3, B3, alpha3, sigma_array3, L_rec3, L_final3 = EMA_sigma(X,y,num_component,iter_EM,BL,BR,sigma)
-
-
-#------------------------------------------------------------#    
-#    
-
-#-------------------4: EMA_sigma without knowing sigma----------------#
-
-# need specification on the range of sigma
-sigmaL =  0.1 # = sigma_min
-sigmaR = np.sqrt(stats.variance(np.reshape(y, (len(y),)))) # = sigma_max
-# sigma_min sigma_max are also used in the cross-validation procedure
-
-# only for linear model
-# set up a random seed for EM 
-# sometimes EM takes a long time to converge, so we records
-# random seed that makes sense for EM
-if config == '3':
-    np.random.seed(620)
-else:
-    np.random.seed(626)
-f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA_true(X,y,num_component,B_true, alpha_true,[sigma,sigma,sigma],iter_EM)
+#
+#iter_EM = 200 # EM needs more iterations
+##------------------------------------------------------------#    
+##    
+##-------------------3: EMA with known sigma------------------#
+## needs sigma as input
+## only for linear model
+## f3, B3, alpha3, sigma_array3, L_rec3, L_final3 = EMA_sigma(X,y,num_component,iter_EM,BL,BR,sigma)
+#
+#
+##------------------------------------------------------------#    
+##    
+#
+##-------------------4: EMA_sigma without knowing sigma----------------#
+#
+## need specification on the range of sigma
+#sigmaL =  0.1 # = sigma_min
+#sigmaR = np.sqrt(stats.variance(np.reshape(y, (len(y),)))) # = sigma_max
+## sigma_min sigma_max are also used in the cross-validation procedure
+#
+## only for linear model
+## set up a random seed for EM 
+## sometimes EM takes a long time to converge, so we records
+## random seed that makes sense for EM
+#if config == '3':
+#    np.random.seed(620)
+#else:
+#    np.random.seed(626)
+#f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA_true(X,y,num_component,B_true, alpha_true,[sigma,sigma,sigma],iter_EM,BL,BR,sigmaL,sigmaR)
+#
 
 #-----------------------------------# 
 #
@@ -228,17 +242,17 @@ for i in range(len(x_list)):
     #dist_fit = lambda y: (np.sqrt(0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x), 0, sigma)+0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x),0, sigma)) \
     #- np.sqrt(sum(alpha[i]*scipy.stats.norm.pdf( y - (B[0,i]+B[1,i]*x), 0, sigma) for i in range(len(alpha)))))**2
     
-    #print("Fix x = %.1f, squared Hellinger distance for NPMLE is %.5f" % (x, quad(dist_fit, -np.inf, np.inf)[0]))
+    #print("Fix x = %.1f, squapink Hellinger distance for NPMLE is %.5f" % (x, quad(dist_fit, -np.inf, np.inf)[0]))
 
     
     plt.subplot(1,len(x_list),i+1)
     
     if func.__name__ == 'lin_func':
         plt.plot(y, sum(alpha4[i]*scipy.stats.norm.pdf( y-func([1,x],B4[:,i]), 0, sigma_array4[i]) \
-               for i in range(len(alpha4))),color = 'tab:red',label = 'EM_true',linestyle = line_styles[3])
+               for i in range(len(alpha4))),color = 'tab:pink',label = 'EM_true',linestyle = line_styles[3])
 
     plt.plot(y, sum(alpha1[i]*scipy.stats.norm.pdf( y-func([1,x],B1[:,i]), 0, sigma) \
-    for i in range(len(alpha1))),color = 'tab:cyan',label = r'NPMLE_$\sigma$',linestyle = line_styles[0])
+    for i in range(len(alpha1))),color = 'tab:green',label = r'NPMLE_$\sigma$',linestyle = line_styles[0])
      
     plt.plot(y, sum(alpha2[i]*scipy.stats.norm.pdf( y-func([1,x],B2[:,i]), 0, sigma_cv) \
     for i in range(len(alpha2))),color = 'tab:orange',label = 'NPMLE_CV',linestyle = line_styles[1])
@@ -259,14 +273,14 @@ for i in range(len(x_list)):
 # legend      
 custom_lines = [
             Line2D([0], [0], color= 'tab:blue', linestyle = line_styles[0]),
-          Line2D([0], [0], color= 'tab:cyan', linestyle = line_styles[0]),
+          Line2D([0], [0], color= 'tab:green', linestyle = line_styles[0]),
           Line2D([0], [0], color= 'tab:orange', linestyle = line_styles[1])
           # Line2D([0], [0], color= 'tab:purple', linestyle = line_styles[2]),
     ]
 if func.__name__ == 'lin_func':
-    custom_lines.append( Line2D([0], [0], color= 'tab:red', linestyle = line_styles[3]))
+    custom_lines.append( Line2D([0], [0], color= 'tab:pink', linestyle = line_styles[3]))
 ax = plt.gca()
-lgd = ax.legend(custom_lines, ['Truth','NPMLE_sigma','NPMLE', 'EM',
+lgd = ax.legend(custom_lines, ['Truth',r'NPMLE-$\sigma$','NPMLE-CV', 'EM-true',
                                 #'EM_sigma'
                          ], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 plt.savefig('./../pics/%s_multi_density.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
