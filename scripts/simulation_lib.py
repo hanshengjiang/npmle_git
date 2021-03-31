@@ -16,6 +16,12 @@ def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func=lin_func):
     '''
     generate testing data
     
+    output
+    ------
+    X (n,p)
+    y (n,1)
+    C (n,1): labels of each datapoints
+    
     '''
     p = len(b1)
 
@@ -91,20 +97,17 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_est,BL,BR,fname,func=lin_func):
     print("number of components is", len(alpha))
     print("only components with probability at least ", threprob, " are shown below:")
     
+    
     if not os.path.exists('./../data/{}'.format(fname)):
         os.mkdir('./../data/{}'.format(fname))
         
-    pd.DataFrame(X).to_csv('./../data/{}/X.csv'.format(fname), index = False)
-    pd.DataFrame(y).to_csv('./../data/{}/y.csv'.format(fname), index = False)
-    pd.DataFrame(B).to_csv('./../data/{}/B.csv'.format(fname), index = False)
-    pd.DataFrame(alpha).to_csv('./../data/{}/alpha.csv'.format(fname), index = False)
-    pd.DataFrame(L_rec).to_csv('./../data/{}/L_rec.csv'.format(fname), index = False)
+    pd.DataFrame(B).to_csv('./../data/{}/B_NPMLE.csv'.format(fname), index = False, header = False)
+    pd.DataFrame(alpha).to_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), index = False, header = False)
+    pd.DataFrame(L_rec).to_csv('./../data/{}/L_rec_NPMLE.csv'.format(fname), index = False, header = False)
     
-    X = pd.read_csv('./../data/{}/X.csv'.format(fname)).values
-    y = pd.read_csv('./../data/{}/y.csv'.format(fname)).values
-    B = pd.read_csv('./../data/{}/B.csv'.format(fname)).values
-    alpha = pd.read_csv('./../data/{}/alpha.csv'.format(fname)).values
-    L_rec = pd.read_csv('./../data/{}/L_rec.csv'.format(fname)).values
+    B = pd.read_csv('./../data/{}/B_NPMLE.csv'.format(fname), header = None).values
+    alpha = pd.read_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), header = None).values
+    L_rec = pd.read_csv('./../data/{}/L_rec_NPMLE.csv'.format(fname), header = None).values
     #------------make plots-----------------#
     plot_func_name = func.__name__[:-4] + 'plot'
     eval(plot_func_name + '(X,y,C,b1,b2,b3,pi1,pi2,sigma_est,B,alpha,L_rec,fname,threprob,func)')

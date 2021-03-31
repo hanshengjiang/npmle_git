@@ -7,8 +7,8 @@
 
 '''
 ---------------------------------------------
-We deprecate this script as of March 30, 2021
-The EM algorithm is now implemented by R package
+We deprecate this python script and use R package mixtools instead
+though implementation also follows the guideline of R paclage
 ---------------------------------------------
 '''
 from package_import import *
@@ -71,10 +71,12 @@ def EMA_true(X,y,k,B_true,alpha_true,sigma_list,iter,BL,BR,sigmaL,sigmaR):
         
         # normalize
         for i in range(n):
-            temp = np.sum(wden[i])
             for j in range(k):
+                temp = np.sum(wden[i][:j])
+                if j+1 <k:
+                    temp = temp + np.sum(wden[i][j+1:])
                 # caution! potential underflow might happen at this step
-                w[i][j] = wden[i][j]/temp
+                w[i][j] = 1/(1+temp/wden[i][j])
         
         
         #M step: update B, alpha, and sigma

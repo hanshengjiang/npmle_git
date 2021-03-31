@@ -12,11 +12,13 @@ noise_type <- args[2]
 
 # process arguments
 if (length(args) < 2){
-  # set up default for test run
+  # default calues
   fname <- "lin_0_1_2_1_30percent"
-  noise_type <- "hetero_error"
+  noise_type <- "homo_error"
 }
 
+# set up arbvar
+# arbvar will decide whether different components have different sigma in EM
 if(noise_type == "hetero_error"){
   arbvar_sign <- TRUE
 }else if(noise_type == "homo_error"){
@@ -46,18 +48,18 @@ reg_outcome <- regmixEM(y, X, lambda = alpha_true, k = k,
                  beta = B_true, sigma = sigma_true,
                  epsilon = 1e-08,
                  addintercept = FALSE, 
-                 arbmean = TRUE, arbvar = FALSE,
+                 arbmean = TRUE, arbvar = arbvar_sign,
                  verb = TRUE)
 #---------------------------------------------------------------------------#
 
 # storage estimation results to files
 alpha_EM <- reg_outcome$lambda
-write.table(alpha_EM, file = file.path(dir, "alpha_EM.csv"),row.names = FALSE, col.names  = FALSE)
+write.table(alpha_EM, file = file.path(dir, "alpha_EM.csv"),sep = ",",row.names = FALSE, col.names  = FALSE)
 
 B_EM <- reg_outcome$beta
-write.table(B_EM, file = file.path(dir, "B_EM.csv"),row.names = FALSE, col.names  = FALSE)
+write.table(B_EM, file = file.path(dir, "B_EM.csv"),sep = ",",row.names = FALSE, col.names  = FALSE)
 
 sigma_EM <- reg_outcome$sigma
-write.table(sigma_EM, file = file.path(dir, "sigma_EM.csv"),row.names = FALSE, col.names  = FALSE)
+write.table(sigma_EM, file = file.path(dir, "sigma_EM.csv"),sep = ",",row.names = FALSE, col.names  = FALSE)
 
 #---------------------------------------------------------------------------#

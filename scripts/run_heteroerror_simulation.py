@@ -121,10 +121,10 @@ if run_cv == 'yes':
     
     kfold = 5 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
-    pd.DataFrame(CV_result).to_csv("./../data/CV_result_{}.csv".format(fname), index = False)
-    
+    pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
     idx_min = np.argmin(CV_result[:,1])
     sigma_cv = sigma_list[idx_min]
+    pd.DataFrame(sigma_cv).to_csv("./../data/{}/sigma_EM.csv".format(fname), index = False, header = False)
 else:
     #--------------------------------------------#
     #otherwise take sigma value from command line
@@ -180,7 +180,7 @@ sigmaR = np.sqrt(stats.variance(np.reshape(y, (len(y),)))) # = sigma_max
 # because EM does not converge from time to time
 np.random.seed(626)
 # f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA(X,y,num_component,iter_EM,BL,BR,sigmaL,sigmaR)
-f4, B4, alpha4, sigma_array4, L_rec4, L_final4 =  EMA_true(X,y,num_component,B_true, alpha_true,sigma_list,iter_EM)
+f4, B4, alpha4, sigma_array4, L_rec4, L_final4 =  EMA_true(X,y,num_component,B_true, alpha_true,sigma_list,iter_EM,BL,BR,sigmaL,sigmaR)
 #-----------------------------------#
 #
 #  plot density function            #
@@ -203,14 +203,14 @@ for i in range(len(x_list)):
     #dist_fit = lambda y: (np.sqrt(0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x), 0, sigma)+0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x),0, sigma)) \
     #- np.sqrt(sum(alpha[i]*scipy.stats.norm.pdf( y - (B[0,i]+B[1,i]*x), 0, sigma) for i in range(len(alpha)))))**2
     
-    #print("Fix x = %.1f, squared Hellinger distance for NPMLE is %.5f" % (x, quad(dist_fit, -np.inf, np.inf)[0]))
+    #print("Fix x = %.1f, squapink Hellinger distance for NPMLE is %.5f" % (x, quad(dist_fit, -np.inf, np.inf)[0]))
 
     
     plt.subplot(1,len(x_list),i+1)
     
     if func.__name__ == 'lin_func':
         plt.plot(y, sum(alpha4[i]*scipy.stats.norm.pdf( y-func([1,x],B4[:,i]), 0, sigma_array4[i]) \
-               for i in range(len(alpha4))),color = 'tab:red',label = 'EM_true',linestyle = line_styles[3])
+               for i in range(len(alpha4))),color = 'tab:pink',label = 'EM_true',linestyle = line_styles[3])
 
     plt.plot(y, sum(alpha2[i]*scipy.stats.norm.pdf( y-func([1,x],B2[:,i]), 0, sigma_cv) \
     for i in range(len(alpha2))),color = 'tab:orange',label = 'NPMLE',linestyle = line_styles[1])
@@ -235,17 +235,17 @@ for i in range(len(x_list)):
 # legend      
 custom_lines = [
             Line2D([0], [0], color= 'tab:blue', linestyle = line_styles[0]),
-          # Line2D([0], [0], color= 'tab:cyan', linestyle = line_styles[0]),
+          # Line2D([0], [0], color= 'tab:green', linestyle = line_styles[0]),
           Line2D([0], [0], color= 'tab:orange', linestyle = line_styles[1])
           # Line2D([0], [0], color= 'tab:purple', linestyle = line_styles[2]),
     ]
 if func.__name__ == 'lin_func':
-    custom_lines.append( Line2D([0], [0], color= 'tab:red', linestyle = line_styles[3]))
+    custom_lines.append( Line2D([0], [0], color= 'tab:pink', linestyle = line_styles[3]))
 
 ax = plt.gca()
 lgd = ax.legend(custom_lines, ['Truth', # 'NPMLE_sigma',
-                               'NPMLE', #'EM_sigma'
-                               'EM'
+                               r'NPMLE-$\sigma$', #'EM_sigma'
+                               'EM-true'
                          ], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 plt.savefig('./../pics/%s_multi_density.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 #plt.show();
