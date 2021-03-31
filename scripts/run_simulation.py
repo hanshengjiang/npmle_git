@@ -28,7 +28,7 @@ if __name__ == "__main__":
         sigma = 0.5
         n = 500
         config = '1'
-        run_cv = 'yes'
+        run_cv = '0.47'
         cv_granuality = 0.04
     # otherwise take argyments from command line
     else:
@@ -154,10 +154,10 @@ if run_cv == 'yes':
     
     kfold = 5 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
-    pd.DataFrame(CV_result).to_csv("./../data/CV_result_{}.csv".format(fname), index = False)
-    
+    pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
     idx_min = np.argmin(CV_result[:,1])
     sigma_cv = sigma_list[idx_min]
+    pd.DataFrame(sigma_cv).to_csv("./../data/{}/sigma_EM.csv".format(fname), index = False, header = False)
 else:
     #--------------------------------------------#
     #otherwise take sigma value from command line
@@ -174,48 +174,30 @@ test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_cv,BL,BR,fname,func)
 
 #--------------------density plots--------------------------#
   
-#-------------------1: CGM with known sigma----------------#
+#-------------------NPMLE-sigma----------------#
 # needs sigma as input
 f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR,func)
     
     
 #------------------------------------------------------------#    
 #    
-#-------------------2: CGM without knowing sigma----------------#
+#-------------------NPMLE-CV ----------------#
 
 f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
     
+#------------------------------------------------------------#    
+#-------------------------   Run EM    ----------------------#
+import os
+import sys
+os.system("Rscript " + "run_regmixEM.R " + fname + ' homo_error')
 
-#
-#iter_EM = 200 # EM needs more iterations
-##------------------------------------------------------------#    
-##    
-##-------------------3: EMA with known sigma------------------#
-## needs sigma as input
-## only for linear model
-## f3, B3, alpha3, sigma_array3, L_rec3, L_final3 = EMA_sigma(X,y,num_component,iter_EM,BL,BR,sigma)
-#
-#
-##------------------------------------------------------------#    
-##    
-#
-##-------------------4: EMA_sigma without knowing sigma----------------#
-#
-## need specification on the range of sigma
-#sigmaL =  0.1 # = sigma_min
-#sigmaR = np.sqrt(stats.variance(np.reshape(y, (len(y),)))) # = sigma_max
-## sigma_min sigma_max are also used in the cross-validation procedure
-#
-## only for linear model
-## set up a random seed for EM 
-## sometimes EM takes a long time to converge, so we records
-## random seed that makes sense for EM
-#if config == '3':
-#    np.random.seed(620)
-#else:
-#    np.random.seed(626)
-#f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA_true(X,y,num_component,B_true, alpha_true,[sigma,sigma,sigma],iter_EM,BL,BR,sigmaL,sigmaR)
-#
+#-------------------Read EM estimated results ----------------#
+B4 = pd.read_csv('./../data/{}/B_EM.csv'.format(fname), header = None).values
+alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
+sigma = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values
+sigma_array4 = np.repeat(sigma, num_component)
+#------------------------------------------------------------# 
+
 
 #-----------------------------------# 
 #
