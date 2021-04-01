@@ -224,9 +224,9 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
                         ]
-        lgd = plt.legend(custom_lines, [r'$y = %.2f %+.2fx%+.2fx^2$ with probability $%.2f$'%(b1[0]**2+b1[0]*b1[1], 0.5*b1[0]*b1[1],0.5*b1[1], pi1), #,'True mixture'# 
-                                  r'$y = %.2f %+.2fx%+.2fx^2$ with probability $%.2f$'%(b1[0]**2+b1[0]*b1[1], 0.5*b1[0]*b1[1],0.5*b1[1], pi2),
-                                  r'$y =  %.2f %+.2fx%+.2fx^2$ with probability $%.2f$'%(b1[0]**2+b1[0]*b1[1], 0.5*b1[0]*b1[1],0.5*b1[1], 1- pi1 - pi2),
+        lgd = plt.legend(custom_lines, [r'$y = (%.2f %+.2fx)^2$ with probability $%.2f$'%(b1[0],b1[1], pi1), #,'True mixture'# 
+                                  r'$y = (%.2f %+.2fx)^2$ with probability $%.2f$'%(b2[0], b2[1], pi2),
+                                  r'$y = (%.2f %+.2fx)^2$ with probability $%.2f$'%(b3[0], b1[1], 1- pi1 - pi2)
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc = 2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     else:
@@ -237,9 +237,8 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
                         ]
-        lgd = plt.legend(custom_lines, [r'$y = %.2f %+.2fx%+.2fx^2$ with probability $%.2f$' %(b1[0]**2+b1[0]*b1[1], 0.5*b1[0]*b1[1],0.5*b1[1], pi1), #,'True mixture'# 
-                                  r'$y = %.2f %+.2fx%+.2fx^2$ with probability $%.2f$' %(b2[0]**2+b2[0]*b2[1], 0.5*b2[0]*b2[1],0.5*b2[1], pi2),
-                                
+        lgd = plt.legend(custom_lines, [r'$y = (%.2f %+.2fx)^2$ with probability $%.2f$'%(b1[0],b1[1], pi1), #,'True mixture'# 
+                                  r'$y = (%.2f %+.2fx)^2$ with probability $%.2f$'%(b2[0], b2[1], pi2)
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc=2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     ax = plt.gca()
@@ -280,7 +279,7 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
             component_color.append(temp)
             plt.plot(t,(b[0]**2) + 0.5*b[0]*b[1]*t+0.5*b[1]*t**2+b[0]*b[1], color = tuple( np.array(RGB_tuples[temp])/255)\
                      ,linewidth = alpha[i][0]*8 ,\
-                     label = r'$y = %.2f %+.2fx%+.2fx^2$ with probability $%.2f$'%(b[0]**2+b[0]*b[1], 0.5*b[0]*b[1],0.5*b[1], alpha[i]))
+                     label = r'$y = (%.2f %+.2fx)^2$ with probability $%.2f$'%(b[0],b[1], alpha[i]))
             temp = temp + 1
             print("coefficients", b, "with probability", alpha[i])
     
