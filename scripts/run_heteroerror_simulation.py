@@ -97,7 +97,7 @@ else:
 iter = 100 # iterations of NPMLE_FW
 
 
-fname = 'hetero' + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
+fname = 'hetero_' + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
 +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
 fname = fname.replace('.','dot')
 
@@ -110,6 +110,24 @@ np.random.seed(626)
 #-----------------------------
 X,y,C = generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func)
 #-----------------------------------------------------------#
+
+#-------------------------------------------------------------#
+# EM algorithms need to specify the number of vomponents
+num_component = int(float(config)/3) + 2
+#-------------------------------------------------------------#
+
+#-----------------------------------------------------------#
+# storage dataset
+if not os.path.exists('./../data/{}'.format(fname)):
+    os.mkdir('./../data/{}'.format(fname))
+pd.DataFrame(X).to_csv('./../data/{}/X.csv'.format(fname), index = False, header = False)
+pd.DataFrame(y).to_csv('./../data/{}/y.csv'.format(fname), index = False, header = False)
+pd.DataFrame(np.reshape(np.array(num_component), (1,1))).to_csv('./../data/{}/num_component.csv'.format(fname), index = False, header = False)
+pd.DataFrame(alpha_true).to_csv('./../data/{}/alpha_true.csv'.format(fname), index = False, header = False)
+pd.DataFrame(B_true).to_csv('./../data/{}/B_true.csv'.format(fname), index = False, header = False)
+pd.DataFrame(sigma_list).to_csv('./../data/{}/sigma_true.csv'.format(fname), index = False, header = False)
+#-----------------------------------------------------------#    
+
 
 
 if run_cv == 'yes':
@@ -153,34 +171,23 @@ f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma_list[0],BL,BR,func)
 
 f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
     
-#-------------------------------------------------------------#
-# EM algorithms need to specify the number of vomponents
-num_component = int(float(config)/3) + 2
-#-------------------------------------------------------------#
 
-iter_EM = 100 # EM needs more iterations
-#------------------------------------------------------------#    
-#    
-#-------------------3: EMA with known sigma------------------#
-# needs sigma as input
-# f3, B3, alpha3, sigma_array3, L_rec3, L_final3 = EMA_sigma(X,y,num_component,iter_EM,BL,BR,sigma)
+#-------------------------   Run EM    ----------------------#
+import os
+import sys
+os.system("Rscript " + "run_regmixEM.R " + fname + ' hetero_error')
+
+#-------------------Read EM estimated results ----------------#
+B4 = pd.read_csv('./../data/{}/B_EM.csv'.format(fname), header = None).values
+alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
+sigma = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values
+sigma_array4 = np.repeat(sigma, num_component)
+#------------------------------------------------------------# 
 
 
-#------------------------------------------------------------#    
-#    
 
-#-------------------4: EMA_sigma without knowing sigma----------------#
 
-# need specification on the range of sigma
-sigmaL =  0.1# = sigma_min
-sigmaR = np.sqrt(stats.variance(np.reshape(y, (len(y),)))) # = sigma_max
-# sigma_min sigma_max are also used in the cross-validation procedure
 
-# set up a random seed for EM 
-# because EM does not converge from time to time
-np.random.seed(626)
-# f4, B4, alpha4, sigma_array4, L_rec4, L_final4 = EMA(X,y,num_component,iter_EM,BL,BR,sigmaL,sigmaR)
-f4, B4, alpha4, sigma_array4, L_rec4, L_final4 =  EMA_true(X,y,num_component,B_true, alpha_true,sigma_list,iter_EM,BL,BR,sigmaL,sigmaR)
 #-----------------------------------#
 #
 #  plot density function            #
