@@ -205,23 +205,25 @@ for i in range(len(x_list)):
     
     #print("Fix x = %.1f, squapink Hellinger distance for NPMLE is %.5f" % (x, quad(dist_fit, -np.inf, np.inf)[0]))
 
-    
     plt.subplot(1,len(x_list),i+1)
     
     if func.__name__ == 'lin_func':
-        plt.plot(y, sum(alpha4[i]*scipy.stats.norm.pdf( y-func([1,x],B4[:,i]), 0, sigma_array4[i]) \
-               for i in range(len(alpha4))),color = 'tab:pink',label = 'EM_true',linestyle = line_styles[3])
-
-    plt.plot(y, sum(alpha2[i]*scipy.stats.norm.pdf( y-func([1,x],B2[:,i]), 0, sigma_cv) \
-    for i in range(len(alpha2))),color = 'tab:orange',label = 'NPMLE',linestyle = line_styles[1])
+        fy4 = sum(alpha4[i]*scipy.stats.norm.pdf( y-func([1,x],B4[:,i]), 0, sigma_array4[i]) \
+               for i in range(len(alpha4)))
+        plt.plot(y, fy4.ravel(),color = 'tab:pink',label = 'EM-true',linestyle = line_styles[3])
         
-    plt.plot(y, sum(alpha1[i]*scipy.stats.norm.pdf( y-func([1,x],B1[:,i]), 0, sigma) \
-   for i in range(len(alpha1))),color = 'tab:cyan',label = 'NPMLE_sigma',linestyle = line_styles[0])
+    fy1 = sum(alpha1[i]*scipy.stats.norm.pdf( y-func([1,x],B1[:,i]), 0, sigma) \
+    for i in range(len(alpha1)))
+    plt.plot(y,fy1.ravel() ,color = 'tab:green',label = r'NPMLE-$\sigma$',linestyle = line_styles[0])
     
+    fy2 = sum(alpha2[i]*scipy.stats.norm.pdf( y-func([1,x],B2[:,i]), 0, sigma_cv) \
+    for i in range(len(alpha2)))
+    plt.plot(y,fy2.ravel() ,color = 'tab:orange',label = 'NPMLE-CV',linestyle = line_styles[1])
         
-    plt.plot(y,pi1*scipy.stats.norm.pdf(y - func([1,x],b1), 0, sigma_list[0])+pi2*scipy.stats.norm.pdf(y-func([1,x],b2),0, sigma_list[1])+\
-    (1-pi1-pi2)*scipy.stats.norm.pdf(y-func([1,x],b3),0, sigma_list[2]),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
-
+    fy_true = pi1*scipy.stats.norm.pdf(y - func([1,x],b1), 0, sigma_list[0])+pi2*scipy.stats.norm.pdf(y-func([1,x],b2),0, sigma_list[1])+\
+    (1-pi1-pi2)*scipy.stats.norm.pdf(y-func([1,x],b3),0, sigma_list[2])
+    plt.plot(y,fy_true.ravel(),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
+    
     
 #    plt.plot(y, sum(alpha3[i]*scipy.stats.norm.pdf( y-(B3[0,i]+B3[1,i]*x), 0, sigma) \
 #    for i in range(len(alpha3))),color = 'tab:purple',label = 'EM_sigma',linestyle = line_styles[2])
@@ -245,6 +247,7 @@ if func.__name__ == 'lin_func':
 ax = plt.gca()
 lgd = ax.legend(custom_lines, ['Truth', # 'NPMLE_sigma',
                                r'NPMLE-$\sigma$', #'EM_sigma'
+                               'NPMLE-CV',
                                'EM-true'
                          ], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 plt.savefig('./../pics/%s_multi_density.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
