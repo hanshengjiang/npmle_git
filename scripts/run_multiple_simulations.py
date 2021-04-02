@@ -12,11 +12,11 @@ import os
 
 if __name__ == "__main__":
     filename = sys.argv[1] #sys_argv[0] is the name of the .py file
-    exp_type = sys.argv[2]
+    exp_type = sys.argv[2] #experiment type
 
 if exp_type == 'discrete':
     # directly run with reported sigma value 
-    # (reported sigma were previously chosen by cross-validation)
+    # (reported sigma's were previously chosen by cross-validation)
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '1' + ' ' + '0.47'+ ' ' 
     os.system("python " + filename + params_ + '&')
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '2' + ' ' + '0.47'+ ' ' 
@@ -33,24 +33,43 @@ elif exp_type == 'discrete_cv':
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '3' + ' ' + 'yes'+ ' ' 
     os.system("python " + filename + params_ + '&')
 
+elif exp_type == 'poly_cv':
+    # re-run cross-validation
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '4' + ' ' + 'yes'+ ' ' 
+    os.system("python " + filename + params_ + '&')
+    
+elif exp_type == 'exp_cv':
+    # re-run cross-validation
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '5' + ' ' + 'yes'+ ' ' 
+    os.system("python " + filename + params_ + '&')
 
+elif exp_type == 'sin_cv':
+    # re-run cross-validation
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '6' + ' ' + 'yes'+ ' ' 
+    os.system("python " + filename + params_ + '&')
+    
 elif exp_type == 'hetero_discrete':
     # re-run cross-validation
-    params_ = ' '+'0.5' + ' '+'0.8' + ' '+'1.0' + ' ' + \
-    '500' + ' ' + '1' + ' ' + '0.54'
+    params_ = ' '+'0.3' + ' '+'0.5' + ' '+'0.7' + ' ' + \
+    '500' + ' ' + '1' + ' ' + '0.33'+ ' ' 
     os.system("python " + filename + params_ + '&')
-    params_ = ' '+'0.5' + ' ' + '0.8' + ' '+'1.0' + ' ' +\
-    '500' + ' ' + '2' + ' ' + '0.54'
+    params_ = ' '+'0.3' + ' ' + '0.5' + ' '+'0.7' + ' ' +\
+    '500' + ' ' + '2' + ' ' + '0.33'+ ' ' 
     os.system("python " + filename + params_ + '&')
-    params_ = ' '+'0.5' + ' ' + '0.8' + ' '+'1.0' + ' ' +\
-    '500' + ' ' + '3' + ' ' + '0.58'
+    params_ = ' '+'0.3' + ' ' + '0.5' + ' '+'0.7' + ' ' +\
+    '500' + ' ' + '3' + ' ' + '0.36'+ ' ' 
     os.system("python " + filename + params_ + '&')
     
 elif exp_type == 'hetero_discrete_cv':
     # re-run cross-validation
-    params_ = ' '+'0.5' + ' '+'0.8' + ' '+'1.0' + ' ' + '500' + ' ' + '1' + ' ' + 'yes'
+    params_ = ' '+'0.3' + ' '+'0.5' + ' '+'0.7' + ' ' + \
+    '500' + ' ' + '1' + ' ' + 'yes'+ ' ' 
     os.system("python " + filename + params_ + '&')
-    params_ = ' '+'0.5' + ' ' + '0.8' + ' '+'1.0' + ' ' +'500' + ' ' + '2' + ' ' + 'yes'
+    params_ = ' '+'0.3' + ' ' + '0.5' + ' '+'0.7' + ' ' +\
+    '500' + ' ' + '2' + ' ' + 'yes'+ ' ' 
     os.system("python " + filename + params_ + '&')
-    params_ = ' '+'0.5' + ' ' + '0.8' + ' '+'1.0' + ' ' +'500' + ' ' + '3' + ' ' + 'yes'
+    params_ = ' '+'0.3' + ' ' + '0.5' + ' '+'0.7' + ' ' +\
+    '500' + ' ' + '3' + ' ' + 'yes'+ ' ' 
     os.system("python " + filename + params_ + '&')
+    
+    

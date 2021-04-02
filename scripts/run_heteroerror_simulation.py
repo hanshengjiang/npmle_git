@@ -33,10 +33,10 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 6:
-        sigma_list = [0.5,0.8,1] # hetero errors
+        sigma_list = [0.3,0.5,0.7] # hetero errors
         n = 500
         config = '1'
-        run_cv = '0.54'
+        run_cv = '0.34'
         cv_granuality = 0.01
     # otherwise take argyments from command line
     else:
@@ -142,7 +142,7 @@ if run_cv == 'yes':
     pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
     idx_min = np.argmin(CV_result[:,1])
     sigma_cv = sigma_list[idx_min]
-    pd.DataFrame(sigma_cv).to_csv("./../data/{}/sigma_EM.csv".format(fname), index = False, header = False)
+    pd.DataFrame(sigma_cv).to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
 else:
     #--------------------------------------------#
     #otherwise take sigma value from command line
@@ -154,7 +154,7 @@ print("sigma_cv:{}".format(sigma_cv))
 
 #------------------------------------------------------------#  
 # paramters of b's and pi's are only for plotting purposes
-test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_cv,-10,10,fname,func)
+# test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_cv,BL,BR,fname,func)
 #------------------------------------------------------------#    
 
 #--------------------density plots--------------------------#
@@ -162,7 +162,7 @@ test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_cv,-10,10,fname,func)
 #-------------------1: CGM with known sigma----------------#
 # needs sigma as input
 # uses the smallest heterosedastic error
-f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma_list[0],BL,BR,func)
+# f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma_list[0],BL,BR,func)
     
     
 #------------------------------------------------------------#    
@@ -181,7 +181,7 @@ os.system("Rscript " + "run_regmixEM.R " + fname + ' hetero_error')
 B4 = pd.read_csv('./../data/{}/B_EM.csv'.format(fname), header = None).values
 alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
 sigma = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values
-sigma_array4 = np.repeat(sigma, num_component)
+sigma_array4 = sigma.ravel()
 #------------------------------------------------------------# 
 
 
@@ -218,11 +218,11 @@ for i in range(len(x_list)):
         fy4 = sum(alpha4[i]*scipy.stats.norm.pdf( y-func([1,x],B4[:,i]), 0, sigma_array4[i]) \
                for i in range(len(alpha4)))
         plt.plot(y, fy4.ravel(),color = 'tab:pink',label = 'EM-true',linestyle = line_styles[3])
-        
-    fy1 = sum(alpha1[i]*scipy.stats.norm.pdf( y-func([1,x],B1[:,i]), 0, sigma) \
-    for i in range(len(alpha1)))
-    plt.plot(y,fy1.ravel() ,color = 'tab:green',label = r'NPMLE-$\sigma$',linestyle = line_styles[0])
-    
+#        
+#    fy1 = sum(alpha1[i]*scipy.stats.norm.pdf( y-func([1,x],B1[:,i]), 0, sigma) \
+#    for i in range(len(alpha1)))
+#    plt.plot(y,fy1.ravel() ,color = 'tab:green',label = r'NPMLE-$\sigma_{\min}$',linestyle = line_styles[0])
+#    
     fy2 = sum(alpha2[i]*scipy.stats.norm.pdf( y-func([1,x],B2[:,i]), 0, sigma_cv) \
     for i in range(len(alpha2)))
     plt.plot(y,fy2.ravel() ,color = 'tab:orange',label = 'NPMLE-CV',linestyle = line_styles[1])
@@ -253,7 +253,7 @@ if func.__name__ == 'lin_func':
 
 ax = plt.gca()
 lgd = ax.legend(custom_lines, ['Truth', # 'NPMLE_sigma',
-                               r'NPMLE-$\sigma$', #'EM_sigma'
+                               # r'NPMLE-$\sigma_{\min}$', #'EM_sigma'
                                'NPMLE-CV',
                                'EM-true'
                          ], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
