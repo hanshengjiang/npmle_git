@@ -32,21 +32,6 @@ elif exp_type == 'discrete_cv':
     os.system("python " + filename + params_ + '&')
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '3' + ' ' + 'yes'+ ' ' 
     os.system("python " + filename + params_ + '&')
-
-elif exp_type == 'poly_cv':
-    # re-run cross-validation
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '4' + ' ' + 'yes'+ ' ' 
-    os.system("python " + filename + params_ + '&')
-    
-elif exp_type == 'exp_cv':
-    # re-run cross-validation
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '5' + ' ' + 'yes'+ ' ' 
-    os.system("python " + filename + params_ + '&')
-
-elif exp_type == 'sin_cv':
-    # re-run cross-validation
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '6' + ' ' + 'yes'+ ' ' 
-    os.system("python " + filename + params_ + '&')
     
 elif exp_type == 'hetero_discrete':
     # re-run cross-validation
@@ -71,5 +56,20 @@ elif exp_type == 'hetero_discrete_cv':
     params_ = ' '+'0.3' + ' ' + '0.5' + ' '+'0.7' + ' ' +\
     '500' + ' ' + '3' + ' ' + 'yes'+ ' ' 
     os.system("python " + filename + params_ + '&')
+        
+elif exp_type == 'poly_cv':
+    # re-run cross-validation
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '4' + ' ' + 'yes'+ ' ' 
+    os.system("python " + filename + params_ + '&')
     
+elif exp_type == 'exp_cv':
+    # re-run cross-validation
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '5' + ' ' + 'yes'+ ' ' 
+    os.system("python " + filename + params_ + '&')
+
+elif exp_type == 'sin_cv':
+    # re-run cross-validation
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '6' + ' ' + 'yes'+ ' ' 
+    os.system("python " + filename + params_ + '&')
+
     

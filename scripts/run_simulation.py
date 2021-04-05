@@ -37,7 +37,7 @@ if __name__ == "__main__":
         n = int(sys.argv[2]) # number of data points
         config = sys.argv[3]
         run_cv = sys.argv[4]
-        cv_granuality = 0.01
+        cv_granuality = 0.02
 # preset configurations      
 if config == '1':
     #----------- configuration 1-----#
@@ -72,7 +72,7 @@ elif config == '3':
     b3 = (-1,0.5)
     pi1 = 0.3
     pi2 = 0.3
-    B_true = [[4,1,-1],[-1,1.5,0.5]]
+    B_true = [[3,1,-1],[-1,1.5,0.5]]
     alpha_true = [0.3,0.3,0.4]
     func = lin_func
     BL = -10
@@ -85,9 +85,12 @@ elif config == '4':
     b3 = (0,0)
     pi1 = 0.5
     pi2 = 0.5
+    B_true = [[0.5,1],[2,2.5]]
+    alpha_true = [0.5,0.5]
     func = poly_func
     BL = -10
     BR = 10
+    x_list = [-1.5,0,1.5]
 elif config == '5':
     #----------- configuration 5-----#
 
@@ -96,6 +99,8 @@ elif config == '5':
     b3 = (0,0)
     pi1 = 0.5
     pi2 = 0.5
+    B_true = [[-0.5,-1.5],[-1,-1.5]]
+    alpha_true = [0.5,0.5]
     func = exp_func
     BL = -10 #BL 
     BR = 10
@@ -107,9 +112,12 @@ elif config == '6':
     b3 = (0,0)
     pi1 = 0.5
     pi2 = 0.5
+    B_true = [[-0.5,-1.5],[1,1.5]]
+    alpha_true = [0.5,0.5]
     func = sin_func
     BL = -10
     BR = 10
+    x_list = [-1.5,0,1.5]
 else:
     sys.exit("Wrong configuration number!")
 
@@ -123,7 +131,7 @@ fname = fname.replace('.','dot')
 #-----------------------------------------------------------#
 # generate simulated dataset
 np.random.seed(626)
-sigma_list = [sigma,sigma,sigma] # homo errors
+sigma_list = [sigma,sigma,sigma] # homo error
 X,y,C = generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func)
 #-----------------------------------------------------------#
 
@@ -148,7 +156,7 @@ pd.DataFrame(sigma_list).to_csv('./../data/{}/sigma_true.csv'.format(fname), ind
 if run_cv == 'yes':
     #------------------------run CV-------------#
     #define a range of candidate sigma values
-    sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
+    sigma_max = min(1, np.sqrt(stats.variance(np.reshape(y, (len(y),)))))
     sigma_min = 0.1
     cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
     
@@ -156,8 +164,8 @@ if run_cv == 'yes':
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
     pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
     idx_min = np.argmin(CV_result[:,1])
-    sigma_cv = sigma_list[idx_min]
-    pd.DataFrame(sigma_cv).to_csv("./../data/{}/sigma_EM.csv".format(fname), index = False, header = False)
+    sigma_cv = cv_sigma_list[idx_min]
+    pd.DataFrame(sigma_cv).to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
 else:
     #--------------------------------------------#
     #otherwise take sigma value from command line
@@ -224,24 +232,27 @@ for i in range(len(x_list)):
     #dist_fit = lambda y: (np.sqrt(0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x), 0, sigma)+0.5*scipy.stats.norm.pdf(y-(b1[0]+b1[1]*x),0, sigma)) \
     #- np.sqrt(sum(alpha[i]*scipy.stats.norm.pdf( y - (B[0,i]+B[1,i]*x), 0, sigma) for i in range(len(alpha)))))**2
     
-    #print("Fix x = %.1f, squapink Hellinger distance for NPMLE is %.5f" % (x, quad(dist_fit, -np.inf, np.inf)[0]))
+    #print("Fix x = %.1f, squared Hellinger distance for NPMLE is %.5f" % (x, quad(dist_fit, -np.inf, np.inf)[0]))
 
     
     plt.subplot(1,len(x_list),i+1)
     
     if func.__name__ == 'lin_func':
-        plt.plot(y, sum(alpha4[i]*scipy.stats.norm.pdf( y-func([1,x],B4[:,i]), 0, sigma_array4[i]) \
-               for i in range(len(alpha4))),color = 'tab:pink',label = 'EM_true',linestyle = line_styles[3])
-
-    plt.plot(y, sum(alpha1[i]*scipy.stats.norm.pdf( y-func([1,x],B1[:,i]), 0, sigma) \
-    for i in range(len(alpha1))),color = 'tab:green',label = r'NPMLE_$\sigma$',linestyle = line_styles[0])
-     
-    plt.plot(y, sum(alpha2[i]*scipy.stats.norm.pdf( y-func([1,x],B2[:,i]), 0, sigma_cv) \
-    for i in range(len(alpha2))),color = 'tab:orange',label = 'NPMLE_CV',linestyle = line_styles[1])
+        fy4 = sum(alpha4[i]*scipy.stats.norm.pdf( y-func([1,x],B4[:,i]), 0, sigma_array4[i]) \
+               for i in range(len(alpha4)))
+        plt.plot(y, fy4.ravel(),color = 'tab:pink',label = 'EM-true',linestyle = line_styles[3])
         
+    fy1 = sum(alpha1[i]*scipy.stats.norm.pdf( y-func([1,x],B1[:,i]), 0, sigma) \
+    for i in range(len(alpha1)))
+    plt.plot(y,fy1.ravel() ,color = 'tab:green',label = r'NPMLE-$\sigma$',linestyle = line_styles[0])
     
-    plt.plot(y,pi1*scipy.stats.norm.pdf(y - func([1,x],b1), 0, sigma)+pi2*scipy.stats.norm.pdf(y-func([1,x],b2),0, sigma)+\
-    (1-pi1-pi2)*scipy.stats.norm.pdf(y-func([1,x],b3),0, sigma),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
+    fy2 = sum(alpha2[i]*scipy.stats.norm.pdf( y-func([1,x],B2[:,i]), 0, sigma_cv) \
+    for i in range(len(alpha2)))
+    plt.plot(y,fy2.ravel() ,color = 'tab:orange',label = 'NPMLE-CV',linestyle = line_styles[1])
+        
+    fy_true = pi1*scipy.stats.norm.pdf(y - func([1,x],b1), 0, sigma)+pi2*scipy.stats.norm.pdf(y-func([1,x],b2),0, sigma)+\
+    (1-pi1-pi2)*scipy.stats.norm.pdf(y-func([1,x],b3),0, sigma)
+    plt.plot(y,fy_true.ravel(),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
     
 #    plt.plot(y, sum(alpha3[i]*scipy.stats.norm.pdf( y-(B3[0,i]+B3[1,i]*x), 0, sigma) \
 #    for i in range(len(alpha3))),color = 'tab:purple',label = 'EM_sigma',linestyle = line_styles[2])

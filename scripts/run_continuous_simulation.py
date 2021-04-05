@@ -50,7 +50,7 @@ fname = fname.replace('.','dot')
 #-----------------------------------------------------------#
 # generate simulated dataset
 np.random.seed(626)
-X,y = generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,convb2, pi1, sigma, func = lin_func)
+X,y = generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma, func = lin_func)
 #-----------------------------------------------------------#
 
 #-----------------------------------------------------------#

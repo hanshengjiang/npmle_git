@@ -35,7 +35,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 6:
         sigma_list = [0.3,0.5,0.7] # hetero errors
         n = 500
-        config = '1'
+        config = '3'
         run_cv = '0.34'
         cv_granuality = 0.01
     # otherwise take argyments from command line
@@ -133,7 +133,7 @@ pd.DataFrame(sigma_list).to_csv('./../data/{}/sigma_true.csv'.format(fname), ind
 if run_cv == 'yes':
     #------------------------run CV-------------#
     #define a range of candidate sigma values
-    sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
+    sigma_max = min(1, np.sqrt(stats.variance(np.reshape(y, (len(y),)))))
     sigma_min = 0.1
     cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
     
@@ -141,7 +141,7 @@ if run_cv == 'yes':
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
     pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
     idx_min = np.argmin(CV_result[:,1])
-    sigma_cv = sigma_list[idx_min]
+    sigma_cv = cv_sigma_list[idx_min]
     pd.DataFrame(sigma_cv).to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
 else:
     #--------------------------------------------#
