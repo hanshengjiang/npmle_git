@@ -5,9 +5,9 @@ This repository contains the implementation for the paper [NPMLE for MR](https:/
 ## Overview
 
 ## Folders and Files
-- 'scripts/':
-- 'data/':
-- 'pics/':
+- `scripts/`:
+- `data/`:
+- `pics/`:
 
 ## Usages
 ### Single run
