@@ -14,10 +14,10 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 5:
-        sigma = 0.5
+        sigma = 0.8
         n = 500
         config = '1'
-        run_cv = '0.47'
+        run_cv = '0.8'
         cv_granuality = 0.04
     # otherwise take argyments from command line
     else:
@@ -34,7 +34,7 @@ if config == '1':
     meanb1 = [1,0.5]
     covb1 = np.array([[0.5,0.2],[0.2,0.3]])
     meanb2 = [2,3]
-    covb2 = np.array([[0.2,0.5],[0.3,0.2]])
+    covb2 = np.array([[0.5,0.2],[0.2,0.3]])
     pi1 = 0.5
    
     func = lin_func
@@ -43,8 +43,8 @@ if config == '1':
     x_list = [-3,0,5] #x_list for later density plots
 
 iter = 100 # iterations of NPMLE_FW
-fname = 'continuous_' + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
-+'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
+fname = 'continuous_' + str(meanb1[0]) + '_'+ str(meanb1[1])+'_'+ str(meanb2[0]) \
++'_' +str(meanb2[1])+'_'+str(int(100*pi1)) +'percent'
 fname = fname.replace('.','dot')  
 
 #-----------------------------------------------------------#
@@ -59,7 +59,7 @@ if not os.path.exists('./../data/{}'.format(fname)):
     os.mkdir('./../data/{}'.format(fname))
 pd.DataFrame(X).to_csv('./../data/{}/X.csv'.format(fname), index = False, header = False)
 pd.DataFrame(y).to_csv('./../data/{}/y.csv'.format(fname), index = False, header = False)
-pd.DataFrame(sigma).to_csv('./../data/{}/sigma_true.csv'.format(fname), index = False, header = False)
+pd.DataFrame(np.reshape(np.array(sigma),(1,1))).to_csv('./../data/{}/sigma_true.csv'.format(fname), index = False, header = False)
 #-----------------------------------------------------------#    
 
 

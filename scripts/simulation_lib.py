@@ -11,7 +11,7 @@ from package_import import *
 from alg1_lib import *
 from plotting_lib import *
 import os
-# from scipy.stats import multivariate_t
+from scipy.stats import multivariate_t
 
 def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func=lin_func):
     '''
@@ -59,7 +59,7 @@ def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func=lin_func):
             C[i] = 3
     return X,y,C
 
-def generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,convb2, pi1, sigma, func = lin_func):
+def generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma, func = lin_func):
     '''
     generate testing data with respect to continuous G^*
     
@@ -76,20 +76,24 @@ def generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,convb2, pi1, sigma
     C (n,1): labels of each datapoints
     
     '''
-    p = len(b1)
+    p = len(meanb1)
+    
+    
+    X = np.zeros((n,2))
+    y = np.zeros((n,1))
+    
+    rv1 = multivariate_t(meanb1,covb1,df = 3)
+    rv2 = multivariate_t(meanb2,covb2,df = 3)
+        
     for i in range(n):
         X[i] = np.reshape([1,np.random.uniform(-1,3)],(1,2))
-    
-        
-        b1 = np.reshape(multivariate_t(meanb1,covb1,2),(2,1))
-        b2 = np.reshape(multivariate_t(meanb2,covb2,2),(2,1))
-        
         b_pi = np.random.uniform(0,1)
         
         if b_pi < pi1:
-            b = b1
+            b = rv1.rvs()
         else:
-            b = b2
+            b = rv2.rvs()
+        # print("b",b)
         y[i] = func(X[i],b) + np.random.normal(0,sigma)
     return X,y
 
