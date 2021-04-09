@@ -10,15 +10,19 @@ from cv_procedure_lib import *
 from em_alg_lib import *
 from regression_func_lib import *
 import sys
+from itertools import repeat
+import multiprocessing 
+from multiprocessing import Pool
 
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 5:
-        sigma = 0.8
+        sigma = 0.5
         n = 500
         config = '1'
-        run_cv = '0.8'
+        run_cv = '0.5'
         cv_granuality = 0.04
+        
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
@@ -35,8 +39,9 @@ if config == '1':
     covb1 = np.array([[0.5,0.2],[0.2,0.3]])
     meanb2 = [2,3]
     covb2 = np.array([[0.5,0.2],[0.2,0.3]])
-    pi1 = 0.5
-   
+    pi1 = 1.0
+    df_ = 3
+    
     func = lin_func
     BL = -10
     BR = 10
@@ -50,7 +55,7 @@ fname = fname.replace('.','dot')
 #-----------------------------------------------------------#
 # generate simulated dataset
 np.random.seed(626)
-X,y = generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma, func = lin_func)
+X,y = generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma,df_, func = lin_func)
 #-----------------------------------------------------------#
 
 #-----------------------------------------------------------#
@@ -75,7 +80,7 @@ if run_cv == 'yes':
     pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
     idx_min = np.argmin(CV_result[:,1])
     sigma_cv = cv_sigma_list[idx_min]
-    pd.DataFrame(sigma_cv).to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
+    pd.DataFrame(np.array([sigma_cv])).to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
 else:
     #--------------------------------------------#
     #otherwise take sigma value from command line
@@ -86,6 +91,7 @@ print("sigma:{},sigma_cv:{}".format(sigma,sigma_cv))
 
 
 #-------------------NPMLE-sigma----------------#
+np.random.seed(626)
 # needs sigma as input
 f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR,func)
     
@@ -93,7 +99,7 @@ f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR,func)
 #------------------------------------------------------------#    
 #    
 #-------------------NPMLE-CV ----------------#
-
+np.random.seed(626)
 f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
     
 #------------------------------------------------------------#    
@@ -109,7 +115,8 @@ t = np.arange(np.amin(X[:,1])-0.5,np.amax(X[:,1])+0.5,1e-6)
 
 #plt.plot(t,b1[0]+b1[1]*t,'r',t,b2[0]+b2[1]*t,'red')
 
-N = len(alpha)
+N = len(alpha2)
+threprob = 0.01
 
 RGB_tuples = [(240,163,255),(0,117,220),(153,63,0),(76,0,92),(0,92,49),
 (43,206,72),(255,204,153),(128,128,128),(148,255,181),(143,124,0),(157,204,0),
@@ -120,19 +127,19 @@ component_plot = []
 component_color = []
 
 temp = 0
-index_sort = np.argsort(-np.reshape(alpha,(len(alpha),)))
+index_sort = np.argsort(-np.reshape(alpha2,(len(alpha2),)))
 count = 0 
 for i in index_sort:
-    b = B[:,i]
+    b = B2[:,i]
     # select component with mixing probability above certain thresholds
-    if alpha[i] >threprob:
+    if alpha2[i] >threprob:
         component_plot.append(i)
         component_color.append(temp)
         plt.plot(t,b[0]+b[1]*t, color = tuple( np.array(RGB_tuples[temp])/255),\
-                 linestyle = line_styles[int(count%4)],linewidth = alpha[i][0]*8 ,\
-                 label = r'$y = %.2f %+.2f x$ with probability $%.2f$'%(b[0], b[1], alpha[i]))
+                 linestyle = line_styles[int(count%4)],linewidth = alpha2[i][0]*8 ,\
+                 label = r'$y = %.2f %+.2f x$ with probability $%.2f$'%(b[0], b[1], alpha2[i]))
         temp = temp + 1
-        print("coefficients", b, "with probability", alpha[i])
+        print("coefficients", b, "with probability", alpha2[i])
         count = count + 1
 
 # ONLY clustering based on plotted components, i.e. components with high probability (>threprob)
@@ -140,7 +147,7 @@ C_cluster = np.zeros((n,1))
 for i in range(len(y)):
     prob = np.zeros((N,1))
     for j in component_plot:
-        prob[j] = alpha[j] * np.exp(-0.5*(y[i] - np.dot(X[i],B[:,j]))**2 /(sigma**2))
+        prob[j] = alpha2[j] * np.exp(-0.5*(y[i] - np.dot(X[i],B2[:,j]))**2 /(sigma**2))
     C_cluster[i] = np.argmax(prob)
     plt.scatter(X[i][1],y[i],color = tuple(np.array(RGB_tuples[component_color[component_plot.index(C_cluster[i])]])/255) ,marker = 'o', facecolors = 'None'); 
         
@@ -201,16 +208,20 @@ def logpdf(x, mean, shape, df):
 #-----------------------------#
     
 # density function under continuous measure
-def func_xy_b1(x,y):
-    func = lambda b,k: 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y-b-k*x)**2/sigma**2)\
-    *pdf(np.array([b,k], meanb1, covb1, 2 ))
-    return func
-def func_xy_b2(x,y):
-    func = lambda b,k: 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y-b-k*x)**2/sigma**2)\
-    *pdf(np.array([b,k], meanb2, covb2, 2 ))
-    return func
+#def func_xy(x,y,meanb,covb,df_):
+#    func = lambda b,k: 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y-b-k*x)**2/sigma**2)\
+#    *pdf(np.array([b,k], meanb, covb, df_ ))
+#    return func
 
-
+# density function under continuous measure
+def func_xy(x,y,meanb,covb,df_):
+    def func(b,k):
+        return 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y-b-k*x)**2/sigma**2)\
+    *pdf(np.array([b,k]), np.array(meanb), np.array(covb), df_ )
+    return func
+def func_xy_int(x,y,meanb,covb,df_):
+    return integrate.dblquad(func_xy(x,y,meanb,covb,df_),\
+                             -np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf)[0]
 #-----------------------------------------------------------------   
 line_styles = ['-','-','-','-']
 # line_styles = ['-','--',':','-.']
@@ -219,8 +230,8 @@ fig = plt.figure(figsize = (16,5))
 i = 0
 for i in range(len(x_list)):
     x = x_list[i]
-    min_ = min(func([1,x],b1), func([1,x],b2))
-    max_ = max(func([1,x],b1), func([1,x],b2))
+    min_ = min(func([1,x],meanb1), func([1,x],meanb2))
+    max_ = max(func([1,x],meanb1), func([1,x],meanb2))
     if func.__name__ == 'lin_func':
         y = np.linspace(min_ -3, max_ + 3, 100)
     else:
@@ -238,14 +249,25 @@ for i in range(len(x_list)):
     plt.plot(y,fy2.ravel() ,color = 'tab:orange',label = 'NPMLE-CV',linestyle = line_styles[1])
     
     #-------------------- ditribution of ground truth needs integral
+    # CAUTION: this step may take very long time to run on a laptop
+    #----------------------------------------------------------------
     fy_true = np.zeros(len(y))
-    for j in range(len(y)):
-        if pi1 < 1:
-            fy_true[j] = integrate.dblquad(func_xy_b1(x,y[j]),-np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf)[0]\
-            +integrate.dblquad(func_xy_b2(x,y[j]),-np.inf,np.inf,lambda b: -np.inf,lambda b :np.inf)[0]
-        else:
-            fy_true[j] = integrate.dblquad(func_xy_b1(x,y[j]),-np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf)[0]
-     
+#    for j in range(len(y)):
+#        if pi1 < 1:
+#            fy_true[j] = pi1* integrate.dblquad(func_xy(x,y[j],meanb1,covb1,df_),-np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf)[0]\
+#            +(1-pi1)*integrate.dblquad(func_xy(x,y[j],meanb2,covb2,df_),-np.inf,np.inf,lambda b: -np.inf,lambda b :np.inf)[0]
+#        else:
+#            fy_true[j] = integrate.dblquad(func_xy(x,y[j],meanb1,covb1,df_),-np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf)[0]
+    if pi1 < 1:
+        with Pool(8) as integral_pool:
+            fy_true = pi1* integral_pool.starmap(func_xy_int, \
+                    zip(repeat(x), np.array(y), repeat(meanb1), repeat(covb1),repeat(df_) ))\
+                                                 + (1-pi1)*integral_pool.starmap(func_xy, \
+                    zip(repeat(x), np.array(y), repeat(meanb2), repeat(covb2),repeat(df_) ))
+    else: 
+        with Pool(8) as integral_pool:
+            fy_true = integral_pool.starmap(func_xy_int, \
+                zip(repeat(x), np.array(y), repeat(meanb1), repeat(covb1),repeat(df_) ))
     plt.plot(y,fy_true.ravel(),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
     
 #    plt.plot(y, sum(alpha3[i]*scipy.stats.norm.pdf( y-(B3[0,i]+B3[1,i]*x), 0, sigma) \
