@@ -28,8 +28,8 @@ if __name__ == "__main__":
         sigma = 0.5
         n = 500
         config = '1'
-        run_cv = '0.47'
-        cv_granuality = 0.04
+        run_cv = '0.48'
+        cv_granuality = 0.01
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
@@ -51,7 +51,7 @@ if config == '1':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [-3,0,5] #x_list for later density plots
+    x_list = [0,1,2] #x_list for later density plots
 elif config == '2':
     #----------- configuration 2-----#
     b1 = (0,1)
@@ -64,7 +64,7 @@ elif config == '2':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [-3,0,5]
+    x_list = [0,1,2]
 elif config == '3':
     #----------- configuration 3-----#
     b1 = (3,-1)
@@ -77,11 +77,11 @@ elif config == '3':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [-3,0,5] 
+    x_list = [0,1,2]
 elif config == '4':
     #----------- configuration 4-----# 
-    b1 = (0.5,2)
-    b2 = (1,2.5)
+    b1 = (-4,1)
+    b2 = (1, -1)
     b3 = (0,0)
     pi1 = 0.5
     pi2 = 0.5
@@ -90,7 +90,7 @@ elif config == '4':
     func = poly_func
     BL = -10
     BR = 10
-    x_list = [-1.5,0,1.5]
+    x_list = [0,1,2]
 elif config == '5':
     #----------- configuration 5-----#
 
@@ -104,7 +104,7 @@ elif config == '5':
     func = exp_func
     BL = -10 #BL 
     BR = 10
-    x_list = [-1.5,0,1.5]
+    x_list = [0,1,2]
 elif config == '6':
     #----------- configuration 5-----#
     b1 = (-0.5,1)
@@ -117,7 +117,7 @@ elif config == '6':
     func = sin_func
     BL = -10
     BR = 10
-    x_list = [-1.5,0,1.5]
+    x_list = [0,1,2]
 else:
     sys.exit("Wrong configuration number!")
 
@@ -128,6 +128,7 @@ fname = func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
 +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
 fname = fname.replace('.','dot')
 
+print("fname",fname)
 #-----------------------------------------------------------#
 # generate simulated dataset
 np.random.seed(626)
@@ -165,7 +166,7 @@ if run_cv == 'yes':
     pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
     idx_min = np.argmin(CV_result[:,1])
     sigma_cv = cv_sigma_list[idx_min]
-    pd.DataFrame(sigma_cv).to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
+    pd.DataFrame(np.array([sigma_cv])).to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
 else:
     #--------------------------------------------#
     #otherwise take sigma value from command line
@@ -177,23 +178,35 @@ print("sigma:{},sigma_cv:{}".format(sigma,sigma_cv))
 
 #------------------------------------------------------------#  
 # paramters of b's and pi's are only for plotting purposes
+
 test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_cv,BL,BR,fname,func)
+
 #------------------------------------------------------------#    
 
 #--------------------density plots--------------------------#
   
 #-------------------NPMLE-sigma----------------#
+np.random.seed(626)
 # needs sigma as input
+
 f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR,func)
     
-    
 #------------------------------------------------------------#    
+    
 #    
 #-------------------NPMLE-CV ----------------#
-
+np.random.seed(626)
 f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
-    
-#------------------------------------------------------------#    
+
+
+#-------------------Ridgeline plot ----------------#
+B2 = pd.read_csv('./../data/{}/B_NPMLE.csv'.format(fname), header = None).values
+alpha2 = pd.read_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), header = None).values
+x_list_dense = np.arange(-1,3,0.5)
+density_ridgeline_plot(x_list_dense,b1,b2,b3,pi1,pi2,sigma,sigma_cv,B2,alpha2,fname,func = lin_func)  
+#------------------------------------------------------------#
+
+ 
 #-------------------------   Run EM    ----------------------#
 import os
 import sys
