@@ -59,7 +59,7 @@ def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func=lin_func):
             C[i] = 3
     return X,y,C
 
-def generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma, func = lin_func):
+def generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma,df_ = 3,func = lin_func):
     '''
     generate testing data with respect to continuous G^*
     
@@ -82,8 +82,8 @@ def generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma,
     X = np.zeros((n,2))
     y = np.zeros((n,1))
     
-    rv1 = multivariate_t(meanb1,covb1,df = 3)
-    rv2 = multivariate_t(meanb2,covb2,df = 3)
+    rv1 = multivariate_t(meanb1,covb1,df = df_)
+    rv2 = multivariate_t(meanb2,covb2,df = df_)
         
     for i in range(n):
         X[i] = np.reshape([1,np.random.uniform(-1,3)],(1,2))

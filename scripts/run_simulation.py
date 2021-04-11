@@ -203,7 +203,8 @@ f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
 B2 = pd.read_csv('./../data/{}/B_NPMLE.csv'.format(fname), header = None).values
 alpha2 = pd.read_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), header = None).values
 x_list_dense = np.arange(-1,3,0.5)
-density_ridgeline_plot(x_list_dense,b1,b2,b3,pi1,pi2,sigma,sigma_cv,B2,alpha2,fname,func = lin_func)  
+
+df_fitted, df_true = density_ridgeline_plot(x_list_dense,b1,b2,b3,pi1,pi2,sigma,sigma_cv,B2,alpha2,fname,func = lin_func)  
 #------------------------------------------------------------#
 
  

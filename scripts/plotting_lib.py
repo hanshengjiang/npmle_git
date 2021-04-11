@@ -20,6 +20,7 @@ whenever funcrions in regression_func_lib changes
 
 from package_import import *
 from regression_func_lib import *
+from matplotlib import cm
 
 def lin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func = lin_func):
     
@@ -224,9 +225,9 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
                         ]
-        lgd = plt.legend(custom_lines, [r'$y = (%.2f %+.2fx)^2$ with probability $%.2f$'%(b1[0],b1[1], pi1), #,'True mixture'# 
-                                  r'$y = (%.2f %+.2fx)^2$ with probability $%.2f$'%(b2[0], b2[1], pi2),
-                                  r'$y = (%.2f %+.2fx)^2$ with probability $%.2f$'%(b3[0], b1[1], 1- pi1 - pi2)
+        lgd = plt.legend(custom_lines, [r'$y = %.2fx + ( 1%+.2fx)^2$ with probability $%.2f$'%(b1[0],b1[1], pi1), #,'True mixture'# 
+                                  r'$y = %.2fx + (1%+.2fx)^2$ with probability $%.2f$'%(b2[0], b2[1], pi2),
+                                  r'$y = %.2fx + ( 1%+.2fx)^2$ with probability $%.2f$'%(b3[0], b1[1], 1- pi1 - pi2)
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc = 2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     else:
@@ -237,8 +238,8 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
                         #Line2D([0], [0], color='black')
                         #,Line2D([0], [0], color='green')#
                         ]
-        lgd = plt.legend(custom_lines, [r'$y = (%.2f %+.2fx)^2$ with probability $%.2f$'%(b1[0],b1[1], pi1), #,'True mixture'# 
-                                  r'$y = (%.2f %+.2fx)^2$ with probability $%.2f$'%(b2[0], b2[1], pi2)
+        lgd = plt.legend(custom_lines, [r'$y = %.2fx + ( 1%+.2fx)^2$ with probability $%.2f$'%(b1[0],b1[1], pi1), #,'True mixture'# 
+                                  r'$y = %.2fx + ( 1%+.2fx)^2$ with probability $%.2f$'%(b2[0], b2[1], pi2)
                                    #'NPMLE component'#, 'OLS'#
                                  ],loc=2,bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     ax = plt.gca()
@@ -277,9 +278,9 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
         if alpha[i] >threprob:
             component_plot.append(i)
             component_color.append(temp)
-            plt.plot(t,(b[0]**2) + 0.5*b[0]*b[1]*t+0.5*b[1]*t**2+b[0]*b[1], color = tuple( np.array(RGB_tuples[temp])/255)\
+            plt.plot(t,b[0]*t+(1+b[1]*t)**2, color = tuple( np.array(RGB_tuples[temp])/255)\
                      ,linewidth = alpha[i][0]*8 ,\
-                     label = r'$y = (%.2f %+.2fx)^2$ with probability $%.2f$'%(b[0],b[1], alpha[i]))
+                     label = r'$y = %.2fx + ( 1%+.2fx)^2$ with probability $%.2f$'%(b[0],b[1], alpha[i]))
             temp = temp + 1
             print("coefficients", b, "with probability", alpha[i])
     
@@ -627,3 +628,61 @@ def sin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     ax.set_xlabel(r"index of mixing components $\beta$'s")
     ax.set_ylabel(r'mixing weights')
     plt.savefig('./../pics/%s_alpha.png'%fname, dpi = 300, bbox_inches='tight')
+    
+    
+#-----------------------------------------------------------------   
+import joypy  
+def density_ridgeline_plot(x_list,b1,b2,b3,pi1,pi2,sigma,sigma_cv,B,alpha,fname,func = lin_func):
+    
+    line_styles = ['-','-','-','-']
+    # line_styles = ['-','--',':','-.']
+    fig = plt.figure(figsize = (16,5))
+    #List of x values
+    i = 0
+    
+    # set up a uniform range of y for all x
+    min_ = -5
+    max_ = 5
+    for i in range(len(x_list)):
+        x = x_list[i]
+        min_ = min(min_, func([1,x],b1), func([1,x],b2))
+        max_ = max(max_, func([1,x],b1), func([1,x],b2))
+        
+    if func.__name__ == 'lin_func':
+        y = np.linspace(min_ -3, max_ + 3, 100)
+    else:
+        y = np.linspace(min_ -6, max_ + 6, 100)
+    #-------------------------------------------
+    
+    fitted_density_array = np.zeros((len(y),len(x_list)))
+    true_density_array = np.zeros((len(y),len(x_list)))
+    for i in range(len(x_list)):
+        x = x_list[i]
+        
+        fy_fitted = sum(alpha[i]*scipy.stats.norm.pdf( y-func([1,x],B[:,i]), 0, sigma_cv) \
+        for i in range(len(alpha)))
+        fitted_density_array[:,i] = np.array(fy_fitted).ravel()
+        
+        
+        
+        fy_true = pi1*scipy.stats.norm.pdf(y - func([1,x],b1), 0, sigma)+pi2*scipy.stats.norm.pdf(y-func([1,x],b2),0, sigma)+\
+        (1-pi1-pi2)*scipy.stats.norm.pdf(y-func([1,x],b3),0, sigma)
+        true_density_array[:,i] = np.array(fy_true).ravel()
+    #----------Rigeplot-------------------#
+    df_fitted = pd.DataFrame(fitted_density_array)
+    df_fitted.columns = x_list
+    
+    df_true = pd.DataFrame(true_density_array)
+    df_true.columns = x_list
+    
+    fig1, ax1 = joypy.joyplot(df_fitted, kind="values", overlap = 0.5, \
+                          fill = False,colormap=cm.autumn_r, x_range=y)
+    plt.savefig("./../pics/ridgeline_fitted_%s"%fname, dpi = 300, bbox_inches='tight')
+    fig2, ax2 = joypy.joyplot(df_true, kind="values", overlap = 0.5, \
+                          fill = False,colormap=cm.autumn_r, x_range=y)
+    plt.savefig("./../pics/ridgeline_true%s"%fname, dpi = 300, bbox_inches='tight')
+    return df_fitted, df_true
+    #---------------------------------------------------------------------------------
+      
+    
+    

@@ -45,7 +45,7 @@ if config == '1':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [-3,0,5] #x_list for later density plots
+    x_list = [-0.5,0,1.5] #x_list for later density plots
 
 iter = 100 # iterations of NPMLE_FW
 fname = 'continuous_' + str(meanb1[0]) + '_'+ str(meanb1[1])+'_'+ str(meanb2[0]) \
@@ -103,7 +103,18 @@ np.random.seed(626)
 f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
     
 #------------------------------------------------------------#    
-
+fig_raw = plt.figure(figsize = (8,8))
+plt.scatter(X[:,1],y,color = 'black',marker = 'o',label = 'Noisy data', facecolors = 'None');
+ax = plt.gca()
+ax.set_xlim([-2,4])
+ax.set_ylim([-4,6])
+ax.set_xlabel(r'$x$')
+ax.set_ylabel(r'$y$')
+lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
+plt.savefig('./../pics/%s_noisy.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+#plt.show();
+    
+    
 
 line_styles = ['-','-','-','-']
 # line_styles = ['-','--',':','-.']
@@ -222,6 +233,7 @@ def func_xy(x,y,meanb,covb,df_):
 def func_xy_int(x,y,meanb,covb,df_):
     return integrate.dblquad(func_xy(x,y,meanb,covb,df_),\
                              -np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf)[0]
+    
 #-----------------------------------------------------------------   
 line_styles = ['-','-','-','-']
 # line_styles = ['-','--',':','-.']
@@ -251,7 +263,7 @@ for i in range(len(x_list)):
     #-------------------- ditribution of ground truth needs integral
     # CAUTION: this step may take very long time to run on a laptop
     #----------------------------------------------------------------
-    fy_true = np.zeros(len(y))
+    # fy_true = np.zeros(len(y))
 #    for j in range(len(y)):
 #        if pi1 < 1:
 #            fy_true[j] = pi1* integrate.dblquad(func_xy(x,y[j],meanb1,covb1,df_),-np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf)[0]\
@@ -261,13 +273,14 @@ for i in range(len(x_list)):
     if pi1 < 1:
         with Pool(8) as integral_pool:
             fy_true = pi1* integral_pool.starmap(func_xy_int, \
-                    zip(repeat(x), np.array(y), repeat(meanb1), repeat(covb1),repeat(df_) ))\
+                    zip(repeat(x), y, repeat(np.array(meanb1)), repeat(np.array(covb1)),repeat(df_) ))\
                                                  + (1-pi1)*integral_pool.starmap(func_xy, \
-                    zip(repeat(x), np.array(y), repeat(meanb2), repeat(covb2),repeat(df_) ))
+                    zip(repeat(x), y, repeat(np.array(meanb2)), repeat(np.array(covb2)),repeat(df_) ))
     else: 
         with Pool(8) as integral_pool:
             fy_true = integral_pool.starmap(func_xy_int, \
-                zip(repeat(x), np.array(y), repeat(meanb1), repeat(covb1),repeat(df_) ))
+                zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(df_) ))
+    fy_true = np.array(fy_true)
     plt.plot(y,fy_true.ravel(),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
     
 #    plt.plot(y, sum(alpha3[i]*scipy.stats.norm.pdf( y-(B3[0,i]+B3[1,i]*x), 0, sigma) \
@@ -286,10 +299,8 @@ custom_lines = [
           Line2D([0], [0], color= 'tab:orange', linestyle = line_styles[1])
           # Line2D([0], [0], color= 'tab:purple', linestyle = line_styles[2]),
     ]
-if func.__name__ == 'lin_func':
-    custom_lines.append( Line2D([0], [0], color= 'tab:pink', linestyle = line_styles[3]))
 ax = plt.gca()
-lgd = ax.legend(custom_lines, ['Truth',r'NPMLE-$\sigma$','NPMLE-CV', 'EM-true',
+lgd = ax.legend(custom_lines, ['Truth',r'NPMLE-$\sigma$','NPMLE-CV',
                                 #'EM_sigma'
                          ], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 plt.savefig('./../pics/%s_multi_density.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')

@@ -15,8 +15,8 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 2:
-        run_cv = 'yes'
-        cv_granuality = 0.02
+        run_cv = 0.31 # chosen by cross-validation procedure
+        cv_granuality = 0.01
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
@@ -24,11 +24,13 @@ if __name__ == "__main__":
         cv_granuality = sys_argv[1]
 
 # read data
-df = pd.read_csv('./../data/co2-emissions-vs-gdp.csv')
-dfs = df.dropna()
-dataf = dfs.iloc[:,[5,6]].values.astype(np.float)
-# 5 population in billions; 8: CO2 in millions ; GDP percapita in 1000USD 
-region_list = dfs.iloc[:,1].values
+df = pd.read_csv('./../real_data/co2-emissions-vs-gdp_simplified.csv')
+
+
+dfs = (df.iloc[:,[2,6,7]]).dropna()
+dataf = dfs.iloc[:,[1,2]].values.astype(np.float)
+# 5 population in billions; 6: CO2 in millions ; GDP percapita in 1000USD 
+region_list = dfs.iloc[:,0].values
 # dataf[:,1:] = dataf[:,1:].astype(np.float)
 n = np.shape(dataf)[0]
 ones = np.ones((n,1))
@@ -41,12 +43,12 @@ if run_cv == 'yes':
     #define a range of candidate sigma values
     # sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
     sigma_max = 0.5
-    sigma_min = 0.1
+    sigma_min = 0.05
     sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
     
     kfold = 10 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,sigma_list,kfold,-10,10)
-    pd.DataFrame(CV_result).to_csv("./../data/CV_result_gdp.csv", index = False)
+    pd.DataFrame(CV_result).to_csv("./../real_data/CV_result_gdp.csv", index = False)
     
     idx_min = np.argmin(CV_result[:,1])
     sigma_cv = sigma_list[idx_min]
@@ -65,7 +67,6 @@ iter = 200
 threprob = 1e-2
 
 #Use Algorithm 1
-sigma = 0.31 # chosen by cross-validation procedure
 np.random.seed(26)
 f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma_cv, -10, 10)
 print("number of components", len(alpha))

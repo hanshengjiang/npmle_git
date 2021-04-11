@@ -17,7 +17,7 @@ def lin_func(x,beta):
 def poly_func(x,beta):
     x = np.array(x).ravel()
     beta = np.array(beta).ravel()
-    return (beta[0] + beta[1]*x[1])**2
+    return beta[0]*x[1] + (1+ beta[1]*x[1])**2
 
 
 def exp_func(x,beta):

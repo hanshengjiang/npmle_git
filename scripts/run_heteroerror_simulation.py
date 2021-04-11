@@ -142,7 +142,7 @@ if run_cv == 'yes':
     pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
     idx_min = np.argmin(CV_result[:,1])
     sigma_cv = cv_sigma_list[idx_min]
-    pd.DataFrame(sigma_cv).to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
+    pd.DataFrame(np.array([sigma_cv])).to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
 else:
     #--------------------------------------------#
     #otherwise take sigma value from command line
@@ -168,7 +168,7 @@ print("sigma_cv:{}".format(sigma_cv))
 #------------------------------------------------------------#    
 #    
 #-------------------2: CGM without knowing sigma----------------#
-
+np.random.seed(626)
 f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
     
 

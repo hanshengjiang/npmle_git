@@ -16,7 +16,7 @@ if __name__ == "__main__":
     # default
     if len(sys.argv) < 2:
         run_cv = 'yes'
-        cv_granuality = 0.02
+        cv_granuality = 0.01
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
@@ -24,7 +24,7 @@ if __name__ == "__main__":
         cv_granuality = sys_argv[1]
 
 #read tonedata into file
-with open('./../data/tonedata.csv', newline='') as csvfile:
+with open('./../real_data/tonedata.csv', newline='') as csvfile:
     data = np.array(list(csv.reader(csvfile)))
     data = data[1:] # remove row containing column name
 dataf = data.astype(np.float)
@@ -39,12 +39,12 @@ if run_cv == 'yes':
     #define a range of candidate sigma values
     # sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
     sigma_max = 0.5
-    sigma_min = 0.1
+    sigma_min = 0.05
     sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
     
     kfold = 10 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,sigma_list,kfold,-10,10)
-    pd.DataFrame(CV_result).to_csv("./../data/CV_result_tone.csv", index = False)
+    pd.DataFrame(CV_result).to_csv("./../real_data/CV_result_tone.csv", index = False)
     
     idx_min = np.argmin(CV_result[:,1])
     sigma_cv = sigma_list[idx_min]

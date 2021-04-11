@@ -9,8 +9,8 @@ Cross-Validation procedure for choosing sigma
 
 from package_import import *
 from alg1_lib import *
-import multiprocessing 
 from itertools import repeat
+import multiprocessing 
 from multiprocessing import Pool
 from regression_func_lib import *
 
