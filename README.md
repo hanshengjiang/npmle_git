@@ -2,7 +2,7 @@
 
 
 ## Overview
-This repository contains the implementation for the paper [NPMLE for MR](https://arxiv.org/). Most scripts are in Python except one R script. These files have been developed and tested in Python v3.7.4 enviroment with main imported packages scipy v1.6.2, numpy v1.7.2, matplotlib v3.1.1, and pandas v0.25.1.
+This repository contains the implementation for the paper [NPMLE for MR](https://arxiv.org/). Most scripts are in Python except one R script. These files have been developed and tested in Python v3.7.4 enviroment.
 
 ## Folder
 - `scripts/`: scripts that implement the NPMLE procedures (named '\*\_lib.py') and scripts that carry out simulations and real data analysis ('run\_\*.py')
