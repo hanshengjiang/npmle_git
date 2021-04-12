@@ -23,7 +23,7 @@ python run_simulation.py
 When running scripts, certain command-line arugments can be passed to the script in order to switch between different numerical settings. The users can consult the configuration part at the beginning of the scripts.
 
 ### Multiple run
-There are also scripts that can easily running multiple simulations with one-line command. For example,
+There are also scripts that can run multiple simulations with one-line command. For example,
 ```{python}
 python run_multiple_simulations.py
 ```
