@@ -15,13 +15,13 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 2:
-        run_cv = 0.31 # chosen by cross-validation procedure
+        run_cv = 0.30 # chosen by cross-validation procedure
         cv_granuality = 0.01
     # otherwise take argyments from command line
     else:
-        #sys_argv[0] is the name of the .py file
-        run_cv = sys_argv[1]
-        cv_granuality = sys_argv[1]
+        #sys_.rgv[0] is the name of the .py file
+        run_cv = sys.argv[1]
+        cv_granuality = float(sys.argv[2])
 
 # read data
 df = pd.read_csv('./../real_data/co2-emissions-vs-gdp_simplified.csv')

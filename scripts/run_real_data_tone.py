@@ -19,9 +19,9 @@ if __name__ == "__main__":
         cv_granuality = 0.01
     # otherwise take argyments from command line
     else:
-        #sys_argv[0] is the name of the .py file
-        run_cv = sys_argv[1]
-        cv_granuality = sys_argv[1]
+        #sys.argv[0] is the name of the .py file
+        run_cv = sys.argv[1]
+        cv_granuality = float(sys.argv[2])
 
 #read tonedata into file
 with open('./../real_data/tonedata.csv', newline='') as csvfile:
