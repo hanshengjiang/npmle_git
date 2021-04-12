@@ -22,4 +22,4 @@ Please cite our paper
 }
 ``` 
 ## License
-All content in this repository is licensed under the MIT license. All comments and suggestions are welcome!
+All content in this repository is licensed under the MIT license. Comments and suggestions are welcome!
