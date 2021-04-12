@@ -97,7 +97,7 @@ else:
 iter = 100 # iterations of NPMLE_FW
 
 
-fname = 'hetero_' + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
+fname = 'hetero_' + func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
 +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
 fname = fname.replace('.','dot')
 
@@ -180,8 +180,8 @@ os.system("Rscript " + "run_regmixEM.R " + fname + ' hetero_error')
 #-------------------Read EM estimated results ----------------#
 B4 = pd.read_csv('./../data/{}/B_EM.csv'.format(fname), header = None).values
 alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
-sigma = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values
-sigma_array4 = sigma.ravel()
+# Note: different from homoerror case, sigma is an array here
+sigma = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values.ravel()
 #------------------------------------------------------------# 
 
 

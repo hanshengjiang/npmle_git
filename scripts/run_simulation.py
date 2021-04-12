@@ -151,7 +151,7 @@ pd.DataFrame(y).to_csv('./../data/{}/y.csv'.format(fname), index = False, header
 pd.DataFrame(np.reshape(np.array(num_component), (1,1))).to_csv('./../data/{}/num_component.csv'.format(fname), index = False, header = False)
 pd.DataFrame(alpha_true).to_csv('./../data/{}/alpha_true.csv'.format(fname), index = False, header = False)
 pd.DataFrame(B_true).to_csv('./../data/{}/B_true.csv'.format(fname), index = False, header = False)
-pd.DataFrame(sigma_list).to_csv('./../data/{}/sigma_true.csv'.format(fname), index = False, header = False)
+pd.DataFrame(sigma_list[:len(alpha_true)]).to_csv('./../data/{}/sigma_true.csv'.format(fname), index = False, header = False)
 #-----------------------------------------------------------#    
 
 if run_cv == 'yes':
@@ -166,7 +166,7 @@ if run_cv == 'yes':
     pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
     idx_min = np.argmin(CV_result[:,1])
     sigma_cv = cv_sigma_list[idx_min]
-    pd.DataFrame(np.array([sigma_cv])).to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
+    
 else:
     #--------------------------------------------#
     #otherwise take sigma value from command line
@@ -197,15 +197,9 @@ f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR,func)
 #-------------------NPMLE-CV ----------------#
 np.random.seed(626)
 f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
+pd.DataFrame(np.repeat(sigma_cv,len(alpha2))).\
+        to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
 
-
-#-------------------Ridgeline plot ----------------#
-B2 = pd.read_csv('./../data/{}/B_NPMLE.csv'.format(fname), header = None).values
-alpha2 = pd.read_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), header = None).values
-x_list_dense = np.arange(-1,3,0.5)
-
-df_fitted, df_true = density_ridgeline_plot(x_list_dense,b1,b2,b3,pi1,pi2,sigma,sigma_cv,B2,alpha2,fname,func = lin_func)  
-#------------------------------------------------------------#
 
  
 #-------------------------   Run EM    ----------------------#
@@ -216,8 +210,7 @@ os.system("Rscript " + "run_regmixEM.R " + fname + ' homo_error')
 #-------------------Read EM estimated results ----------------#
 B4 = pd.read_csv('./../data/{}/B_EM.csv'.format(fname), header = None).values
 alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
-sigma = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values
-sigma_array4 = np.repeat(sigma, num_component)
+sigma_array4 = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values.ravel()
 #------------------------------------------------------------# 
 
 

@@ -163,8 +163,8 @@ def lin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func = li
     fig3 = plt.figure(figsize = (6,5))
     ax = plt.gca()
     ax.set_xlabel(r"Iteration")
-    ax.set_ylabel(r'$C_L$')
-    plt.plot(L_rec);
+    ax.set_ylabel(r'$\log C_L$')
+    plt.plot(np.log(np.array(L_rec)));
     
     #mixing weights
     fig4 = plt.figure(figsize = (6,5))
@@ -320,8 +320,8 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     fig3 = plt.figure(figsize = (6,5))
     ax = plt.gca()
     ax.set_xlabel(r"Iteration")
-    ax.set_ylabel(r'$C_L$')
-    plt.plot(L_rec);
+    ax.set_ylabel(r'$\log C_L$')
+    plt.plot(np.log(np.array(L_rec)));
     
     
     #mixing weights
@@ -478,8 +478,8 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     fig3 = plt.figure(figsize = (6,5))
     ax = plt.gca()
     ax.set_xlabel(r"Iteration")
-    ax.set_ylabel(r'$C_L$')
-    plt.plot(L_rec);
+    ax.set_ylabel(r'$\log C_L$')
+    plt.plot(np.log(np.array(L_rec)));
      
     
     fig4 = plt.figure(figsize = (6,5))
@@ -635,8 +635,8 @@ def sin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     fig3 = plt.figure(figsize = (6,5))
     ax = plt.gca()
     ax.set_xlabel(r"Iteration")
-    ax.set_ylabel(r'$C_L$')
-    plt.plot(L_rec);
+    ax.set_ylabel(r'$\log C_L$')
+    plt.plot(np.log(np.array(L_rec)));
     
     
     fig4 = plt.figure(figsize = (6,5))

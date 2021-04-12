@@ -34,7 +34,7 @@ elif exp_type == 'discrete_cv':
     os.system("python " + filename + params_ + '&')
     
 elif exp_type == 'hetero_discrete':
-    # re-run cross-validation
+    #  directly run with sigma selected by CV 
     params_ = ' '+'0.3' + ' '+'0.5' + ' '+'0.7' + ' ' + \
     '500' + ' ' + '1' + ' ' + '0.3'+ ' ' 
     os.system("python " + filename + params_ + '&')
@@ -58,7 +58,7 @@ elif exp_type == 'hetero_discrete_cv':
     os.system("python " + filename + params_ + '&')
         
 elif exp_type == 'poly_cv':
-    # re-run cross-validation
+    #  directly run with sigma selected by CV 
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '4' + ' ' + 'yes'+ ' ' 
     os.system("python " + filename + params_ + '&')
 
@@ -67,10 +67,9 @@ elif exp_type == 'poly':
    
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '4' + ' ' + '0.48'+ ' ' 
     os.system("python " + filename + params_ + '&')
-    
-    
+      
 elif exp_type == 'exp_cv':
-    # re-run cross-validation
+    #  directly run with sigma selected by CV 
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '5' + ' ' + 'yes'+ ' ' 
     os.system("python " + filename + params_ + '&')
     
@@ -80,7 +79,7 @@ elif exp_type == 'exp':
     os.system("python " + filename + params_ + '&')
     
 elif exp_type == 'sin_cv':
-    # re-run cross-validation
+    #  directly run with sigma selected by CV 
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '6' + ' ' + 'yes'+ ' ' 
     os.system("python " + filename + params_ + '&')
 

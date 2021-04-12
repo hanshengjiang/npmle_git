@@ -159,7 +159,8 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR, func = lin_func):
         
         # calculate the "curvature constant"
         curvature_temp = np.sum(np.log(1/f)) -  np.sum(np.log(1/f_old)) + np.dot(f.T,1/f_old) -np.dot(f_old.T,1/f_old)
-        curvature_rec.append(curvature_temp * (t+2)**2/2)
+        curvature_rec.append(float(curvature_temp) * (t+2)**2/2)
+        print("C_L", t, ":",curvature_rec[-1])
         
         #prune P by deleting columns corresponding to very small alpha
         P_prune = np.zeros((n,1))

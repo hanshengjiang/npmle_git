@@ -59,6 +59,8 @@ def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func=lin_func):
             C[i] = 3
     return X,y,C
 
+
+
 def generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma,df_ = 3,func = lin_func):
     '''
     generate testing data with respect to continuous G^*
@@ -96,6 +98,7 @@ def generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma,
         # print("b",b)
         y[i] = func(X[i],b) + np.random.normal(0,sigma)
     return X,y
+
 
 
 def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_est,BL,BR,fname,func=lin_func):
