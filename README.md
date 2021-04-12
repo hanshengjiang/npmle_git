@@ -10,11 +10,24 @@ This repository contains the implementation for the paper [NPMLE for MR](https:/
 - `pics/`: various visualization results
 - `real_data/`: data .csv files for real data analysis
 
-## Usages
+## Usage
+### Single run
+Each script in `scripts/` with names starting with 'run' implements one run of a certain numerical experiment. The users can directly run the Python script in their own IDE or alternatively use commands in the terminal. For example, 
 ```{python}
-Rscript ./simulations/pfer_small.R 4 1
+python run_real_data_gdp.py
 ```
+or
+```{python}
+python run_simulation.py 
+```
+When running scripts, certain command-line arugments can be passed to the script in order to switch between different numerical settings. The users can consult the configuration part at the beginning of the scripts.
 
+### Multiple run
+There are also scripts that can easily running multiple simulations with one-line command. For example,
+```{python}
+python run_multiple_simulations.py
+```
+There are a few command-line arugments can be passed to this script as well.
 
 ## License
 All content in this repository is licensed under the MIT license. Comments and suggestions are welcome!
