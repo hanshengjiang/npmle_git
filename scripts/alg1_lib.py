@@ -111,7 +111,7 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR, func = lin_func):
     p = len(X[0])
     
     L_rec = []
-    
+    curvature_rec = []
     #------------initialize beta0 and f-------------#
     beta0 = np.reshape(np.dot(np.matmul(linalg.inv(np.matmul(X.T,X)),X.T),y),(p,1)) #beta0 is OLS solution
     # caution ols might not be the best choice for initialization
@@ -153,8 +153,13 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR, func = lin_func):
         P = np.append(P,g,axis = 1)
         B = np.append(B,beta_sol,axis = 1)
         
+        f_old = np.copy(f)
         #fully corrective step wrt current active set P
         f, alpha = FW_FC(f,alpha,P,n)
+        
+        # calculate the "curvature constant"
+        curvature_temp = np.sum(np.log(1/f)) -  np.sum(np.log(1/f_old)) + np.dot(f.T,1/f_old) -np.dot(f_old.T,1/f_old)
+        curvature_rec.append(curvature_temp * (t+2)**2/2)
         
         #prune P by deleting columns corresponding to very small alpha
         P_prune = np.zeros((n,1))
@@ -181,13 +186,16 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR, func = lin_func):
         temp = np.sum(np.log(1/f))
         L_rec.append(temp)
         
+        
+        
         # early stopping
         gap_thresh = n*0.001
         if (t>50) and (dual_gap_rec[t] < gap_thresh) and (dual_gap_rec[t-1] < gap_thresh) and (dual_gap_rec[t-2] < gap_thresh):
             print("stop at iteration", t)
-            return f, B, alpha, L_rec, temp
-    
-    return f, B, alpha, L_rec, temp
+            # return f, B, alpha, L_rec, temp
+            return f, B, alpha, curvature_rec, temp
+    # return f, B, alpha, L_rec, temp 
+    return f, B, alpha, curvature_rec, temp 
 
 
 

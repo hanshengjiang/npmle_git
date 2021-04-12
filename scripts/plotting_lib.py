@@ -161,15 +161,18 @@ def lin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func = li
       
     #MLE 
     fig3 = plt.figure(figsize = (6,5))
-    plt.plot(L_rec);plt.title("neg-log likelihood over iterations");
+    ax = plt.gca()
+    ax.set_xlabel(r"Iteration")
+    ax.set_ylabel(r'$C_L$')
+    plt.plot(L_rec);
     
     #mixing weights
     fig4 = plt.figure(figsize = (6,5))
     plt.plot(-np.sort(-alpha.ravel()),marker = 'o', linestyle = '--')
     plt.title("mixing weights in descending order");
     ax = plt.gca()
-    ax.set_xlabel(r"index of mixing components $\beta$'s")
-    ax.set_ylabel(r'mixing weights')
+    ax.set_xlabel(r"Index of mixing components $\beta$'s")
+    ax.set_ylabel(r'Mixing weights')
     plt.savefig('./../pics/%s_alpha.png'%fname, dpi = 300, bbox_inches='tight')
 
 #-------------------------------------------------------------------#
@@ -313,9 +316,14 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     #lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
     plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
+    #MLE 
     fig3 = plt.figure(figsize = (6,5))
-    plt.plot(L_rec);plt.title("neg-log likelihood over iterations");  
-   
+    ax = plt.gca()
+    ax.set_xlabel(r"Iteration")
+    ax.set_ylabel(r'$C_L$')
+    plt.plot(L_rec);
+    
+    
     #mixing weights
     fig4 = plt.figure(figsize = (6,5))
     plt.plot(-np.sort(-alpha.ravel()),marker = 'o', linestyle = '--')
@@ -466,8 +474,13 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     #plt.show();
 
     
+    #MLE 
     fig3 = plt.figure(figsize = (6,5))
-    plt.plot(L_rec);plt.title("neg-log likelihood over iterations");    
+    ax = plt.gca()
+    ax.set_xlabel(r"Iteration")
+    ax.set_ylabel(r'$C_L$')
+    plt.plot(L_rec);
+     
     
     fig4 = plt.figure(figsize = (6,5))
     plt.plot(-np.sort(-alpha.ravel()),marker = 'o', linestyle = '--')
@@ -618,8 +631,13 @@ def sin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     #plt.show();
 
     
+    #MLE 
     fig3 = plt.figure(figsize = (6,5))
-    plt.plot(L_rec);plt.title("neg-log likelihood over iterations");    
+    ax = plt.gca()
+    ax.set_xlabel(r"Iteration")
+    ax.set_ylabel(r'$C_L$')
+    plt.plot(L_rec);
+    
     
     fig4 = plt.figure(figsize = (6,5))
     plt.plot(-np.sort(-alpha.ravel()),marker = 'o', linestyle = '--')
@@ -632,8 +650,22 @@ def sin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     
 #-----------------------------------------------------------------   
 import joypy  
-def density_ridgeline_plot(x_list,b1,b2,b3,pi1,pi2,sigma,sigma_cv,B,alpha,fname,func = lin_func):
+def density_ridgeline_plot(x_list,sigma,B,alpha,fname,func = lin_func, approach = 'True'):
     
+    
+    '''
+    Input
+    -----
+    sigma (k,) np array
+    B (p,k)
+    alpha (k,)
+    fname string
+    
+    Output
+    ------
+    Ridgeline plots
+    
+    '''
     line_styles = ['-','-','-','-']
     # line_styles = ['-','--',':','-.']
     fig = plt.figure(figsize = (16,5))
@@ -641,47 +673,46 @@ def density_ridgeline_plot(x_list,b1,b2,b3,pi1,pi2,sigma,sigma_cv,B,alpha,fname,
     i = 0
     
     # set up a uniform range of y for all x
-    min_ = -5
+    min_ = -1
     max_ = 5
     for i in range(len(x_list)):
         x = x_list[i]
-        min_ = min(min_, func([1,x],b1), func([1,x],b2))
-        max_ = max(max_, func([1,x],b1), func([1,x],b2))
+        min_ = min(min_, min([func([1,x],B[:,i]) for i in range(len(B[0]))]))
+        max_ = max(max_, max([func([1,x],B[:,i]) for i in range(len(B[0]))]))
         
     if func.__name__ == 'lin_func':
-        y = np.linspace(min_ -3, max_ + 3, 100)
+        y = np.linspace(min_ -1, max_ + 1, 100)
     else:
-        y = np.linspace(min_ -6, max_ + 6, 100)
+        y = np.linspace(min_ -3, max_ + 3, 100)
     #-------------------------------------------
     
-    fitted_density_array = np.zeros((len(y),len(x_list)))
-    true_density_array = np.zeros((len(y),len(x_list)))
+    density_array = np.zeros((len(y),len(x_list)))
+
     for i in range(len(x_list)):
         x = x_list[i]
-        
-        fy_fitted = sum(alpha[i]*scipy.stats.norm.pdf( y-func([1,x],B[:,i]), 0, sigma_cv) \
-        for i in range(len(alpha)))
-        fitted_density_array[:,i] = np.array(fy_fitted).ravel()
-        
-        
-        
-        fy_true = pi1*scipy.stats.norm.pdf(y - func([1,x],b1), 0, sigma)+pi2*scipy.stats.norm.pdf(y-func([1,x],b2),0, sigma)+\
-        (1-pi1-pi2)*scipy.stats.norm.pdf(y-func([1,x],b3),0, sigma)
-        true_density_array[:,i] = np.array(fy_true).ravel()
+        fy = sum(alpha[j]*scipy.stats.norm.pdf(y-func([1,x],B[:,j]), 0, sigma[j]) \
+        for j in range(len(alpha)))
+        density_array[:,i] = np.array(fy).ravel()
+            
+    
     #----------Rigeplot-------------------#
-    df_fitted = pd.DataFrame(fitted_density_array)
-    df_fitted.columns = x_list
+    df = pd.DataFrame(density_array)
+    df.columns = x_list
     
-    df_true = pd.DataFrame(true_density_array)
-    df_true.columns = x_list
+    # choose a few index to be included in the labels
+    sparse_index = np.append(np.arange(0,100,25),99) # gap 20 can be adjusted 
+    y_labeled = np.around(y[sparse_index], decimals = 1)
+    # x_label = [x if int(10*x)%20 ==0 else None for x in x_list ]
+ 
+    fig1, ax1 = joypy.joyplot(df, kind="values", overlap = 0.5 \
+                          ,x_range = list(range(100)), ylabels = False\
+                          ,background='k', linecolor="w",grid=False,  linewidth=1.5,fill=False \
+                          )
+    ax1[-1].set_xticks(sparse_index)
+    ax1[-1].set_xticklabels(y_labeled)
     
-    fig1, ax1 = joypy.joyplot(df_fitted, kind="values", overlap = 0.5, \
-                          fill = False,colormap=cm.autumn_r, x_range=y)
-    plt.savefig("./../pics/ridgeline_fitted_%s"%fname, dpi = 300, bbox_inches='tight')
-    fig2, ax2 = joypy.joyplot(df_true, kind="values", overlap = 0.5, \
-                          fill = False,colormap=cm.autumn_r, x_range=y)
-    plt.savefig("./../pics/ridgeline_true%s"%fname, dpi = 300, bbox_inches='tight')
-    return df_fitted, df_true
+    plt.savefig("./../pics/ridgeline_{}_{}".format(fname, approach), \
+                dpi = 300, bbox_inches='tight')
     #---------------------------------------------------------------------------------
       
     
