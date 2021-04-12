@@ -12,12 +12,12 @@ noise_type <- args[2]
 
 # process arguments
 if (length(args) < 2){
-  # default calues
+  # default values
   fname <- "lin_0_1_2_1_30percent"
   noise_type <- "homo_error"
 }
 
-# set up arbvar
+# set up 'arbvar' of function regmixEM
 # arbvar will decide whether different components have different sigma in EM
 if(noise_type == "hetero_error"){
   arbvar_sign <- TRUE
@@ -59,7 +59,15 @@ write.table(alpha_EM, file = file.path(dir, "alpha_EM.csv"),sep = ",",row.names 
 B_EM <- reg_outcome$beta
 write.table(B_EM, file = file.path(dir, "B_EM.csv"),sep = ",",row.names = FALSE, col.names  = FALSE)
 
-sigma_EM <- reg_outcome$sigma
+if(noise_type == "homo_error"){
+# turn into an sigma array
+  sigma_EM <- rep(reg_outcome$sigma, k) 
+}else if(noise_type == "hetero_error"){
+  sigma_EM <- reg_outcome$sigma
+}else {
+  stop("Unknown noise types!")
+}
 write.table(sigma_EM, file = file.path(dir, "sigma_EM.csv"),sep = ",",row.names = FALSE, col.names  = FALSE)
 
 #---------------------------------------------------------------------------#
+
