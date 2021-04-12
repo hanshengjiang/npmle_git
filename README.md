@@ -27,7 +27,7 @@ There are also scripts that can run multiple simulations with one-line command. 
 ```{python}
 python run_multiple_simulations.py
 ```
-There are a few command-line arugments can be passed to this script as well.
+There are a few command-line arugments available for this script as well.
 
 ## License
 All content in this repository is licensed under the MIT license. Comments and suggestions are welcome!
