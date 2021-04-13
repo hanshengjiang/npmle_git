@@ -23,7 +23,7 @@ python run_simulation.py
 When running scripts, certain command-line arguments can be passed to the script in order to switch among different simulation settings. The users can consult the configuration part at the beginning of the scripts for all arguments available.
 
 ### Multiple run
-There are also scripts that can run multiple simulations with a one-line command. For example,
+There are also scripts in `scripts/` that can run multiple simulations with a one-line command. For example,
 ```
 python run_multiple_simulations.py
 ```
