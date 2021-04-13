@@ -6,7 +6,7 @@ This repository contains the implementation for the paper [NPMLE for MR](https:/
 
 ## Folder
 - `scripts/`: (1) scripts (named '\*\_lib.py') that implement the NPMLE procedures as well as set-ups for simulation and plotting; (2) scripts (named 'run\_\*.py') that carry out simulations and real data analysis
-- `data/`: various results in numeric form and storaged in .csv files
+- `data/`: various results in numeric form and stored in .csv files
 - `pics/`: various visualization results
 - `real_data/`: data .csv files for real data analysis
 
