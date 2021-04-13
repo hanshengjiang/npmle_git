@@ -62,7 +62,7 @@ if config == '1':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [-3,0,5] #x_list for later density plots
+    x_list = [-1.5,0,1.5] #x_list for later density plots
 elif config == '2':
     #----------- configuration 2-----#
     b1 = (0,1)
@@ -75,7 +75,7 @@ elif config == '2':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [-3,0,5]
+    x_list = [-1.5,0,1.5]
 elif config == '3':
     #----------- configuration 3-----#
     b1 = (3,-1)
@@ -88,7 +88,7 @@ elif config == '3':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [-3,0,5] 
+    x_list = [-1.5,0,1.5]
 else:
     sys.exit("Wrong configuration number!")
 
@@ -181,7 +181,7 @@ os.system("Rscript " + "run_regmixEM.R " + fname + ' hetero_error')
 B4 = pd.read_csv('./../data/{}/B_EM.csv'.format(fname), header = None).values
 alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
 # Note: different from homoerror case, sigma is an array here
-sigma = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values.ravel()
+sigma_array4 = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values.ravel()
 #------------------------------------------------------------# 
 
 
