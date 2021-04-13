@@ -12,7 +12,7 @@ This repository contains the implementation for the paper [NPMLE for MR](https:/
 
 ## Usage
 ### Single run
-Each script in `scripts/` starting with 'run_' implements one run of a certain numerical experiment. The users can directly run the Python script in their own IDE or alternatively use commands in the terminal. For example, 
+Each script starting with 'run_' in `scripts/` is used for one run of a certain numerical experiment. The users can directly run the Python script in their own IDE or alternatively use commands in the terminal. For example, 
 ```{python}
 python run_real_data_gdp.py
 ```
