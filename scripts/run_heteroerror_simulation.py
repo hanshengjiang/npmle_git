@@ -36,7 +36,7 @@ if __name__ == "__main__":
         sigma_list = [0.3,0.5,1] # hetero errors
         n = 500
         config = '3'
-        run_cv = 'yes' # note this depends on sigma_list
+        run_cv = 0.34 # note this depends on sigma_list
         cv_granuality = 0.01
     # otherwise take argyments from command line
     else:
