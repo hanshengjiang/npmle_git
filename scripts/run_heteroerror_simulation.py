@@ -33,10 +33,10 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 6:
-        sigma_list = [0.3,0.5,0.7] # hetero errors
+        sigma_list = [0.3,0.5,1] # hetero errors
         n = 500
         config = '3'
-        run_cv = '0.34'
+        run_cv = 'yes' # note this depends on sigma_list
         cv_granuality = 0.01
     # otherwise take argyments from command line
     else:
