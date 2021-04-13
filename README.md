@@ -1,4 +1,4 @@
-# A Nonparametric Maximum Likelihood Approach to Mixture of Regressions
+# A Nonparametric Maximum Likelihood Approach to Mixture of Regression
 
 
 ## Overview
