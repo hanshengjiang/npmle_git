@@ -13,18 +13,18 @@ This repository contains the implementation for the paper [NPMLE for MR](https:/
 ## Usage
 ### Single run
 Each script starting with 'run_' in `scripts/` is used for one run of a certain numerical experiment. The users can directly run the Python script in their own IDE or alternatively use commands in the terminal. For example, 
-```{python}
+```
 python run_real_data_gdp.py
 ```
 or
-```{python}
+```
 python run_simulation.py 
 ```
 When running scripts, certain command-line arugments can be passed to the script in order to switch between different simulation settings. The users can consult the configuration part at the beginning of the scripts.
 
 ### Multiple run
 There are also scripts that can run multiple simulations with a one-line command. For example,
-```{python}
+```
 python run_multiple_simulations.py
 ```
 There are a few command-line arugments available for this script as well.
