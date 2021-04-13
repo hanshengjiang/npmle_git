@@ -20,14 +20,14 @@ or
 ```
 python run_simulation.py 
 ```
-When running scripts, certain command-line arugments can be passed to the script in order to switch between different simulation settings. The users can consult the configuration part at the beginning of the scripts.
+When running scripts, certain command-line arguments can be passed to the script in order to switch between different simulation settings. The users can consult the configuration part at the beginning of the scripts.
 
 ### Multiple run
 There are also scripts that can run multiple simulations with a one-line command. For example,
 ```
 python run_multiple_simulations.py
 ```
-There are a few command-line arugments available for this script as well.
+There are a few command-line arguments available for this script as well.
 
 ## License
 All content in this repository is licensed under the MIT license. Comments and suggestions are welcome!
