@@ -165,6 +165,7 @@ def lin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func = li
     ax.set_xlabel(r"Iteration")
     ax.set_ylabel(r'$\log C_L$')
     plt.plot(np.log(np.array(L_rec)));
+    plt.savefig('./../pics/%s_C_L.png'%fname, dpi = 300, bbox_inches='tight')
     
     #mixing weights
     fig4 = plt.figure(figsize = (6,5))
@@ -322,7 +323,7 @@ def poly_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     ax.set_xlabel(r"Iteration")
     ax.set_ylabel(r'$\log C_L$')
     plt.plot(np.log(np.array(L_rec)));
-    
+    plt.savefig('./../pics/%s_C_L.png'%fname, dpi = 300, bbox_inches='tight')
     
     #mixing weights
     fig4 = plt.figure(figsize = (6,5))
@@ -480,7 +481,7 @@ def exp_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     ax.set_xlabel(r"Iteration")
     ax.set_ylabel(r'$\log C_L$')
     plt.plot(np.log(np.array(L_rec)));
-     
+    plt.savefig('./../pics/%s_C_L.png'%fname, dpi = 300, bbox_inches='tight')
     
     fig4 = plt.figure(figsize = (6,5))
     plt.plot(-np.sort(-alpha.ravel()),marker = 'o', linestyle = '--')
@@ -637,7 +638,7 @@ def sin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     ax.set_xlabel(r"Iteration")
     ax.set_ylabel(r'$\log C_L$')
     plt.plot(np.log(np.array(L_rec)));
-    
+    plt.savefig('./../pics/%s_C_L.png'%fname, dpi = 300, bbox_inches='tight')
     
     fig4 = plt.figure(figsize = (6,5))
     plt.plot(-np.sort(-alpha.ravel()),marker = 'o', linestyle = '--')
