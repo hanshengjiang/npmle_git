@@ -20,7 +20,7 @@ if __name__ == "__main__":
         sigma = 0.5
         n = 500
         config = '1'
-        run_cv = '0.5'
+        run_cv = '1.04'
         cv_granuality = 0.04
         
     # otherwise take argyments from command line
@@ -45,7 +45,7 @@ if config == '1':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [-0.5,0,1.5] #x_list for later density plots
+    x_list = [-1.5,0,1.5] #x_list for later density plots
 
 iter = 100 # iterations of NPMLE_FW
 fname = 'continuous_' + str(meanb1[0]) + '_'+ str(meanb1[1])+'_'+ str(meanb2[0]) \
@@ -232,7 +232,7 @@ def func_xy(x,y,meanb,covb,df_):
     return func
 def func_xy_int(x,y,meanb,covb,df_):
     return integrate.dblquad(func_xy(x,y,meanb,covb,df_),\
-                             -np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf)[0]
+                             -np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf, epsabs = 1e-3)[0]
     
 #-----------------------------------------------------------------   
 line_styles = ['-','-','-','-']
