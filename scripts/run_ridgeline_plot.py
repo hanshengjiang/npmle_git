@@ -100,7 +100,20 @@ elif config == '5':
     BR = 10
     x_list = [0,1,2]
 elif config == '6':
-    #----------- configuration 5-----#
+    #----------- configuration 6-----#
+    b1 = (-0.5,1)
+    b2 = (-1.5,1.5)
+    b3 = (0,0)
+    pi1 = 0.5
+    pi2 = 0.5
+    B_true = [[-0.5,-1.5],[1,1.5]]
+    alpha_true = [0.5,0.5]
+    func = sin_func
+    BL = -10
+    BR = 10
+    x_list = [0,1,2]
+elif config == '7':
+    #----------- continuous case-----#
     b1 = (-0.5,1)
     b2 = (-1.5,1.5)
     b3 = (0,0)
@@ -115,9 +128,10 @@ elif config == '6':
 else:
     sys.exit("Wrong configuration number!")
 
-fname = func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
-+'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
-fname = fname.replace('.','dot')
+if config != '7':
+    fname = func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
+    +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
+    fname = fname.replace('.','dot')
 
 if error_type == 'hetero':
     fname = 'hetero_'+fname
