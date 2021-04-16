@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # default
     if len(sys.argv) < 3:
         config = '1'
-        error_type = 'homo'
+        error_type = 'homo' # error type can be hetero for config = 1,2,3
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
@@ -45,7 +45,6 @@ if config == '1':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [0,1,2] #x_list for later density plots
 elif config == '2':
     #----------- configuration 2-----#
     b1 = (0,1)
@@ -58,7 +57,6 @@ elif config == '2':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [0,1,2]
 elif config == '3':
     #----------- configuration 3-----#
     b1 = (3,-1)
@@ -71,7 +69,6 @@ elif config == '3':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [0,1,2]
 elif config == '4':
     #----------- configuration 4-----# 
     b1 = (-4,1)
@@ -84,7 +81,6 @@ elif config == '4':
     func = poly_func
     BL = -10
     BR = 10
-    x_list = [0,1,2]
 elif config == '5':
     #----------- configuration 5-----#
 
@@ -98,7 +94,6 @@ elif config == '5':
     func = exp_func
     BL = -10 #BL 
     BR = 10
-    x_list = [0,1,2]
 elif config == '6':
     #----------- configuration 6-----#
     b1 = (-0.5,1)
@@ -111,7 +106,6 @@ elif config == '6':
     func = sin_func
     BL = -10
     BR = 10
-    x_list = [0,1,2]
 elif config == '7':
     #----------- continuous case-----#
     b1 = (-0.5,1)
@@ -124,7 +118,6 @@ elif config == '7':
     func = sin_func
     BL = -10
     BR = 10
-    x_list = [0,1,2]
 else:
     sys.exit("Wrong configuration number!")
 

@@ -1,4 +1,5 @@
 # set up working directory as the location of this script
+# if you are running this in rstudio
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # check if R package "mixtools" is installed
@@ -13,8 +14,16 @@ noise_type <- args[2]
 # process arguments
 if (length(args) < 2){
   # default values
-  fname <- "lin_0_1_2_1_30percent"
-  noise_type <- "homo_error"
+  
+  #----- either heteroerror ---
+  fname <- "hetero_lin_0_1_2_1_30percent"
+  noise_type <- "hetero_error"
+  #----------------------------
+  
+  #----- or homoerror --------
+  # fname <- "lin_0_1_2_1_30percent"
+  # noise_type <- "homo_error"
+  #----------------------------
 }
 
 # set up 'arbvar' of function regmixEM
