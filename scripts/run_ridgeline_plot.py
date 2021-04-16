@@ -108,16 +108,19 @@ elif config == '6':
     BR = 10
 elif config == '7':
     #----------- continuous case-----#
-    b1 = (-0.5,1)
-    b2 = (-1.5,1.5)
-    b3 = (0,0)
-    pi1 = 0.5
-    pi2 = 0.5
-    B_true = [[-0.5,-1.5],[1,1.5]]
-    alpha_true = [0.5,0.5]
-    func = sin_func
+    meanb1 = [1,0.5]
+    covb1 = np.array([[0.5,0.2],[0.2,0.3]])
+    meanb2 = [2,3]
+    covb2 = np.array([[0.5,0.2],[0.2,0.3]])
+    pi1 = 1.0
+    df_ = 3
+    
+    func = lin_func
     BL = -10
     BR = 10
+    fname = 'continuous_' + str(meanb1[0]) + '_'+ str(meanb1[1])+'_'+ str(meanb2[0]) \
+        +'_' +str(meanb2[1])+'_'+str(int(100*pi1)) +'percent'
+    fname = fname.replace('.','dot')  
 else:
     sys.exit("Wrong configuration number!")
 
@@ -133,12 +136,24 @@ if error_type == 'hetero':
 x_list_dense = np.arange(-1,3,0.1)
 
 #----------------------True-------------------------------------------#
+
 B1 = pd.read_csv('./../data/{}/B_true.csv'.format(fname), header = None).values
 alpha1 = pd.read_csv('./../data/{}/alpha_true.csv'.format(fname), header = None).values
 sigma = pd.read_csv('./../data/{}/sigma_true.csv'.format(fname), header = None).values.ravel()
 
+# set up range of y 
+min_ = -1
+max_ = 5
+for i in range(len(x_list_dense)):
+    x = x_list_dense[i]
+    min_ = min(min_, min([func([1,x],B1[:,i]) for i in range(len(B1[0]))]))
+    max_ = max(max_, max([func([1,x],B1[:,i]) for i in range(len(B1[0]))]))
+min_ = float(int(min_))
+max_ = float(int(max_))
+print(min_, max_)
+
 df_NPMLE = density_ridgeline_plot(x_list_dense,sigma,\
-                                    B1,alpha1,fname,func = lin_func, approach = 'true')  
+                                    B1,alpha1,fname,min_,max_,func , approach = 'true')  
 
 
 #----------------------NPMLE-CV --------------------------------------#
@@ -147,15 +162,16 @@ alpha2 = pd.read_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), header = None
 sigma_cv = pd.read_csv('./../data/{}/sigma_CV.csv'.format(fname), header = None).values.ravel()
 
 df_NPMLE = density_ridgeline_plot(x_list_dense,sigma_cv,\
-                                    B2,alpha2,fname,func = lin_func, approach = 'NPMLE-CV')  
+                                    B2,alpha2,fname, min_,max_,func, approach = 'NPMLE-CV')  
 
 
 #-----------------------   EM-true  -------------------------------------#
-B4 = pd.read_csv('./../data/{}/B_EM.csv'.format(fname), header = None).values
-alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
-sigma_EM = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values.ravel()
-
-df_NPMLE = density_ridgeline_plot(x_list_dense,sigma_EM,\
-                                    B4,alpha4,fname,func = lin_func, approach = 'EM-true')  
+if func.__name__ == 'lin_func':
+    B4 = pd.read_csv('./../data/{}/B_EM.csv'.format(fname), header = None).values
+    alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
+    sigma_EM = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values.ravel()
+    
+    df_NPMLE = density_ridgeline_plot(x_list_dense,sigma_EM,\
+                                        B4,alpha4,fname, min_,max_,func, approach = 'EM-true')  
 
 #-------------------------------------------------------------------#

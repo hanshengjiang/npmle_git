@@ -651,7 +651,7 @@ def sin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func):
     
 #-----------------------------------------------------------------   
 import joypy  
-def density_ridgeline_plot(x_list,sigma,B,alpha,fname,func = lin_func, approach = 'True'):
+def density_ridgeline_plot(x_list,sigma,B,alpha,fname, min_,max_,func = lin_func, approach = 'True'):
     
     
     '''
@@ -674,13 +674,8 @@ def density_ridgeline_plot(x_list,sigma,B,alpha,fname,func = lin_func, approach 
     i = 0
     
     # set up a uniform range of y for all x
-    min_ = -1
-    max_ = 5
-    for i in range(len(x_list)):
-        x = x_list[i]
-        min_ = min(min_, min([func([1,x],B[:,i]) for i in range(len(B[0]))]))
-        max_ = max(max_, max([func([1,x],B[:,i]) for i in range(len(B[0]))]))
-        
+    
+    
     if func.__name__ == 'lin_func':
         y = np.linspace(min_ -1, max_ + 1, 100)
     else:
@@ -696,7 +691,7 @@ def density_ridgeline_plot(x_list,sigma,B,alpha,fname,func = lin_func, approach 
         density_array[:,i] = np.array(fy).ravel()
             
     
-    #----------Rigeplot-------------------#
+    #----------Ridgeplot-------------------#
     df = pd.DataFrame(density_array)
     df.columns = x_list
     
