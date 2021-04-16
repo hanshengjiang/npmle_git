@@ -101,7 +101,13 @@ f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR,func)
 #-------------------NPMLE-CV ----------------#
 np.random.seed(626)
 f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
+pd.DataFrame(np.repeat(sigma_cv,len(alpha2))).\
+        to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
+pd.DataFrame(B).to_csv('./../data/{}/B_NPMLE.csv'.format(fname), index = False, header = False)
+pd.DataFrame(alpha).to_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), index = False, header = False)
+pd.DataFrame(L_rec).to_csv('./../data/{}/L_rec_NPMLE.csv'.format(fname), index = False, header = False)
     
+ 
 #------------------------------------------------------------#    
 fig_raw = plt.figure(figsize = (8,8))
 plt.scatter(X[:,1],y,color = 'black',marker = 'o',label = 'Noisy data', facecolors = 'None');
