@@ -57,9 +57,12 @@ def cross_validation(X,y,sigma,k,BL,BR,func=lin_func):
     n = len(X[:,0])
     m = int(n/k)
 
-    # no need to permuate here 
-    X_rdn = X
-    y_rdn = y
+    # no need to permuate here if it is simulated data
+    # but necessary for real data
+    np.random.seed(26)
+    rdn_index = np.random.permutation(n)
+    X_rdn = X[rdn_index]
+    y_rdn = y[rdn_index]
 
     log_L = 0
 
