@@ -25,7 +25,7 @@ When running scripts in terminal, certain command-line arguments can be passed t
 python run_simulation.py 0.5 500 1 yes 0.01
 ```
 
-The users can consult the configuration part at the beginning of the scripts for all arguments available.
+The users can consult the configuration part at the beginning of the scripts to find all arguments that are available.
 
 ### Multiple run
 There are also scripts in `scripts/` that can run multiple simulations with a one-line command. For example,
