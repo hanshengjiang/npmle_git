@@ -12,7 +12,7 @@ This repository contains numerical implementation for the paper [NPMLE for MR](h
 
 ## Usage
 ### Single run
-Each script starting with 'run_' in `scripts/` is used for one run of a certain numerical experiment. The users can directly run the script in their own IDE or alternatively use commands in the terminal. For example, 
+Each script starting with 'run_' in `scripts/` is used for one run of a certain numerical experiment. The users can directly run the script in their own IDE directly but running the script with commands in the terminal is recommended. For example, 
 ```
 python run_real_data_gdp.py
 ```
@@ -20,7 +20,12 @@ or
 ```
 python run_simulation.py 
 ```
-When running scripts, certain command-line arguments can be passed to the script in order to switch among different simulation settings. The users can consult the configuration part at the beginning of the scripts for all arguments available.
+When running scripts in terminal, certain command-line arguments can be passed to the script in order to switch among different simulation settings. For example, for script `run_simulation.py` one can choose noise levels, number of data points, number of components, whethter running cross-validation and the granularity of cross-validation through command-line arguments, as below
+```
+python run_simulation.py 0.5 500 1 yes 0.01
+```
+
+The users can consult the configuration part at the beginning of the scripts for all arguments available.
 
 ### Multiple run
 There are also scripts in `scripts/` that can run multiple simulations with a one-line command. For example,
