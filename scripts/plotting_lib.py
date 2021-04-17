@@ -710,6 +710,71 @@ def density_ridgeline_plot(x_list,sigma,B,alpha,fname, min_,max_,func = lin_func
     plt.savefig("./../pics/ridgeline_{}_{}".format(fname, approach), \
                 dpi = 300, bbox_inches='tight')
     #---------------------------------------------------------------------------------
-      
+ 
+# ridgeline plots when true distribution is continuous  
+def density_ridgeline_plot_continuous(x_list,sigma,meanb1,covb1, meanb2,covb2,pi1,fname, min_,max_,func = lin_func, approach = 'True'):
+    
+    '''
+    Input
+    -----
+    sigma float
+    B (p,k)
+    alpha (k,)
+    fname string
+    
+    Output
+    ------
+    Ridgeline plots
+    
+    '''
+    line_styles = ['-','-','-','-']
+    # line_styles = ['-','--',':','-.']
+    fig = plt.figure(figsize = (16,5))
+    #List of x values
+    i = 0
+    
+    # set up a uniform range of y for all x
     
     
+    if func.__name__ == 'lin_func':
+        y = np.linspace(min_ -1, max_ + 1, 100)
+    else:
+        y = np.linspace(min_ -3, max_ + 3, 100)
+    #-------------------------------------------
+    
+    #-------------------------------------------
+    
+    density_array = np.zeros((len(y),len(x_list)))
+
+    for i in range(len(x_list)):
+        x = x_list[i]
+        if pi1 < 1:
+            with Pool(8) as integral_pool:
+                fy = pi1* integral_pool.starmap(func_xy_int, \
+                    zip(repeat(x), y, repeat(np.array(meanb1)), repeat(np.array(covb1)),repeat(df_) ))\
+                                                 + (1-pi1)*integral_pool.starmap(func_xy, \
+                    zip(repeat(x), y, repeat(np.array(meanb2)), repeat(np.array(covb2)),repeat(df_) ))
+        else: 
+            with Pool(8) as integral_pool:
+                fy = integral_pool.starmap(func_xy_int, \
+                zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(df_) ))
+        density_array[:,i] = np.array(fy).ravel()
+            
+    #----------Ridgeplot-------------------#
+    df = pd.DataFrame(density_array)
+    df.columns = x_list
+    
+    # choose a few index to be included in the labels
+    sparse_index = np.append(np.arange(0,100,25),99) # gap 20 can be adjusted 
+    y_labeled = np.around(y[sparse_index], decimals = 1)
+    # x_label = [x if int(10*x)%20 ==0 else None for x in x_list ]
+ 
+    fig1, ax1 = joypy.joyplot(df, kind="values", overlap = 0.5 \
+                          ,x_range = list(range(100)), ylabels = False\
+                          ,background='k', linecolor="w",grid=False,  linewidth=1.5,fill=False \
+                          )
+    ax1[-1].set_xticks(sparse_index)
+    ax1[-1].set_xticklabels(y_labeled)
+    
+    plt.savefig("./../pics/ridgeline_{}_{}".format(fname, approach), \
+                dpi = 300, bbox_inches='tight')

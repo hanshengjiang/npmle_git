@@ -153,10 +153,14 @@ max_ = float(int(max_))
 
 if func.__name__ == 'poly_func':
     max_ = 11
-    
-df_NPMLE = density_ridgeline_plot(x_list_dense,sigma,\
-                                    B1,alpha1,fname,min_,max_,func , approach = 'true')  
 
+if config != '7':   
+    df_NPMLE = density_ridgeline_plot(x_list_dense,sigma,\
+                                        B1,alpha1,fname,min_,max_,func , approach = 'true')  
+else:
+    df_NPMLE = density_ridgeline_plot_continuous(x_list_dense,sigma,\
+                        meanb1,covb1, meanb2,covb2,pi1,fname, min_,max_,func, approach = 'True'):
+ 
 
 #----------------------NPMLE-CV --------------------------------------#
 B2 = pd.read_csv('./../data/{}/B_NPMLE.csv'.format(fname), header = None).values
@@ -168,7 +172,7 @@ df_NPMLE = density_ridgeline_plot(x_list_dense,sigma_cv,\
 
 
 #-----------------------   EM-true  -------------------------------------#
-if func.__name__ == 'lin_func':
+if func.__name__ == 'lin_func' and config != '7':
     B4 = pd.read_csv('./../data/{}/B_EM.csv'.format(fname), header = None).values
     alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
     sigma_EM = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values.ravel()
