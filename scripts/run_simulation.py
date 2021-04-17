@@ -27,7 +27,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 5:
         sigma = 0.5
         n = 500
-        config = '1'
+        config = '4'
         run_cv = '0.48'
         cv_granuality = 0.01
     # otherwise take argyments from command line
@@ -51,7 +51,7 @@ if config == '1':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [0,1,2] #x_list for later density plots
+    x_list = [-1.5,0,1.5] #x_list for later density plots
 elif config == '2':
     #----------- configuration 2-----#
     b1 = (0,1)
@@ -64,7 +64,7 @@ elif config == '2':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [0,1,2]
+    x_list = [-1.5,0,1.5]
 elif config == '3':
     #----------- configuration 3-----#
     b1 = (3,-1)
@@ -77,7 +77,7 @@ elif config == '3':
     func = lin_func
     BL = -10
     BR = 10
-    x_list = [0,1,2]
+    x_list = [-1.5,0,1.5]
 elif config == '4':
     #----------- configuration 4-----# 
     b1 = (-4,1)
@@ -85,12 +85,12 @@ elif config == '4':
     b3 = (0,0)
     pi1 = 0.5
     pi2 = 0.5
-    B_true = [[0.5,1],[2,2.5]]
+    B_true = [[-4,1],[1,-1]]
     alpha_true = [0.5,0.5]
     func = poly_func
     BL = -10
     BR = 10
-    x_list = [0,1,2]
+    x_list = [-1.5,0,1.5]
 elif config == '5':
     #----------- configuration 5-----#
 
@@ -104,9 +104,9 @@ elif config == '5':
     func = exp_func
     BL = -10 #BL 
     BR = 10
-    x_list = [0,1,2]
+    x_list = [-1.5,0,1.5]
 elif config == '6':
-    #----------- configuration 5-----#
+    #----------- configuration 6-----#
     b1 = (-0.5,1)
     b2 = (-1.5,1.5)
     b3 = (0,0)
@@ -117,7 +117,7 @@ elif config == '6':
     func = sin_func
     BL = -10
     BR = 10
-    x_list = [0,1,2]
+    x_list = [-1.5,0,1.5]
 else:
     sys.exit("Wrong configuration number!")
 
@@ -129,6 +129,7 @@ fname = func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
 fname = fname.replace('.','dot')
 
 print("fname",fname)
+
 #-----------------------------------------------------------#
 # generate simulated dataset
 np.random.seed(626)
@@ -199,8 +200,15 @@ np.random.seed(626)
 f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
 pd.DataFrame(np.repeat(sigma_cv,len(alpha2))).\
         to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
-
-
+pd.DataFrame(B2).to_csv('./../data/{}/B_NPMLE.csv'.format(fname), index = False, header = False)
+pd.DataFrame(alpha2).to_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), index = False, header = False)
+pd.DataFrame(L_rec2).to_csv('./../data/{}/L_rec_NPMLE.csv'.format(fname), index = False, header = False)
+    
+#B2 = pd.read_csv('./../data/{}/B_NPMLE.csv'.format(fname), header = None).values
+#alpha2 = pd.read_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), header = None).values
+#sigma_cv = pd.read_csv('./../data/{}/sigma_CV.csv'.format(fname), header = None).values[0]
+# 
+    
  
 #-------------------------   Run EM    ----------------------#
 import os
@@ -221,6 +229,7 @@ sigma_array4 = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = N
 #-----------------------------------#
   
 #-----------------------------------------------------------------   
+
 line_styles = ['-','-','-','-']
 # line_styles = ['-','--',':','-.']
 fig = plt.figure(figsize = (16,5))
@@ -283,6 +292,8 @@ ax = plt.gca()
 lgd = ax.legend(custom_lines, ['Truth',r'NPMLE-$\sigma$','NPMLE-CV', 'EM-true',
                                 #'EM_sigma'
                          ], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+
+    
 plt.savefig('./../pics/%s_multi_density.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 #plt.show();
 #---------------------------------------------------------------------------------

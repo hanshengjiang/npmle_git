@@ -24,7 +24,7 @@ Ridgeline plots
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 3:
-        config = '1'
+        config = '4'
         error_type = 'homo' # error type can be hetero for config = 1,2,3
     # otherwise take argyments from command line
     else:
@@ -76,7 +76,7 @@ elif config == '4':
     b3 = (0,0)
     pi1 = 0.5
     pi2 = 0.5
-    B_true = [[0.5,1],[2,2.5]]
+    B_true = [[-4,1],[1,-1]]
     alpha_true = [0.5,0.5]
     func = poly_func
     BL = -10
@@ -150,8 +150,10 @@ for i in range(len(x_list_dense)):
     max_ = max(max_, max([func([1,x],B1[:,i]) for i in range(len(B1[0]))]))
 min_ = float(int(min_))
 max_ = float(int(max_))
-print(min_, max_)
 
+if func.__name__ == 'poly_func':
+    max_ = 11
+    
 df_NPMLE = density_ridgeline_plot(x_list_dense,sigma,\
                                     B1,alpha1,fname,min_,max_,func , approach = 'true')  
 
