@@ -28,11 +28,11 @@ python run_simulation.py 0.5 500 1 yes 0.01
 The users can consult the configuration part at the beginning of the scripts to find all arguments that are available.
 
 ### Multiple run
-There are also scripts in `scripts/` that can run multiple simulations with a one-line command. For example,
+There are also scripts in `scripts/` that can run multiple simulations with a one-line command. For example, one can use `run_multiple_simulations.py` to run all simulation examples for discrete cases by adding two command-line arguments as follows.
 ```
-python run_multiple_simulations.py
+python run_multiple_simulations.py run_simulation.py discrete_cv
 ```
-There are also a few command-line arguments available for this script.
+There are also a few other command-line arguments available for this script, which are specified in documentation.
 
 ## License
 All content in this repository is licensed under the MIT license. Comments and suggestions are welcome!
