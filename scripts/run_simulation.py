@@ -160,6 +160,8 @@ if run_cv == 'yes':
     #define a range of candidate sigma values
     sigma_max = min(0.6, np.sqrt(stats.variance(np.reshape(y, (len(y),)))))
     sigma_min = 0.2
+    # NOTE: we started with a bigger range of sigma and narrowed down to this
+    # NOTE: running with smaller range so that we can test very small granularity within less time
     cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granularity)
     
     kfold = 5 # number of fold in CV procedure
