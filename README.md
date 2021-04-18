@@ -28,7 +28,7 @@ python run_simulation.py 0.5 500 1 yes 0.01
 The users can consult the configuration part at the beginning of the scripts to find all arguments that are available.
 
 ### Multiple run
-There are also scripts in `scripts/` that can run multiple simulations with a one-line command. For example, one can use `run_multiple_simulations.py` to run all simulation examples for discrete cases by adding two command-line arguments as follows.
+There are also scripts in `scripts/` that can run multiple simulations with a one-line command. For example, one can use the script `run_multiple_simulations.py` to run all simulation examples for discrete cases by adding two command-line arguments as follows.
 ```
 python run_multiple_simulations.py run_simulation.py discrete_cv
 ```
