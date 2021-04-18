@@ -33,11 +33,13 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 6:
-        sigma_list = [0.3,0.5,1] # hetero errors
+        print("A negative case:")
+        # three component negative case
+        sigma_list = [0.3,0.5,1.0] # hetero errors
         n = 500
         config = '3'
         run_cv = 0.34 # note this depends on sigma_list
-        cv_granuality = 0.01
+        cv_granularity = 0.01
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
@@ -48,7 +50,7 @@ if __name__ == "__main__":
         n = int(sys.argv[4]) # number of data points
         config = sys.argv[5]
         run_cv = sys.argv[6]
-        cv_granuality = 0.04
+        cv_granularity = 0.04
 # preset configurations      
 if config == '1':
     #----------- configuration 1-----#
@@ -101,6 +103,8 @@ fname = 'hetero_' + func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b
 +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
 fname = fname.replace('.','dot')
 
+if len(sys.argv) < 6:
+    fname = fname + '_negative_case'
 
 #-----------------------------------------------------------#
 # generate simulated dataset
@@ -133,9 +137,9 @@ pd.DataFrame(sigma_list).to_csv('./../data/{}/sigma_true.csv'.format(fname), ind
 if run_cv == 'yes':
     #------------------------run CV-------------#
     #define a range of candidate sigma values
-    sigma_max = min(1, np.sqrt(stats.variance(np.reshape(y, (len(y),)))))
-    sigma_min = 0.1
-    cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
+    sigma_max = min(0.6, np.sqrt(stats.variance(np.reshape(y, (len(y),)))))
+    sigma_min = 0.2
+    cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granularity)
     
     kfold = 5 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
@@ -154,7 +158,7 @@ print("sigma_cv:{}".format(sigma_cv))
 
 #------------------------------------------------------------#  
 # paramters of b's and pi's are only for plotting purposes
-# test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_cv,BL,BR,fname,func)
+test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_cv,BL,BR,fname,func)
 #------------------------------------------------------------#    
 
 #--------------------density plots--------------------------#
@@ -170,7 +174,12 @@ print("sigma_cv:{}".format(sigma_cv))
 #-------------------2: CGM without knowing sigma----------------#
 np.random.seed(626)
 f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
-    
+pd.DataFrame(np.repeat(sigma_cv,len(alpha2))).\
+        to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
+pd.DataFrame(B2).to_csv('./../data/{}/B_NPMLE.csv'.format(fname), index = False, header = False)
+pd.DataFrame(alpha2).to_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), index = False, header = False)
+pd.DataFrame(L_rec2).to_csv('./../data/{}/L_rec_NPMLE.csv'.format(fname), index = False, header = False)
+   
 
 #-------------------------   Run EM    ----------------------#
 import os

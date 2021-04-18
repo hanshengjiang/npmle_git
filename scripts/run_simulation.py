@@ -29,7 +29,7 @@ if __name__ == "__main__":
         n = 500
         config = '4'
         run_cv = '0.48'
-        cv_granuality = 0.01
+        cv_granularity = 0.01
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         n = int(sys.argv[2]) # number of data points
         config = sys.argv[3]
         run_cv = sys.argv[4]
-        cv_granuality = 0.02
+        cv_granularity = 0.01
 # preset configurations      
 if config == '1':
     #----------- configuration 1-----#
@@ -158,9 +158,9 @@ pd.DataFrame(sigma_list[:len(alpha_true)]).to_csv('./../data/{}/sigma_true.csv'.
 if run_cv == 'yes':
     #------------------------run CV-------------#
     #define a range of candidate sigma values
-    sigma_max = min(1, np.sqrt(stats.variance(np.reshape(y, (len(y),)))))
-    sigma_min = 0.1
-    cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
+    sigma_max = min(0.6, np.sqrt(stats.variance(np.reshape(y, (len(y),)))))
+    sigma_min = 0.2
+    cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granularity)
     
     kfold = 5 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)

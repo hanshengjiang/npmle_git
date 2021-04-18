@@ -21,7 +21,7 @@ if __name__ == "__main__":
         n = 500
         config = '1'
         run_cv = '1.04'
-        cv_granuality = 0.04
+        cv_granularity = 0.04
         
     # otherwise take argyments from command line
     else:
@@ -30,7 +30,7 @@ if __name__ == "__main__":
         n = int(sys.argv[2]) # number of data points
         config = sys.argv[3]
         run_cv = sys.argv[4]
-        cv_granuality = 0.01
+        cv_granularity = 0.01
 
 # preset configurations      
 if config == '1':
@@ -73,7 +73,7 @@ if run_cv == 'yes':
     #define a range of candidate sigma values
     sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
     sigma_min = 0.1
-    cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
+    cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granularity)
     
     kfold = 5 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
@@ -197,7 +197,7 @@ plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,
 # -------------------------------------------#
 # source: https://gregorygundersen.com/blog/2020/01/20/multivariate-t/
 # pdf of multivarite_t
-from   scipy.special import gammaln
+from  scipy.special import gammaln
 
 
 def pdf(x, mean, shape, df):
@@ -231,13 +231,13 @@ def logpdf(x, mean, shape, df):
 #    return func
 
 # density function under continuous measure
-def func_xy(x,y,meanb,covb,df_):
+def func_xy(x,y,meanb,covb,sigma,df_):
     def func(b,k):
         return 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y-b-k*x)**2/sigma**2)\
     *pdf(np.array([b,k]), np.array(meanb), np.array(covb), df_ )
     return func
-def func_xy_int(x,y,meanb,covb,df_):
-    return integrate.dblquad(func_xy(x,y,meanb,covb,df_),\
+def func_xy_int(x,y,meanb,covb,sigma,df_):
+    return integrate.dblquad(func_xy(x,y,meanb,covb,sigma,df_),\
                              -np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf, epsabs = 1e-3)[0]
     
 #-----------------------------------------------------------------   
@@ -279,13 +279,13 @@ for i in range(len(x_list)):
     if pi1 < 1:
         with Pool(8) as integral_pool:
             fy_true = pi1* integral_pool.starmap(func_xy_int, \
-                    zip(repeat(x), y, repeat(np.array(meanb1)), repeat(np.array(covb1)),repeat(df_) ))\
+                    zip(repeat(x), y, repeat(np.array(meanb1)), repeat(np.array(covb1)),repeat(sigma_cv),repeat(df_) ))\
                                                  + (1-pi1)*integral_pool.starmap(func_xy, \
-                    zip(repeat(x), y, repeat(np.array(meanb2)), repeat(np.array(covb2)),repeat(df_) ))
+                    zip(repeat(x), y, repeat(np.array(meanb2)), repeat(np.array(covb2)),repeat(sigma_cv),repeat(df_) ))
     else: 
         with Pool(8) as integral_pool:
             fy_true = integral_pool.starmap(func_xy_int, \
-                zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(df_) ))
+                zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(sigma_cv),repeat(df_) ))
     fy_true = np.array(fy_true)
     plt.plot(y,fy_true.ravel(),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
     

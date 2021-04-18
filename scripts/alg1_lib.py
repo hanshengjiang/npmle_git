@@ -103,7 +103,7 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR, func = lin_func):
     f: n * J, atomic likelihood vectors in active set
     B: p * J, coefficients corresponding to vectors in active set
     alpha: J * 1, mixing proportions of vectors in active set
-    L_rec: neg-log likelihood over iterations
+    L_rec: neg-log likelihood over iterations / C_L
     temp: final neg-log likelihood
     
     '''  

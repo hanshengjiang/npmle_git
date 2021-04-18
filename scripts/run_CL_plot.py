@@ -39,6 +39,12 @@ BL = -10
 BR = 10
 #---------------------------------------------#
 
+fname = func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
++'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
+fname = fname.replace('.','dot')
+
+#---------------------------------------------#
+
 np.random.seed(26)
 
 CL_record = np.zeros((n_repeat, iter-1))
@@ -54,11 +60,13 @@ for i in tqdm(range(n_repeat)):
 fig = plt.figure(figsize = (6,5))
 ax = plt.gca()
 ax.set_xlabel(r"Iteration")
-ax.set_ylabel(r'$\log C_L$')
+ax.set_ylabel(r'$C_L$')
 for i in range(n_repeat):
-    plt.plot(np.log(np.array(CL_record[i,:])), linewidth = 0.5);
+    plt.plot(np.arange(1,iter), np.array(CL_record[i,:]), linewidth = 0.3);
 plt.savefig('./../pics/%s_C_L_multi.png'%fname, dpi = 300, bbox_inches='tight')
 
+# save to file
+pd.DataFrame(CL_record).to_csv('./../data/{}/CL_record.csv'.format(fname), index = False, header = False)
 
 
 

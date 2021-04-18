@@ -710,9 +710,63 @@ def density_ridgeline_plot(x_list,sigma,B,alpha,fname, min_,max_,func = lin_func
     plt.savefig("./../pics/ridgeline_{}_{}".format(fname, approach), \
                 dpi = 300, bbox_inches='tight')
     #---------------------------------------------------------------------------------
- 
+
+
+
+#------- COPIED from run_continuous_simulation.py --------------#
+from  scipy.special import gammaln
+import multiprocessing 
+from multiprocessing import Pool
+from itertools import repeat
+
+def pdf(x, mean, shape, df):
+    return np.exp(logpdf(x, mean, shape, df))
+
+
+def logpdf(x, mean, shape, df):
+    dim = mean.size
+
+    vals, vecs = np.linalg.eigh(shape)
+    logdet     = np.log(vals).sum()
+    valsinv    = np.array([1./v for v in vals])
+    U          = vecs * np.sqrt(valsinv)
+    dev        = x - mean
+    maha       = np.square(np.dot(dev, U)).sum(axis=-1)
+
+    t = 0.5 * (df + dim)
+    A = gammaln(t)
+    B = gammaln(0.5 * df)
+    C = dim/2. * np.log(df * np.pi)
+    D = 0.5 * logdet
+    E = -t * np.log(1 + (1./df) * maha)
+
+    return A - B - C - D + E
+#--------------END COPY     ----------------------------------#
+    
+# density function under continuous measure
+#def func_xy(x,y,meanb,covb,df_):
+#    func = lambda b,k: 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y-b-k*x)**2/sigma**2)\
+#    *pdf(np.array([b,k], meanb, covb, df_ ))
+#    return func
+
+# density function under continuous measure
+def func_xy(x,y,meanb,covb,sigma,df_):
+    def func(b,k):
+        return 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y-b-k*x)**2/sigma**2)\
+    *pdf(np.array([b,k]), np.array(meanb), np.array(covb), df_ )
+    return func
+def func_xy_int(x,y,meanb,covb,sigma,df_):
+    return integrate.dblquad(func_xy(x,y,meanb,covb,sigma,df_),\
+                             -np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf, epsabs = 1e-3)[0]
+     
+    
+    
+    
+    
+#-------------------------------------------------------#
+
 # ridgeline plots when true distribution is continuous  
-def density_ridgeline_plot_continuous(x_list,sigma,meanb1,covb1, meanb2,covb2,pi1,fname, min_,max_,func = lin_func, approach = 'True'):
+def density_ridgeline_plot_continuous(x_list,sigma,meanb1,covb1, meanb2,covb2,df_, pi1,fname, min_,max_,func = lin_func, approach = 'True'):
     
     '''
     Input
@@ -751,13 +805,13 @@ def density_ridgeline_plot_continuous(x_list,sigma,meanb1,covb1, meanb2,covb2,pi
         if pi1 < 1:
             with Pool(8) as integral_pool:
                 fy = pi1* integral_pool.starmap(func_xy_int, \
-                    zip(repeat(x), y, repeat(np.array(meanb1)), repeat(np.array(covb1)),repeat(df_) ))\
+                    zip(repeat(x), y, repeat(np.array(meanb1)), repeat(np.array(covb1)),repeat(sigma), repeat(df_) ))\
                                                  + (1-pi1)*integral_pool.starmap(func_xy, \
-                    zip(repeat(x), y, repeat(np.array(meanb2)), repeat(np.array(covb2)),repeat(df_) ))
+                    zip(repeat(x), y, repeat(np.array(meanb2)), repeat(np.array(covb2)),repeat(sigma),repeat(df_) ))
         else: 
             with Pool(8) as integral_pool:
                 fy = integral_pool.starmap(func_xy_int, \
-                zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(df_) ))
+                zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(sigma),repeat(df_) ))
         density_array[:,i] = np.array(fy).ravel()
             
     #----------Ridgeplot-------------------#

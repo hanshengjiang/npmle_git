@@ -15,13 +15,13 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 2:
-        run_cv = 0.30 # chosen by cross-validation procedure
-        cv_granuality = 0.01
+        run_cv = 'yes' # chosen by cross-validation procedure
+        cv_granularity = 0.1
     # otherwise take argyments from command line
     else:
         #sys_.rgv[0] is the name of the .py file
         run_cv = sys.argv[1]
-        cv_granuality = float(sys.argv[2])
+        cv_granularity = float(sys.argv[2])
 
 # read data
 df = pd.read_csv('./../real_data/co2-emissions-vs-gdp_simplified.csv')
@@ -42,9 +42,9 @@ if run_cv == 'yes':
     #------------------------run CV-------------#
     #define a range of candidate sigma values
     # sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
-    sigma_max = 0.5
-    sigma_min = 0.05
-    sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
+    sigma_max = 0.6
+    sigma_min = 0.3
+    sigma_list = np.arange(sigma_min, sigma_max, cv_granularity)
     
     kfold = 10 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,sigma_list,kfold,-10,10)

@@ -11,6 +11,7 @@ from cv_procedure_lib import *
 from em_alg_lib import *
 from regression_func_lib import *
 import sys
+from plotting_lib import *
 
 '''
 Ridgeline plots
@@ -24,7 +25,7 @@ Ridgeline plots
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 3:
-        config = '4'
+        config = '7'
         error_type = 'homo' # error type can be hetero for config = 1,2,3
     # otherwise take argyments from command line
     else:
@@ -137,29 +138,32 @@ x_list_dense = np.arange(-1,3,0.1)
 
 #----------------------True-------------------------------------------#
 
-B1 = pd.read_csv('./../data/{}/B_true.csv'.format(fname), header = None).values
-alpha1 = pd.read_csv('./../data/{}/alpha_true.csv'.format(fname), header = None).values
 sigma = pd.read_csv('./../data/{}/sigma_true.csv'.format(fname), header = None).values.ravel()
-
-# set up range of y 
-min_ = -1
-max_ = 5
-for i in range(len(x_list_dense)):
-    x = x_list_dense[i]
-    min_ = min(min_, min([func([1,x],B1[:,i]) for i in range(len(B1[0]))]))
-    max_ = max(max_, max([func([1,x],B1[:,i]) for i in range(len(B1[0]))]))
-min_ = float(int(min_))
-max_ = float(int(max_))
-
-if func.__name__ == 'poly_func':
-    max_ = 11
-
-if config != '7':   
+    
+if config != '7': 
+    B1 = pd.read_csv('./../data/{}/B_true.csv'.format(fname), header = None).values
+    alpha1 = pd.read_csv('./../data/{}/alpha_true.csv'.format(fname), header = None).values
+   
+    # set up range of y 
+    min_ = -1
+    max_ = 5
+    for i in range(len(x_list_dense)):
+        x = x_list_dense[i]
+        min_ = min(min_, min([func([1,x],B1[:,i]) for i in range(len(B1[0]))]))
+        max_ = max(max_, max([func([1,x],B1[:,i]) for i in range(len(B1[0]))]))
+    min_ = float(int(min_))
+    max_ = float(int(max_))
+    
+    if func.__name__ == 'poly_func':
+        max_ = 11 
+        
     df_NPMLE = density_ridgeline_plot(x_list_dense,sigma,\
                                         B1,alpha1,fname,min_,max_,func , approach = 'true')  
 else:
+    min_ = -2
+    max_ = 8
     df_NPMLE = density_ridgeline_plot_continuous(x_list_dense,sigma,\
-                        meanb1,covb1, meanb2,covb2,pi1,fname, min_,max_,func, approach = 'True'):
+                        meanb1,covb1, meanb2,covb2,df_,pi1,fname, min_,max_,func, approach = 'true')
  
 
 #----------------------NPMLE-CV --------------------------------------#

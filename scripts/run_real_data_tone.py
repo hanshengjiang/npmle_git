@@ -15,13 +15,13 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 2:
-        run_cv = 'yes'
-        cv_granuality = 0.01
+        run_cv = 0.05 # chosen by cross-validation procedure
+        cv_granularity = 0.01
     # otherwise take argyments from command line
     else:
         #sys.argv[0] is the name of the .py file
         run_cv = sys.argv[1]
-        cv_granuality = float(sys.argv[2])
+        cv_granularity = float(sys.argv[2])
 
 #read tonedata into file
 with open('./../real_data/tonedata.csv', newline='') as csvfile:
@@ -40,7 +40,7 @@ if run_cv == 'yes':
     # sigma_max = np.sqrt(stats.variance(np.reshape(y, (len(y),))))
     sigma_max = 0.5
     sigma_min = 0.05
-    sigma_list = np.arange(sigma_min, sigma_max, cv_granuality)
+    sigma_list = np.arange(sigma_min, sigma_max, cv_granularity)
     
     kfold = 10 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,sigma_list,kfold,-10,10)
@@ -59,10 +59,11 @@ print("sigma_cv:{}".format(sigma_cv))
 
 
 iter = 200
-threprob = 0.02
+threprob = 1e-2
 
 #Use Frank-Wofle with an estimated sigma
-sigma = 0.05
+#Use Algorithm 1
+np.random.seed(26)
 f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma_cv,-10,10)
 
 
