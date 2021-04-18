@@ -20,7 +20,7 @@ or
 ```
 python run_simulation.py 
 ```
-When running scripts in terminal, certain command-line arguments can be passed to the script in order to switch among different simulation settings. For example, for script `run_simulation.py` one can specify a set of command line arguments as below, which represent noise levels = `0.5`, number of data points = `500`, component coefficients setup = type `1`, whether to run cross-validation = `yes`, and the granularity of cross-validation = `0.01` respectively.
+When running scripts in terminal, certain command-line arguments can be passed to the script in order to switch among different simulation settings. For example, for script `run_simulation.py` one can specify a set of command line arguments as below, which represent scale parameter $\sigma$ = `0.5`, number of data points = `500`, component coefficients setup = type `1`, whether to run cross-validation = `yes`, and the granularity of cross-validation = `0.01` respectively.
 ```
 python run_simulation.py 0.5 500 1 yes 0.01
 ```
