@@ -48,13 +48,13 @@ elif exp_type == 'hetero_discrete':
 elif exp_type == 'hetero_discrete_cv':
     # re-run cross-validation
     params_ = ' '+'0.3' + ' '+'0.5' + ' '+'0.7' + ' ' + \
-    '500' + ' ' + '1' + ' ' + 'yes'+ ' ' 
+    '500' + ' ' + '1' + ' ' + 'yes'+ ' ' + '0.01' + '_'
     os.system("python " + filename + params_ + '&')
     params_ = ' '+'0.3' + ' ' + '0.5' + ' '+'0.7' + ' ' +\
-    '500' + ' ' + '2' + ' ' + 'yes'+ ' ' 
+    '500' + ' ' + '2' + ' ' + 'yes'+ ' ' + '0.01' + '_'
     os.system("python " + filename + params_ + '&')
     params_ = ' '+'0.3' + ' ' + '0.5' + ' '+'0.7' + ' ' +\
-    '500' + ' ' + '3' + ' ' + 'yes'+ ' ' 
+    '500' + ' ' + '3' + ' ' + 'yes'+ ' ' + '0.01' + '_'
     os.system("python " + filename + params_ + '&')
         
 elif exp_type == 'poly_cv':

@@ -50,7 +50,7 @@ if __name__ == "__main__":
         n = int(sys.argv[4]) # number of data points
         config = sys.argv[5]
         run_cv = sys.argv[6]
-        cv_granularity = 0.04
+        cv_granularity = float(sys.argv[7])
 # preset configurations      
 if config == '1':
     #----------- configuration 1-----#
@@ -138,7 +138,7 @@ if run_cv == 'yes':
     #------------------------run CV-------------#
     #define a range of candidate sigma values
     sigma_max = min(0.6, np.sqrt(stats.variance(np.reshape(y, (len(y),)))))
-    sigma_min = 0.2
+    sigma_min = 0.25
     # NOTE: we started with a bigger range of sigma and narrowed down to this
     # NOTE: running with smaller range so that we can test very small granularity within less time
     cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granularity)
