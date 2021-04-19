@@ -30,7 +30,7 @@ if __name__ == "__main__":
         n = int(sys.argv[2]) # number of data points
         config = sys.argv[3]
         run_cv = sys.argv[4]
-        cv_granularity = 0.01
+        cv_granularity = float(sys.argv[5]) 
 
 # preset configurations      
 if config == '1':
@@ -46,17 +46,42 @@ if config == '1':
     BL = -10
     BR = 10
     x_list = [-1.5,0,1.5] #x_list for later density plots
-
+    
+    continuous_type = 'continuous_multivariate_t'
+    fname = continuous_type + str(meanb1[0]) + '_'+ str(meanb1[1])+'_'+ str(meanb2[0]) \
+    +'_' +str(meanb2[1])+'_'+str(int(100*pi1)) +'percent'
+    
+if config == '2':
+    #----------- configuration 1-----#
+    c1 = [0,0]
+    r1 = 2
+    c2 = [0,2]
+    r2 = 2
+    pi1 = 1.0
+    
+    func = lin_func
+    BL = -10
+    BR = 10
+    x_list = [-1.5,0,1.5] #x_list for later density plots
+    
+    continuous_type = 'continuous_uniform_circle'
+    fname = continuous_type + str(c1[0]) + '_'+ str(c1[1])+'_'+ str(c2[0]) \
+    +'_' +str(c2[1])+'_'+str(int(100*pi1)) +'percent'
+    
 iter = 100 # iterations of NPMLE_FW
-fname = 'continuous_' + str(meanb1[0]) + '_'+ str(meanb1[1])+'_'+ str(meanb2[0]) \
-+'_' +str(meanb2[1])+'_'+str(int(100*pi1)) +'percent'
 fname = fname.replace('.','dot')  
 
 #-----------------------------------------------------------#
 # generate simulated dataset
-np.random.seed(626)
-X,y = generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma,df_, func = lin_func)
+if config == '1':
+    np.random.seed(626)
+    X,y = generate_multivariate_t_test_data\
+    (n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma,df_, func)
+elif config == '2':
+    np.random.seed(626)
+    X,y = generate_circle_test_data(n,iter, c1,r1,c2,r2, pi1, sigma,func)
 #-----------------------------------------------------------#
+
 
 #-----------------------------------------------------------#
 # storage dataset
@@ -92,7 +117,7 @@ if run_cv == 'yes':
     
     idx_approx_set = np.argwhere(CV_result[:,1] < CV_min + epsilon * CV_min)
     
-    sigma_cv = cv_sigma_list[np.minimum(idx_approx_set)]
+    sigma_cv = cv_sigma_list[np.min(idx_approx_set.ravel())]
     #--------------------------------------------#
     
 else:
@@ -201,10 +226,12 @@ lgd = ax.legend(loc=2, bbox_to_anchor=(1.05,1.0),borderaxespad=0.);
 plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 # plt.show();
 
-#-----------------------------------# 
-#
-#  plot density function            #
-#
+#-----------------------------------#
+#                                   # 
+#                                   #
+#    plot density function          #
+#                                   #
+#                                   #
 #-----------------------------------#
     
     
@@ -244,16 +271,33 @@ def logpdf(x, mean, shape, df):
 #    *pdf(np.array([b,k], meanb, covb, df_ ))
 #    return func
 
-# density function under continuous measure
+
+#--------------------------------------#
 def func_xy(x,y,meanb,covb,sigma,df_):
+    # density function of G^* under continuous measure
     def func(b,k):
         return 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y-b-k*x)**2/sigma**2)\
     *pdf(np.array([b,k]), np.array(meanb), np.array(covb), df_ )
     return func
 def func_xy_int(x,y,meanb,covb,sigma,df_):
+    # density function of y under continuous measure
     return integrate.dblquad(func_xy(x,y,meanb,covb,sigma,df_),\
                              -np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf, epsabs = 1e-3)[0]
-    
+
+#--------------------------------------#
+def func_xy_circ(x,y,c,r,sigma):
+    # density function of G^* under continuous measure
+    def func(angle):
+        b = c.ravel()[0] + r * np.cos(angle)
+        k = c.ravel()[1] + r * np.sin(angle)
+        return 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y-b-k*x)**2/sigma**2) /(2 *np.pi)
+    return func
+def func_xy_circ_int(x,y,c,r,sigma):
+    # density function of y under continuous measure
+    return integrate.quad(func_xy_circ(x,y,c,r,sigma),0,2 * np.pi,epsabs = 1e-3)[0]
+
+
+   
 #-----------------------------------------------------------------   
 line_styles = ['-','-','-','-']
 # line_styles = ['-','--',':','-.']
@@ -290,16 +334,31 @@ for i in range(len(x_list)):
 #            +(1-pi1)*integrate.dblquad(func_xy(x,y[j],meanb2,covb2,df_),-np.inf,np.inf,lambda b: -np.inf,lambda b :np.inf)[0]
 #        else:
 #            fy_true[j] = integrate.dblquad(func_xy(x,y[j],meanb1,covb1,df_),-np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf)[0]
+    
     if pi1 < 1:
-        with Pool(8) as integral_pool:
-            fy_true = pi1* integral_pool.starmap(func_xy_int, \
-                    zip(repeat(x), y, repeat(np.array(meanb1)), repeat(np.array(covb1)),repeat(sigma_cv),repeat(df_) ))\
-                                                 + (1-pi1)*integral_pool.starmap(func_xy, \
-                    zip(repeat(x), y, repeat(np.array(meanb2)), repeat(np.array(covb2)),repeat(sigma_cv),repeat(df_) ))
-    else: 
-        with Pool(8) as integral_pool:
-            fy_true = integral_pool.starmap(func_xy_int, \
-                zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(sigma_cv),repeat(df_) ))
+        if config == '1':
+            with Pool(8) as integral_pool:
+                fy_true = pi1* integral_pool.starmap(func_xy_int, \
+                        zip(repeat(x), y, repeat(np.array(meanb1)), repeat(np.array(covb1)),repeat(sigma_cv),repeat(df_) ))\
+                                                     + (1-pi1)*integral_pool.starmap(func_xy, \
+                        zip(repeat(x), y, repeat(np.array(meanb2)), repeat(np.array(covb2)),repeat(sigma_cv),repeat(df_) ))
+        elif config == '2':
+            with Pool(8) as integral_pool:
+                fy_true = pi1* integral_pool.starmap(func_xy_circ_int,\
+                            zip(repeat(x), repeat(y), repeat(c1), repeat(r1), repeat(sigma_cv)))\
+                + (1-pi1) * integral_pool.starmap(func_xy_circ_int,\
+                            zip(repeat(x), repeat(y), repeat(c2), repeat(r2), repeat(sigma_cv)))
+
+    elif pi1 == 1:
+        if config == '1':
+            with Pool(8) as integral_pool:
+                fy_true = integral_pool.starmap(func_xy_int, \
+                    zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(sigma_cv),repeat(df_) ))
+        elif config == '2':
+            with Pool(8) as integral_pool:
+                fy_true = integral_pool.starmap(func_xy_circ_int,\
+                            zip(repeat(x), repeat(y), repeat(c1), repeat(r1), repeat(sigma_cv)))
+                
     fy_true = np.array(fy_true)
     plt.plot(y,fy_true.ravel(),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
     
