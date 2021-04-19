@@ -78,9 +78,20 @@ if run_cv == 'yes':
     kfold = 5 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
     pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
+   
+    #--------------------------------------------#
+    # choose sigma according to CV_result
     idx_min = np.argmin(CV_result[:,1])
-    sigma_cv = cv_sigma_list[idx_min]
-    pd.DataFrame(np.array([sigma_cv])).to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
+    CV_min = CV_result[idx_min,1]
+    
+    epsilon = 0.01 # epsilon = 0.0 then normal selection
+    # positive epsilon allows smaller sigma
+    
+    idx_approx_set = np.argwhere(CV_result[:,1] < CV_min + epsilon * CV_min)
+    
+    sigma_cv = cv_sigma_list[np.minimum(idx_approx_set)]
+    #--------------------------------------------#
+    
 else:
     #--------------------------------------------#
     #otherwise take sigma value from command line

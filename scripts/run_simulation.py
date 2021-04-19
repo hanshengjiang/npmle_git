@@ -159,17 +159,27 @@ if run_cv == 'yes':
     #------------------------run CV-------------#
     #define a range of candidate sigma values
     sigma_max = min(0.6, np.sqrt(stats.variance(np.reshape(y, (len(y),)))))
-    sigma_min = 0.2
+    sigma_min = 0.25
     # NOTE: we started with a bigger range of sigma and narrowed down to this
     # NOTE: running with smaller range so that we can test very small granularity within less time
     cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granularity)
     
     kfold = 5 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
-    pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
-    idx_min = np.argmin(CV_result[:,1])
+    pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False, header = False)
     
-    sigma_cv = cv_sigma_list[idx_min]
+    #--------------------------------------------#
+    # choose sigma according to CV_result
+    idx_min = np.argmin(CV_result[:,1])
+    CV_min = CV_result[idx_min,1]
+    
+    epsilon = 0.0 # epsilon = 0.0 then normal selection
+    # positive epsilon allows smaller sigma
+    
+    idx_approx_set = np.argwhere(CV_result[:,1] < CV_min + epsilon * CV_min)
+    
+    sigma_cv = cv_sigma_list[np.minimum(idx_approx_set)]
+    #--------------------------------------------#
     
 else:
     #--------------------------------------------#
