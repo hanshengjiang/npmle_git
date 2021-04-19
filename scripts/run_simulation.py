@@ -37,7 +37,7 @@ if __name__ == "__main__":
         n = int(sys.argv[2]) # number of data points
         config = sys.argv[3]
         run_cv = sys.argv[4]
-        cv_granularity = 0.01
+        cv_granularity = float(sys.argv[5]) 
 # preset configurations      
 if config == '1':
     #----------- configuration 1-----#
@@ -178,7 +178,7 @@ if run_cv == 'yes':
     
     idx_approx_set = np.argwhere(CV_result[:,1] < CV_min + epsilon * CV_min)
     
-    sigma_cv = cv_sigma_list[np.minimum(idx_approx_set)]
+    sigma_cv = cv_sigma_list[np.min(idx_approx_set.ravel())]
     #--------------------------------------------#
     
 else:

@@ -157,7 +157,7 @@ if run_cv == 'yes':
     
     idx_approx_set = np.argwhere(CV_result[:,1] < CV_min + epsilon * CV_min)
     
-    sigma_cv = cv_sigma_list[np.minimum(idx_approx_set)]
+    sigma_cv = cv_sigma_list[np.min(idx_approx_set.ravel())]
     #--------------------------------------------#
     
     

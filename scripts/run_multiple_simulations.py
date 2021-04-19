@@ -26,11 +26,11 @@ if exp_type == 'discrete':
     
 elif exp_type == 'discrete_cv':
     # re-run cross-validation
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '1' + ' ' + 'yes'+ ' ' 
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '1' + ' ' + 'yes'+ ' ' + '0.01' + '_'
     os.system("python " + filename + params_ + '&')
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '2' + ' ' + 'yes'+ ' ' 
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '2' + ' ' + 'yes'+ ' ' + '0.01' + '_'
     os.system("python " + filename + params_ + '&')
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '3' + ' ' + 'yes'+ ' ' 
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '3' + ' ' + 'yes'+ ' ' + '0.01' + '_'
     os.system("python " + filename + params_ + '&')
     
 elif exp_type == 'hetero_discrete':
@@ -42,7 +42,7 @@ elif exp_type == 'hetero_discrete':
     '500' + ' ' + '2' + ' ' + '0.3'+ ' ' 
     os.system("python " + filename + params_ + '&')
     params_ = ' '+'0.3' + ' ' + '0.5' + ' '+'0.7' + ' ' +\
-    '500' + ' ' + '3' + ' ' + '0.42'+ ' ' 
+    '500' + ' ' + '3' + ' ' + '0.31'+ ' ' 
     os.system("python " + filename + params_ + '&')
     
 elif exp_type == 'hetero_discrete_cv':
@@ -59,7 +59,7 @@ elif exp_type == 'hetero_discrete_cv':
         
 elif exp_type == 'poly_cv':
     #  directly run with sigma selected by CV 
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '4' + ' ' + 'yes'+ ' ' 
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '4' + ' ' + 'yes'+ ' ' + '0.01' + '_'
     os.system("python " + filename + params_ + '&')
 
 elif exp_type == 'poly':
@@ -70,7 +70,7 @@ elif exp_type == 'poly':
       
 elif exp_type == 'exp_cv':
     #  directly run with sigma selected by CV 
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '5' + ' ' + 'yes'+ ' ' 
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '5' + ' ' + 'yes'+ ' ' + '0.01' + '_'
     os.system("python " + filename + params_ + '&')
     
 elif exp_type == 'exp':
@@ -80,7 +80,7 @@ elif exp_type == 'exp':
     
 elif exp_type == 'sin_cv':
     #  directly run with sigma selected by CV 
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '6' + ' ' + 'yes'+ ' ' 
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '6' + ' ' + 'yes'+ ' ' + '0.01' + '_'
     os.system("python " + filename + params_ + '&')
 
 elif exp_type == 'sin':
