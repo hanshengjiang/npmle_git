@@ -61,7 +61,7 @@ def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func=lin_func):
 
 
 
-def generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma,df_ = 3,func = lin_func):
+def generate_multivariate_t_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma,df_ = 3,func = lin_func):
     '''
     generate testing data with respect to continuous G^*
     
@@ -96,6 +96,50 @@ def generate_continuous_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma,
         else:
             b = rv2.rvs()
         # print("b",b)
+        y[i] = func(X[i],b) + np.random.normal(0,sigma)
+    return X,y
+
+def generate_circle_test_data(n,iter, c1,r1,c2,r2, pi1, sigma,func = lin_func):
+    '''
+    generate testing data with respect to continuous G^*
+    
+    G^* is uniform distribution over circle
+    
+    Input
+    -----
+    c1, c2: (p,1) center of circles
+    r_1, r_2: numeric radius of circles
+    
+    
+    output
+    ------
+    X (n,p)
+    y (n,1)
+    C (n,1): labels of each datapoints
+    
+    '''
+    
+    
+    
+    X = np.zeros((n,2))
+    y = np.zeros((n,1))
+    
+    c1 = np.reshape(np.array(c1), (2,1))
+    c2 = np.reshape(np.array(c2), (2,1))
+    
+    for i in range(n):
+        X[i] = np.reshape([1,np.random.uniform(-1,3)],(1,2))
+        b_pi = np.random.uniform(0,1)
+        
+        angle = np.random.uniform(0,2 * np.pi )
+        direction = np.array([[np.cos(angle)], [np.sin(angle)]])
+        
+        if b_pi < pi1:
+            b = c1 + r1 * direction
+        else:
+            b = c2 + r2 * direction
+        # print("b",b)
+        
         y[i] = func(X[i],b) + np.random.normal(0,sigma)
     return X,y
 
