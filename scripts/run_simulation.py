@@ -168,6 +168,7 @@ if run_cv == 'yes':
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
     pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
     idx_min = np.argmin(CV_result[:,1])
+    
     sigma_cv = cv_sigma_list[idx_min]
     
 else:
