@@ -19,9 +19,9 @@ if __name__ == "__main__":
     if len(sys.argv) < 5:
         sigma = 0.5
         n = 500
-        config = '1'
-        run_cv = '1.04'
-        cv_granularity = 0.04
+        config = '2' # '1'
+        run_cv = '0.51' # 1.04
+        cv_granularity = 0.01
         
     # otherwise take argyments from command line
     else:
@@ -75,11 +75,11 @@ fname = fname.replace('.','dot')
 # generate simulated dataset
 if config == '1':
     np.random.seed(626)
-    X,y = generate_multivariate_t_test_data\
+    X,y,Bn = generate_multivariate_t_test_data\
     (n,iter, meanb1,covb1,meanb2,covb2, pi1, sigma,df_, func)
 elif config == '2':
     np.random.seed(626)
-    X,y = generate_circle_test_data(n,iter, c1,r1,c2,r2, pi1, sigma,func)
+    X,y,Bn = generate_circle_test_data(n,iter, c1,r1,c2,r2, pi1, sigma,func)
 #-----------------------------------------------------------#
 
 
@@ -89,6 +89,7 @@ if not os.path.exists('./../data/{}'.format(fname)):
     os.mkdir('./../data/{}'.format(fname))
 pd.DataFrame(X).to_csv('./../data/{}/X.csv'.format(fname), index = False, header = False)
 pd.DataFrame(y).to_csv('./../data/{}/y.csv'.format(fname), index = False, header = False)
+pd.DataFrame(Bn).to_csv('./../data/{}/Bn.csv'.format(fname), index = False, header = False)
 pd.DataFrame(np.reshape(np.array(sigma),(1,1))).to_csv('./../data/{}/sigma_true.csv'.format(fname), index = False, header = False)
 #-----------------------------------------------------------#    
 
@@ -105,17 +106,19 @@ if run_cv == 'yes':
     
     kfold = 5 # number of fold in CV procedure
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
-    pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False)
+    pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False, header = False)
    
+    # CV_result = pd.read_csv('./../data/{}/CV_result.csv'.format(fname), header = None).values
+    #
     #--------------------------------------------#
     # choose sigma according to CV_result
     idx_min = np.argmin(CV_result[:,1])
     CV_min = CV_result[idx_min,1]
     
-    epsilon = 0.01 # epsilon = 0.0 then normal selection
+    epsilon = 0.0 # epsilon = 0.0 then normal selection
     # positive epsilon allows smaller sigma
     
-    idx_approx_set = np.argwhere(CV_result[:,1] < CV_min + epsilon * CV_min)
+    idx_approx_set = np.argwhere(CV_result[:,1] <= CV_min + epsilon * CV_min)
     
     sigma_cv = cv_sigma_list[np.min(idx_approx_set.ravel())]
     #--------------------------------------------#
@@ -172,7 +175,7 @@ t = np.arange(np.amin(X[:,1])-0.5,np.amax(X[:,1])+0.5,1e-6)
 #plt.plot(t,b1[0]+b1[1]*t,'r',t,b2[0]+b2[1]*t,'red')
 
 N = len(alpha2)
-threprob = 0.01
+threprob = 0.02
 
 RGB_tuples = [(240,163,255),(0,117,220),(153,63,0),(76,0,92),(0,92,49),
 (43,206,72),(255,204,153),(128,128,128),(148,255,181),(143,124,0),(157,204,0),

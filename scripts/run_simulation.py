@@ -168,6 +168,9 @@ if run_cv == 'yes':
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
     pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False, header = False)
     
+    # CV_result = pd.read_csv('./../data/{}/CV_result.csv'.format(fname), header = None).values
+    #
+    
     #--------------------------------------------#
     # choose sigma according to CV_result
     idx_min = np.argmin(CV_result[:,1])
@@ -176,7 +179,7 @@ if run_cv == 'yes':
     epsilon = 0.0 # epsilon = 0.0 then normal selection
     # positive epsilon allows smaller sigma
     
-    idx_approx_set = np.argwhere(CV_result[:,1] < CV_min + epsilon * CV_min)
+    idx_approx_set = np.argwhere(CV_result[:,1] <= CV_min + epsilon * CV_min)
     
     sigma_cv = cv_sigma_list[np.min(idx_approx_set.ravel())]
     #--------------------------------------------#

@@ -75,14 +75,14 @@ def generate_multivariate_t_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, si
     ------
     X (n,p)
     y (n,1)
-    C (n,1): labels of each datapoints
-    
+    Bn (n,p): grounfd truth of beta for all n data points
+    p = 2
     '''
-    p = len(meanb1)
     
     
     X = np.zeros((n,2))
     y = np.zeros((n,1))
+    Bn = np.zeros((n,2))
     
     rv1 = multivariate_t(meanb1,covb1,df = df_)
     rv2 = multivariate_t(meanb2,covb2,df = df_)
@@ -95,9 +95,10 @@ def generate_multivariate_t_test_data(n,iter, meanb1,covb1,meanb2,covb2, pi1, si
             b = rv1.rvs()
         else:
             b = rv2.rvs()
+        Bn[i] = b.ravel()
         # print("b",b)
         y[i] = func(X[i],b) + np.random.normal(0,sigma)
-    return X,y
+    return X,y,Bn
 
 def generate_circle_test_data(n,iter, c1,r1,c2,r2, pi1, sigma,func = lin_func):
     '''
@@ -115,14 +116,15 @@ def generate_circle_test_data(n,iter, c1,r1,c2,r2, pi1, sigma,func = lin_func):
     ------
     X (n,p)
     y (n,1)
-    C (n,1): labels of each datapoints
-    
+    Bn (n,p): grounfd truth of beta for all n data points
+    p = 2
     '''
     
     
     
     X = np.zeros((n,2))
     y = np.zeros((n,1))
+    Bn = np.zeros((n,2))
     
     c1 = np.reshape(np.array(c1), (2,1))
     c2 = np.reshape(np.array(c2), (2,1))
@@ -138,10 +140,10 @@ def generate_circle_test_data(n,iter, c1,r1,c2,r2, pi1, sigma,func = lin_func):
             b = c1 + r1 * direction
         else:
             b = c2 + r2 * direction
+        Bn[i] = b.ravel()
         # print("b",b)
-        
         y[i] = func(X[i],b) + np.random.normal(0,sigma)
-    return X,y
+    return X,y,Bn
 
 
 
