@@ -157,12 +157,12 @@ if config != '7':
     if func.__name__ == 'poly_func':
         max_ = 11 
         
-    df_NPMLE = density_ridgeline_plot(x_list_dense,sigma,\
+    df_true = density_ridgeline_plot(x_list_dense,sigma,\
                                         B1,alpha1,fname,min_,max_,func , approach = 'true')  
 else:
     min_ = -2
     max_ = 8
-    df_NPMLE = density_ridgeline_plot_continuous(x_list_dense,sigma,\
+    df_true = density_ridgeline_plot_continuous(x_list_dense,sigma,\
                         meanb1,covb1, meanb2,covb2,df_,pi1,fname, min_,max_,func, approach = 'true')
  
 
@@ -181,7 +181,18 @@ if func.__name__ == 'lin_func' and config != '7':
     alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
     sigma_EM = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values.ravel()
     
-    df_NPMLE = density_ridgeline_plot(x_list_dense,sigma_EM,\
+    df_EM = density_ridgeline_plot(x_list_dense,sigma_EM,\
                                         B4,alpha4,fname, min_,max_,func, approach = 'EM-true')  
 
 #-------------------------------------------------------------------#
+
+# put ALL density functions in the same ridgeline plot
+# NOTE: we will transpose the data frames
+df_combined = pd.concat([df_true.transpose(), df_NPMLE.transpose()], axis=1)
+
+fig1, ax1 = joypy.joyplot(df, kind="values", overlap = 0.5 \
+                          ,x_range = list(range(100)), ylabels = False\
+                          ,background='k', linecolor="w",grid=False,  linewidth=1.5,fill=False \
+                          )
+
+

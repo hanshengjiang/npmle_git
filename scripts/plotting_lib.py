@@ -709,6 +709,7 @@ def density_ridgeline_plot(x_list,sigma,B,alpha,fname, min_,max_,func = lin_func
     
     plt.savefig("./../pics/ridgeline_{}_{}".format(fname, approach), \
                 dpi = 300, bbox_inches='tight')
+    return df
     #---------------------------------------------------------------------------------
 
 
@@ -832,3 +833,5 @@ def density_ridgeline_plot_continuous(x_list,sigma,meanb1,covb1, meanb2,covb2,df
     
     plt.savefig("./../pics/ridgeline_{}_{}".format(fname, approach), \
                 dpi = 300, bbox_inches='tight')
+    
+    return df
