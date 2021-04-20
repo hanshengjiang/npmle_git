@@ -25,7 +25,7 @@ Ridgeline plots
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 3:
-        config = '7'
+        config = '1'
         error_type = 'homo' # error type can be hetero for config = 1,2,3
     # otherwise take argyments from command line
     else:
@@ -134,7 +134,7 @@ if error_type == 'hetero':
     fname = 'hetero_'+fname
 #------------------------------------------------------------------------
 
-x_list_dense = np.arange(-1,3,0.1)
+x_list_dense = np.arange(-1,3.1,0.1)
 
 #----------------------True-------------------------------------------#
 
@@ -188,11 +188,40 @@ if func.__name__ == 'lin_func' and config != '7':
 
 # put ALL density functions in the same ridgeline plot
 # NOTE: we will transpose the data frames
-df_combined = pd.concat([df_true.transpose(), df_NPMLE.transpose()], axis=1)
 
-fig1, ax1 = joypy.joyplot(df, kind="values", overlap = 0.5 \
-                          ,x_range = list(range(100)), ylabels = False\
-                          ,background='k', linecolor="w",grid=False,  linewidth=1.5,fill=False \
-                          )
+
+ylabels = False
+xlabels = False
+color_list = ['tab:blue', 'tab:orange', 'tab:pink']
+ys = []
+overlap = 0.5
+for i in range(len(x_list_dense)):
+    plt_y = i * (1.0 - overlap)
+    ys.append(plt_y)
+    
+    curve_true = df_true.values[:,i]
+    curve_NPMLE = df_NPMLE.values[:,i]
+    curve_EM = df_EM.values[:,i]
+    
+    plt.plot(x_list_dense, curve_true + y, color = color_list[0], \
+             zorder = len(x_list_dense)-i+1)
+    plt.plot(x_list_dense, curve_NPMLE + y, color = color_list[1], \
+             zorder = len(x_list_dense)-i+1)
+    plt.plot(x_list_dense, curve_EM + y, color = color_list[2], \
+             zorder = len(x_list_dense)-i+1)
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 
