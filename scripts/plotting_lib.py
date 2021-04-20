@@ -669,7 +669,7 @@ def density_ridgeline_plot(x_list,sigma,B,alpha,fname, min_,max_,func = lin_func
     '''
     line_styles = ['-','-','-','-']
     # line_styles = ['-','--',':','-.']
-    fig = plt.figure(figsize = (16,5))
+
     #List of x values
     i = 0
     
@@ -784,7 +784,7 @@ def density_ridgeline_plot_continuous(x_list,sigma,meanb1,covb1, meanb2,covb2,df
     '''
     line_styles = ['-','-','-','-']
     # line_styles = ['-','--',':','-.']
-    fig = plt.figure(figsize = (16,5))
+
     #List of x values
     i = 0
     

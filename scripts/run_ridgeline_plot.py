@@ -25,7 +25,7 @@ Ridgeline plots
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 3:
-        config = '1'
+        config = '4'
         error_type = 'homo' # error type can be hetero for config = 1,2,3
     # otherwise take argyments from command line
     else:
@@ -153,9 +153,6 @@ if config != '7':
         max_ = max(max_, max([func([1,x],B1[:,i]) for i in range(len(B1[0]))]))
     min_ = float(int(min_))
     max_ = float(int(max_))
-    
-    if func.__name__ == 'poly_func':
-        max_ = 11 
         
     df_true = density_ridgeline_plot(x_list_dense,sigma,\
                                         B1,alpha1,fname,min_,max_,func , approach = 'true')  
@@ -190,28 +187,57 @@ if func.__name__ == 'lin_func' and config != '7':
 # NOTE: we will transpose the data frames
 
 
-ylabels = False
-xlabels = False
-color_list = ['tab:blue', 'tab:orange', 'tab:pink']
-ys = []
-overlap = 0.5
-for i in range(len(x_list_dense)):
-    plt_y = i * (1.0 - overlap)
-    ys.append(plt_y)
-    
-    curve_true = df_true.values[:,i]
-    curve_NPMLE = df_NPMLE.values[:,i]
-    curve_EM = df_EM.values[:,i]
-    
-    plt.plot(x_list_dense, curve_true + y, color = color_list[0], \
-             zorder = len(x_list_dense)-i+1)
-    plt.plot(x_list_dense, curve_NPMLE + y, color = color_list[1], \
-             zorder = len(x_list_dense)-i+1)
-    plt.plot(x_list_dense, curve_EM + y, color = color_list[2], \
-             zorder = len(x_list_dense)-i+1)
 
+
+line_styles = ['-','-','-','-']
+color_list = ['tab:blue', 'tab:orange', 'tab:pink']
+name_list = ['Truth','NPMLE-CV', 'EM-true']
+
+for [plot_NPMLE,plot_EM] in [[True, False], [False, True]]:
+    
+    fig = plt.figure(figsize = (10,10))
+    if func.__name__ == 'lin_func':
+        y = np.linspace(min_ -1, max_ + 1, 100)
+    else:
+        y = np.linspace(min_ -3, max_ + 3, 100)
+        
+    curve_gap = 0.08
+    for i in range(len(x_list_dense)):
+        x_step = i * curve_gap
+        
+        curve_true = df_true.values[:,i]
+        plt.plot(y, curve_true + x_step, color = color_list[0], \
+                     zorder = len(x_list_dense)-i+1)
+        if plot_NPMLE == True:
+            curve_NPMLE = df_NPMLE.values[:,i]
+            plt.plot(y, curve_NPMLE + x_step, color = color_list[1], \
+                         zorder = len(x_list_dense)-i+1)
+        if plot_EM == True:
+            curve_EM = df_EM.values[:,i]
+            plt.plot(y, curve_EM + x_step, color = color_list[2], \
+                 zorder = len(x_list_dense)-i+1)
+    #
     
     
+    if plot_NPMLE == True:
+        plt_index = [0,1]
+    if plot_EM == True:
+        plt_index = [0,2]
+    if plot_NPMLE == True and plot_EM == True:
+        plt_index = [0,1,2]
+    # legend      
+    custom_lines = [
+                Line2D([0], [0], color= color_list[0], linestyle = line_styles[0]),
+              Line2D([0], [0], color= color_list[1], linestyle = line_styles[1]),
+              Line2D([0], [0], color= color_list[2], linestyle = line_styles[2])
+              # Line2D([0], [0], color= 'tab:purple', linestyle = line_styles[2]),
+        ]
+    
+    ax = plt.gca()
+    lgd = ax.legend(np.array(custom_lines)[plt_index], np.array(name_list)[plt_index], \
+                    bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    plt.savefig("./../pics/ridgeline_{}_{}".format(fname, '_'.join(np.array(name_list)[plt_index])), \
+                    dpi = 300, bbox_inches='tight')
     
     
     
