@@ -207,7 +207,7 @@ np.random.seed(626)
 # needs sigma as input
 
 f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR,func)
-pd.DataFrame(np.repeat(sigma,len(alpha2))).\
+pd.DataFrame(np.repeat(sigma,len(alpha1))).\
         to_csv("./../data/{}/sigma_NPMLEsigma.csv".format(fname), index = False, header = False)
 pd.DataFrame(B1).to_csv('./../data/{}/B_NPMLEsigma.csv'.format(fname), index = False, header = False)
 pd.DataFrame(alpha1).to_csv('./../data/{}/alpha_NPMLEsigma.csv'.format(fname), index = False, header = False)
