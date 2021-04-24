@@ -136,7 +136,11 @@ print("sigma:{},sigma_cv:{}".format(sigma,sigma_cv))
 np.random.seed(626)
 # needs sigma as input
 f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR,func)
-    
+pd.DataFrame(np.repeat(sigma,len(alpha1))).\
+        to_csv("./../data/{}/sigma_NPMLEsigma.csv".format(fname), index = False, header = False)
+pd.DataFrame(B1).to_csv('./../data/{}/B_NPMLEsigma.csv'.format(fname), index = False, header = False)
+pd.DataFrame(alpha1).to_csv('./../data/{}/alpha_NPMLEsigma.csv'.format(fname), index = False, header = False)
+pd.DataFrame(L_rec1).to_csv('./../data/{}/L_rec_NPMLEsigma.csv'.format(fname), index = False, header = False) 
     
 #------------------------------------------------------------#    
 #    
@@ -309,8 +313,12 @@ fig = plt.figure(figsize = (16,5))
 i = 0
 for i in range(len(x_list)):
     x = x_list[i]
-    min_ = min(func([1,x],meanb1), func([1,x],meanb2))
-    max_ = max(func([1,x],meanb1), func([1,x],meanb2))
+    if config == '1':
+        min_ = min(func([1,x],meanb1), func([1,x],meanb2))
+        max_ = max(func([1,x],meanb1), func([1,x],meanb2))
+    if config == '2':
+        min_ = min(func([1,x],c1), func([1,x],c2))
+        max_ = max(func([1,x],c1), func([1,x],c2))
     if func.__name__ == 'lin_func':
         y = np.linspace(min_ -3, max_ + 3, 100)
     else:
