@@ -233,6 +233,20 @@ lgd = ax.legend(loc=2, bbox_to_anchor=(1.05,1.0),borderaxespad=0.);
 plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 # plt.show();
 
+
+#-----------------------------------#
+#                                   # 
+#                                   #
+#    empirical bayes                #
+#                                   #
+#                                   #
+#-----------------------------------#
+
+#plt.scatter(Bn[0],Bn[1])
+
+
+
+
 #-----------------------------------#
 #                                   # 
 #                                   #
@@ -297,11 +311,11 @@ def func_xy_circ(x,y,c,r,sigma):
     def func(angle):
         b = c.ravel()[0] + r * np.cos(angle)
         k = c.ravel()[1] + r * np.sin(angle)
-        return 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y-b-k*x)**2/sigma**2) /(2 *np.pi)
+        return 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y-b-k*x)**2/sigma**2) /(2*np.pi)
     return func
 def func_xy_circ_int(x,y,c,r,sigma):
     # density function of y under continuous measure
-    return integrate.quad(func_xy_circ(x,y,c,r,sigma),0,2 * np.pi,epsabs = 1e-3)[0]
+    return integrate.quad(func_xy_circ(x,y,c,r,sigma),0,2 * np.pi,epsrel = 1e-2)[0]
 
 
    
