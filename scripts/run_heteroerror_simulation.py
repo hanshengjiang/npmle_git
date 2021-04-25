@@ -96,7 +96,10 @@ else:
 
 
 
-iter = 100 # iterations of NPMLE_FW
+iter = 200 
+# we require larger number of iterations for 
+# heteroerror case
+# iterations of NPMLE_FW
 
 
 fname = 'hetero_' + func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
@@ -181,9 +184,15 @@ test(X, y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_cv,BL,BR,fname,func)
   
 #-------------------1: CGM with known sigma----------------#
 # needs sigma as input
+np.random.seed(626)
 # uses the smallest heterosedastic error
-# f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma_list[0],BL,BR,func)
-    
+f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma_list[0],BL,BR,func)
+pd.DataFrame(np.repeat(sigma_list[0],len(alpha1))).\
+        to_csv("./../data/{}/sigma_NPMLEsigma.csv".format(fname), index = False, header = False)
+pd.DataFrame(B1).to_csv('./../data/{}/B_NPMLEsigma.csv'.format(fname), index = False, header = False)
+pd.DataFrame(alpha1).to_csv('./../data/{}/alpha_NPMLEsigma.csv'.format(fname), index = False, header = False)
+pd.DataFrame(L_rec1).to_csv('./../data/{}/L_rec_NPMLEsigma.csv'.format(fname), index = False, header = False)
+      
     
 #------------------------------------------------------------#    
 #    
