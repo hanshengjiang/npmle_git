@@ -25,8 +25,8 @@ Ridgeline plots
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 3:
-        config = '3'
-        error_type = 'hetero' # error type can be hetero for config = 1,2,3
+        config = '2'
+        error_type = 'homo' # error type can be hetero for config = 1,2,3
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
@@ -202,8 +202,6 @@ line_styles = ['-','-','-','-']
 color_list = ['tab:gray', 'tab:green', 'tab:orange', 'tab:pink']
 name_list = ['Truth',r'NPMLE-$\sigma$','NPMLE-CV', 'EM-true']
 
-fig = plt.figure(figsize = (25,5))
-
 plot_config_list = [[True, False, False], [False, True, False], [False, False, True]]
 
 if func.__name__ == 'lin_func':
@@ -212,39 +210,42 @@ if func.__name__ == 'lin_func':
 else:
     y = np.linspace(min_ -3, max_ + 3, 100)
     plt_index = [0,1,2]
+
+fig = plt.figure(figsize = (5*len(plt_index)-5,5))
+axes = fig.subplots(nrows=1, ncols=len(plt_index)-1)
+
+j_ = 0 
+for ax in fig.axes:
     
-for i in range(len(plt_index)-1):
+    [plot_NPMLEsigma,plot_NPMLE,plot_EM] = plot_config_list[j_]
+    j_ = j_ + 1
     
-    [plot_NPMLEsigma,plot_NPMLE,plot_EM] = plot_config_list[i]
-    
-    plt.subplot(1,len(plot_config_list)+1,i+1)
-    
-        
+    # fig.add_subplot(1,len(plot_config_list)+1,i+1)
+       
     curve_gap = 0.1
     for i in range(len(x_list_dense)):
         x_step = -1 + i * curve_gap
         
         curve_true = df_true.values[:,i]
-        plt.plot(y, curve_true + x_step, color = color_list[0], linestyle = line_styles[0],\
+        ax.plot(y, curve_true + x_step, color = color_list[0], linestyle = line_styles[0],\
                      zorder = len(x_list_dense)-i+1)
         if plot_NPMLEsigma == True:
             curve_NPMLEsigma = df_NPMLEsigma.values[:,i]
-            plt.plot(y, curve_NPMLEsigma + x_step, color = color_list[1], \
+            ax.plot(y, curve_NPMLEsigma + x_step, color = color_list[1], \
                          zorder = len(x_list_dense)-i+1)
         if plot_NPMLE == True:
             curve_NPMLE = df_NPMLE.values[:,i]
-            plt.plot(y, curve_NPMLE + x_step, color = color_list[2], \
+            ax.plot(y, curve_NPMLE + x_step, color = color_list[2], \
                          zorder = len(x_list_dense)-i+1)
-        
         if plot_EM == True:
             curve_EM = df_EM.values[:,i]
-            plt.plot(y, curve_EM + x_step, color = color_list[3], \
+            ax.plot(y, curve_EM + x_step, color = color_list[3], \
                  zorder = len(x_list_dense)-i+1)
             
-        plt.xlabel(r'$y$')
-        plt.ylabel(r'$x$')
-    
-      
+        ax.set_xlabel(r'$y$')
+        
+axes[0].set_ylabel(r'$x$')
+
 # legend      
 custom_lines = [
             Line2D([0], [0], color= color_list[0], linestyle = line_styles[0]),
@@ -253,10 +254,9 @@ custom_lines = [
           Line2D([0], [0], color= color_list[3], linestyle = line_styles[3])
     ]
 
-ax = plt.gca()
-lgd = ax.legend(np.array(custom_lines)[plt_index], np.array(name_list)[plt_index], \
-                bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-plt.savefig("./../pics/ridgeline_{}_{}".format(fname, '_'.join(np.array(name_list)).replace('-$\sigma$', 'sigma')), \
+axes[0].legend(np.array(custom_lines)[plt_index], np.array(name_list)[plt_index], \
+                bbox_to_anchor=(0, -0.2), loc=2, ncol = len(plt_index),borderaxespad=0.)
+fig.savefig("./../pics/ridgeline_{}_{}".format(fname, '_'.join(np.array(name_list)).replace('-$\sigma$', 'sigma')), \
                 dpi = 300, bbox_inches='tight')
 
 
