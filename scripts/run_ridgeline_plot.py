@@ -26,7 +26,7 @@ if __name__ == "__main__":
     # default
     if len(sys.argv) < 3:
         config = '2'
-        error_type = 'homo' # error type can be hetero for config = 1,2,3
+        error_type = 'hetero' # error type can be hetero for config = 1,2,3
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
