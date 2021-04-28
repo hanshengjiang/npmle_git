@@ -25,7 +25,7 @@ Ridgeline plots
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 3:
-        config = '2'
+        config = '3'
         error_type = 'hetero' # error type can be hetero for config = 1,2,3
     # otherwise take argyments from command line
     else:
@@ -244,7 +244,7 @@ for ax in fig.axes:
             
         ax.set_xlabel(r'$y$')
         
-axes[0].set_ylabel(r'$x$')
+axes[0].set_ylabel(r'Covariate')
 
 # legend      
 custom_lines = [
