@@ -52,7 +52,7 @@ if config == '1':
     +'_' +str(meanb2[1])+'_'+str(int(100*pi1)) +'percent'
     
 if config == '2':
-    #----------- configuration 1-----#
+    #----------- configuration 2-----#
     c1 = [0,0]
     r1 = 2
     c2 = [0,2]
@@ -242,7 +242,93 @@ plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,
 #                                   #
 #-----------------------------------#
 
-#plt.scatter(Bn[0],Bn[1])
+# read data files
+X = pd.read_csv('./../data/{}/X.csv'.format(fname), header = None).values
+y = pd.read_csv('./../data/{}/y.csv'.format(fname), header = None).values
+Bn = pd.read_csv('./../data/{}/Bn.csv'.format(fname), header = None).values
+
+if not os.path.exists('./../pics/EB_test'):
+    os.mkdir('./../pics/EB_test')
+    
+#np.random.seed(626)
+#X,y,Bn = generate_circle_test_data(10000,iter, c1,r1,c2,r2, pi1, sigma,func)
+
+# true
+fig_t = plt.figure(figsize = (8,8))
+ax_t = fig_t.add_subplot(1,1,1)
+ax_t.scatter(Bn[:,0],Bn[:,1], marker = '.')
+ax_t.set_xlabel(r"$\beta_1$")
+ax_t.set_ylabel(r"$\beta_2$")
+fig_t.savefig('./../pics/EB_test/%s_truth.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+#--------------------------------------#
+
+
+# oracle bayes
+
+def func_xy_beta_circ(x,y,c,r,sigma):
+    # b * density function
+    def func_circ_0(angle):
+        return (float(c[0]) + r*np.cos(angle)) * 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y- float(c[0])-r*np.cos(angle)\
+                          -float(c[1])*x - r*np.sin(angle)*x)**2/sigma**2)/(2*np.pi)
+    def func_circ_1(angle):
+        return (float(c[1]) + r*np.sin(angle)) * 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y- float(c[0])-r*np.cos(angle)\
+                          -float(c[1])*x - r*np.sin(angle)*x)**2/sigma**2)/(2*np.pi)
+    return func_circ_0, func_circ_1
+
+def func_xy_beta_circ_int(x,y,c,r,sigma):
+    # mean of b
+    b = np.zeros(2)
+    
+    b[0] = integrate.quad(func_xy_beta_circ(x,y,c,r,sigma)[0],0.0,2 * np.pi,epsrel = 1e-3)[0]
+    b[1] = integrate.quad(func_xy_beta_circ(x,y,c,r,sigma)[1],0.0,2 * np.pi,epsrel = 1e-3)[0]
+    return b
+
+# computing oracle bayes
+p = 2
+Bn_ob = np.zeros((n,p))
+for i in range(n):
+    if pi1 == 1:
+        # only consider pi1 =1 case for simplicity
+        b_temp = func_xy_beta_circ_int(X[i,1],y[i],c1,r1,sigma)
+        Bn_ob[i,:] = b_temp/func_xy_circ_int(X[i,1],y[i],c1,r1,sigma)
+fig_ob = plt.figure(figsize = (8,8))
+ax_ob = fig_ob.add_subplot(1,1,1)
+ax_ob.scatter(Bn_ob[:,0],Bn_ob[:,1], marker = '.')
+ax_ob.set_xlabel(r"$\beta_1$")
+ax_ob.set_ylabel(r"$\beta_2$")
+fig_ob.savefig('./../pics/EB_test/%s_OB.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+
+
+#--------------------------------------#
+    
+
+# empirical bayes
+#-----------------
+
+Bn_eb = np.zeros((n,p))
+for i in range(n):
+    # B2 is estimation from NPMLE-CV
+    # read from storage earlier
+    k = len(B2[0])
+    
+    prob_ = np.zeros(k)
+    temp_ = np.zeros(k)
+    
+    for j in range(k):
+        temp_[j] = -0.5*(y[i] - np.dot(X[i],B2[:,j]))**2/(sigma_cv**2)
+    max_ = max(temp_)
+    b = np.zeros(p)
+    for j in range(k):
+        if temp_[j] - max_ > -10:
+            b = b + B2[:,j]*np.exp(temp_[j])/np.sum(np.exp(temp_))
+    Bn_eb[i,:] = b
+    
+fig_eb = plt.figure(figsize = (8,8))
+ax_eb = fig_eb.add_subplot(1,1,1)
+ax_eb.scatter(Bn_eb[:,0],Bn_eb[:,1], marker = '.')
+ax_eb.set_xlabel(r"$\beta_1$")
+ax_eb.set_ylabel(r"$\beta_2$")
+fig_eb.savefig('./../pics/EB_test/%s_EB.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
 
 
@@ -316,7 +402,7 @@ def func_xy_circ(x,y,c,r,sigma):
     return func_circ
 def func_xy_circ_int(x,y,c,r,sigma):
     # density function of y under continuous measure
-    return integrate.quad(func_xy_circ(x,y,c,r,sigma),0.0,2 * np.pi,epsrel = 1e-2)[0]
+    return integrate.quad(func_xy_circ(x,y,c,r,sigma),0.0,2 * np.pi,epsrel = 1e-3)[0]
 
 
    
