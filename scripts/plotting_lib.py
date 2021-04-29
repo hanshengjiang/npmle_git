@@ -761,9 +761,7 @@ def func_xy_int(x,y,meanb,covb,sigma,df_):
                              -np.inf,np.inf,lambda b:-np.inf,lambda b :np.inf, epsabs = 1e-3)[0]
      
     
-    
-    
-    
+
 #-------------------------------------------------------#
 
 # ridgeline plots when true distribution is continuous  
@@ -813,6 +811,92 @@ def density_ridgeline_plot_continuous(x_list,sigma,meanb1,covb1, meanb2,covb2,df
             with Pool(8) as integral_pool:
                 fy = integral_pool.starmap(func_xy_int, \
                 zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(sigma),repeat(df_) ))
+        density_array[:,i] = np.array(fy).ravel()
+            
+    #----------Ridgeplot-------------------#
+    df = pd.DataFrame(density_array)
+    df.columns = x_list
+    
+    # choose a few index to be included in the labels
+    sparse_index = np.append(np.arange(0,100,25),99) # gap 20 can be adjusted 
+    y_labeled = np.around(y[sparse_index], decimals = 1)
+    # x_label = [x if int(10*x)%20 ==0 else None for x in x_list ]
+ 
+    fig1, ax1 = joypy.joyplot(df, kind="values", overlap = 0.5 \
+                          ,x_range = list(range(100)), ylabels = False\
+                          ,background='k', linecolor="w",grid=False,  linewidth=1.5,fill=False \
+                          )
+    ax1[-1].set_xticks(sparse_index)
+    ax1[-1].set_xticklabels(y_labeled)
+    
+    plt.savefig("./../pics/ridgeline_{}_{}".format(fname, approach), \
+                dpi = 300, bbox_inches='tight')
+    
+    return df
+
+#----------------------------------------------------------------
+
+#--------------------------------------#
+def func_xy_circ(x,y,c,r,sigma):
+    # density function of G^* under continuous measure
+    def func_circ(angle):
+#        b = c.ravel()[0] + r * np.cos(angle)
+#        k = c.ravel()[1] + r * np.sin(angle)
+        return 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y- float(c[0])-r*np.cos(angle)\
+                          -float(c[1])*x - r*np.sin(angle)*x)**2/sigma**2)/(2*np.pi)
+    return func_circ
+def func_xy_circ_int(x,y,c,r,sigma):
+    # density function of y under continuous measure
+    return integrate.quad(func_xy_circ(x,y,c,r,sigma),0.0,2 * np.pi,epsrel = 1e-3)[0]
+
+# ridgeline plots when true distribution is continuous  
+def density_ridgeline_plot_uniform_circle(x_list,sigma,c1,r1,c2,r2, pi1,fname, min_,max_,func = lin_func, approach = 'True'):
+    
+    '''
+    Input
+    -----
+    sigma float
+    B (p,k)
+    alpha (k,)
+    fname string
+    
+    Output
+    ------
+    Ridgeline plots
+    
+    '''
+    line_styles = ['-','-','-','-']
+    # line_styles = ['-','--',':','-.']
+
+    #List of x values
+    i = 0
+    
+    # set up a uniform range of y for all x
+    
+    
+    if func.__name__ == 'lin_func':
+        y = np.linspace(min_ -1, max_ + 1, 100)
+    else:
+        y = np.linspace(min_ -3, max_ + 3, 100)
+    #-------------------------------------------
+    
+    #-------------------------------------------
+    
+    density_array = np.zeros((len(y),len(x_list)))
+
+    for i in range(len(x_list)):
+        x = x_list[i]
+        if pi1 < 1:
+            with Pool(8) as integral_pool:
+                fy = pi1* integral_pool.starmap(func_xy_circ_int,\
+                                    zip(repeat(x), y, repeat(c1), repeat(r1), repeat(sigma)))\
+                        + (1-pi1) * integral_pool.starmap(func_xy_circ_int,\
+                                    zip(repeat(x), y, repeat(c2), repeat(r2), repeat(sigma)))
+
+        else: 
+            with Pool(8) as integral_pool:
+                fy = integral_pool.starmap(func_xy_circ_int,\
+                                        zip(repeat(x), y, repeat(c1), repeat(r1), repeat(sigma)))
         density_array[:,i] = np.array(fy).ravel()
             
     #----------Ridgeplot-------------------#

@@ -173,13 +173,13 @@ x_list_dense = np.arange(-1,3.1,0.1)
 
 #----------------------True-------------------------------------------#
 
-sigma_true = pd.read_csv('./../data/{}/sigma_true.csv'.format(fname), header = None).values.ravel()
-B_true = pd.read_csv('./../data/{}/B_true.csv'.format(fname), header = None).values
-alpha_true = pd.read_csv('./../data/{}/alpha_true.csv'.format(fname), header = None).values
-   
-    
 if float(config) < 7: 
-
+    
+    sigma_true = pd.read_csv('./../data/{}/sigma_true.csv'.format(fname), header = None).values.ravel()
+    B_true = pd.read_csv('./../data/{}/B_true.csv'.format(fname), header = None).values
+    alpha_true = pd.read_csv('./../data/{}/alpha_true.csv'.format(fname), header = None).values
+       
+    
     # set up range of y 
     min_ = -1
     max_ = 5
@@ -203,7 +203,7 @@ elif config == '8':
     min_ = -2
     max_ = 8
     df_true = density_ridgeline_plot_uniform_circle(x_list_dense,sigma,\
-                        c1,r1, c2,r2,,pi1,fname, min_,max_,func, approach = 'true')
+                        c1,r1, c2,r2,pi1,fname, min_,max_,func, approach = 'true')
     
 #----------------------NPMLE-sigma --------------------------------------#
 B1 = pd.read_csv('./../data/{}/B_NPMLEsigma.csv'.format(fname), header = None).values
