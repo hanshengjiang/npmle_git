@@ -25,8 +25,8 @@ Ridgeline plots
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 3:
-        config = '8'
-        error_type = 'homo' # error type can be hetero for config = 1,2,3
+        config = '3-negative'
+        error_type = 'hetero' # error type can be hetero for config = 1,2,3
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
@@ -81,7 +81,7 @@ elif config == '3-negative':
     b3 = (-1,0.5)
     pi1 = 0.3
     pi2 = 0.3
-    B_true = [[4,1,-1],[-1,1.5,0.5]]
+    B_true = [[3,1,-1],[-1,1.5,0.5]]
     alpha_true = [0.3,0.3,0.4]
     func = lin_func
     BL = -10
@@ -164,10 +164,13 @@ elif config == '8':
 else:
     sys.exit("Wrong configuration number!")
 
-if float(config) <7 :
+if float(config[0]) <7 :
     fname = func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
     +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
     fname = fname.replace('.','dot')
+
+if config[1:] == '-negative':
+    fname = fname + '_negative_case'
 
 if error_type == 'hetero':
     fname = 'hetero_'+fname
@@ -177,7 +180,7 @@ x_list_dense = np.arange(-1,3.1,0.1)
 
 #----------------------True-------------------------------------------#
 
-if float(config) < 7: 
+if float(config[0]) < 7: 
     
     sigma_true = pd.read_csv('./../data/{}/sigma_true.csv'.format(fname), header = None).values.ravel()
     B_true = pd.read_csv('./../data/{}/B_true.csv'.format(fname), header = None).values
@@ -229,7 +232,7 @@ df_NPMLE = density_ridgeline_plot(x_list_dense,sigma_cv,\
 
 
 #-----------------------   EM-true  -------------------------------------#
-if func.__name__ == 'lin_func' and float(config) < 7 :
+if func.__name__ == 'lin_func' and float(config[0]) < 7 :
     B4 = pd.read_csv('./../data/{}/B_EM.csv'.format(fname), header = None).values
     alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
     sigma_EM = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values.ravel()
@@ -251,7 +254,7 @@ name_list = ['Truth',r'NPMLE-$\sigma$','NPMLE-CV', 'EM-true']
 
 plot_config_list = [[True, False, False], [False, True, False], [False, False, True]]
 
-if func.__name__ == 'lin_func' and float(config) < 7:
+if func.__name__ == 'lin_func' and float(config[0]) < 7:
     y = np.linspace(min_ -1, max_ + 1, 100)
     plt_index = [0,1,2,3]
 else:
