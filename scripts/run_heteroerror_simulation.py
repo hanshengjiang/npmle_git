@@ -36,8 +36,8 @@ if __name__ == "__main__":
         # three component negative case
         sigma_list = [0.3,0.5,0.7] # hetero errors if negative case
         n = 500
-        config = '3'
-        run_cv = '0.27' # note this depends on sigma_list
+        config = '3-negative'
+        run_cv = '0.25' # note this depends on sigma_list
         cv_granularity = 0.01
     # otherwise take argyments from command line
     else:
