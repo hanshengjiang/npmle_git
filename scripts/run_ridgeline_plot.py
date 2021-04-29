@@ -136,6 +136,9 @@ elif config == '7':
     func = lin_func
     BL = -10
     BR = 10
+    
+    sigma = 0.5
+    
     continuous_type = 'continuous_multivariate_t'
     fname = continuous_type + str(meanb1[0]) + '_'+ str(meanb1[1])+'_'+ str(meanb2[0]) \
     +'_' +str(meanb2[1])+'_'+str(int(100*pi1)) +'percent'
@@ -153,6 +156,7 @@ elif config == '8':
     BR = 10
     x_list = [-1.5,0,1.5] #x_list for later density plots
     
+    sigma = 0.5
     continuous_type = 'continuous_uniform_circle'
     fname = continuous_type + str(c1[0]) + '_'+ str(c1[1])+'_'+ str(c2[0]) \
     +'_' +str(c2[1])+'_'+str(int(100*pi1)) +'percent'
@@ -200,8 +204,8 @@ elif config == '7':
                         meanb1,covb1, meanb2,covb2,df_,pi1,fname, min_,max_,func, approach = 'true')
 elif config == '8':
     # continuous case
-    min_ = -2
-    max_ = 8
+    min_ = -5
+    max_ = 5
     df_true = density_ridgeline_plot_uniform_circle(x_list_dense,sigma,\
                         c1,r1, c2,r2,pi1,fname, min_,max_,func, approach = 'true')
     
@@ -247,7 +251,7 @@ name_list = ['Truth',r'NPMLE-$\sigma$','NPMLE-CV', 'EM-true']
 
 plot_config_list = [[True, False, False], [False, True, False], [False, False, True]]
 
-if func.__name__ == 'lin_func':
+if func.__name__ == 'lin_func' and float(config) < 7:
     y = np.linspace(min_ -1, max_ + 1, 100)
     plt_index = [0,1,2,3]
 else:
@@ -288,7 +292,7 @@ for ax in fig.axes:
             
         ax.set_xlabel(r'$y$')
         
-axes[0].set_ylabel(r'Covariate')
+axes[0].set_ylabel(r'$x$')
 
 # legend      
 custom_lines = [

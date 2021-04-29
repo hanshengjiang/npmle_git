@@ -33,12 +33,11 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 6:
-        print("A negative case:")
         # three component negative case
-        sigma_list = [0.3,0.5,1.0] # hetero errors
+        sigma_list = [0.3,0.5,0.7] # hetero errors if negative case
         n = 500
         config = '3'
-        run_cv = 'yes' # note this depends on sigma_list
+        run_cv = '0.27' # note this depends on sigma_list
         cv_granularity = 0.01
     # otherwise take argyments from command line
     else:
@@ -72,7 +71,7 @@ elif config == '2':
     b3 = (0,1)
     pi1 = 0.3
     pi2 = 0.7
-    B_true = [[0,1],[2,1]]
+    B_true = [[0,2],[1,1]]
     alpha_true = [0.3,0.7]
     func = lin_func
     BL = -10
@@ -85,12 +84,30 @@ elif config == '3':
     b3 = (-1,0.5)
     pi1 = 0.3
     pi2 = 0.3
+    B_true = [[3,1,-1],[-1,1.5,0.5]]
+    alpha_true = [0.3,0.3,0.4]
+    func = lin_func
+    BL = -10
+    BR = 10
+    x_list = [-1.5,0,1.5]
+elif config == '3-negative':
+    #----------- configuration 3-negative -----#
+    
+    # redefine sigma_list because this is a negative case
+    sigma_list = [0.3,0.5,0.1]
+    
+    b1 = (3,-1)
+    b2 = (1,1.5)
+    b3 = (-1,0.5)
+    pi1 = 0.3
+    pi2 = 0.3
     B_true = [[4,1,-1],[-1,1.5,0.5]]
     alpha_true = [0.3,0.3,0.4]
     func = lin_func
     BL = -10
     BR = 10
     x_list = [-1.5,0,1.5]
+    
 else:
     sys.exit("Wrong configuration number!")
 
@@ -106,7 +123,7 @@ fname = 'hetero_' + func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b
 +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
 fname = fname.replace('.','dot')
 
-if len(sys.argv) < 6:
+if config[1:] == '-negative':
     fname = fname + '_negative_case'
 
 #-----------------------------------------------------------#
@@ -147,6 +164,7 @@ if run_cv == 'yes':
     cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granularity)
     
     kfold = 5 # number of fold in CV procedure
+    
     CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
     pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False, header = False)
     
@@ -157,7 +175,7 @@ if run_cv == 'yes':
     idx_min = np.argmin(CV_result[:,1])
     CV_min = CV_result[idx_min,1]
     
-    epsilon = 0.01 # epsilon = 0.0 then normal selection
+    epsilon = 0.00 # epsilon = 0.0 then normal selection
     # positive epsilon allows smaller sigma
     
     idx_approx_set = np.argwhere(CV_result[:,1] <= CV_min + epsilon * CV_min)

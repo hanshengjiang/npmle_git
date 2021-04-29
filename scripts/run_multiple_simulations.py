@@ -36,10 +36,10 @@ elif exp_type == 'discrete_cv':
 elif exp_type == 'hetero_discrete':
     #  directly run with sigma selected by CV 
     params_ = ' '+'0.3' + ' '+'0.5' + ' '+'0.7' + ' ' + \
-    '500' + ' ' + '1' + ' ' + '0.3'+ ' ' + '0.01' + ' '
+    '500' + ' ' + '1' + ' ' + '0.27'+ ' ' + '0.01' + ' '
     os.system("python " + filename + params_ + '&')
     params_ = ' '+'0.3' + ' ' + '0.5' + ' '+'0.7' + ' ' +\
-    '500' + ' ' + '2' + ' ' + '0.3'+ ' ' + '0.01' + ' '
+    '500' + ' ' + '2' + ' ' + '0.29'+ ' ' + '0.01' + ' '
     os.system("python " + filename + params_ + '&')
     params_ = ' '+'0.3' + ' ' + '0.5' + ' '+'0.7' + ' ' +\
     '500' + ' ' + '3' + ' ' + '0.31'+ ' ' + '0.01' + ' '
