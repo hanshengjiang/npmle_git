@@ -316,7 +316,7 @@ def func_xy_circ(x,y,c,r,sigma):
     return func_circ
 def func_xy_circ_int(x,y,c,r,sigma):
     # density function of y under continuous measure
-    return integrate.quad(func_xy_circ(x,y,c,r,sigma),0.0001,2 * np.pi,epsrel = 1e-2)[0]
+    return integrate.quad(func_xy_circ(x,y,c,r,sigma),0.0,2 * np.pi,epsrel = 1e-2)[0]
 
 
    
