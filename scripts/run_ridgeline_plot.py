@@ -25,8 +25,8 @@ Ridgeline plots
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 3:
-        config = '3'
-        error_type = 'hetero' # error type can be hetero for config = 1,2,3
+        config = '8'
+        error_type = 'homo' # error type can be hetero for config = 1,2,3
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
@@ -70,6 +70,23 @@ elif config == '3':
     func = lin_func
     BL = -10
     BR = 10
+elif config == '3-negative':
+    #----------- configuration 3-negative -----#
+    
+    # redefine sigma_list because this is a negative case
+    # sigma_list = [0.3,0.5,0.1]
+    
+    b1 = (3,-1)
+    b2 = (1,1.5)
+    b3 = (-1,0.5)
+    pi1 = 0.3
+    pi2 = 0.3
+    B_true = [[4,1,-1],[-1,1.5,0.5]]
+    alpha_true = [0.3,0.3,0.4]
+    func = lin_func
+    BL = -10
+    BR = 10
+    x_list = [-1.5,0,1.5]
 elif config == '4':
     #----------- configuration 4-----# 
     b1 = (-4,1)
@@ -119,13 +136,31 @@ elif config == '7':
     func = lin_func
     BL = -10
     BR = 10
-    fname = 'continuous_' + str(meanb1[0]) + '_'+ str(meanb1[1])+'_'+ str(meanb2[0]) \
-        +'_' +str(meanb2[1])+'_'+str(int(100*pi1)) +'percent'
-    fname = fname.replace('.','dot')  
+    continuous_type = 'continuous_multivariate_t'
+    fname = continuous_type + str(meanb1[0]) + '_'+ str(meanb1[1])+'_'+ str(meanb2[0]) \
+    +'_' +str(meanb2[1])+'_'+str(int(100*pi1)) +'percent'
+
+elif config == '8':
+    #----------- configuration -----#
+    c1 = [0,0]
+    r1 = 2
+    c2 = [0,2]
+    r2 = 2
+    pi1 = 1.0
+    
+    func = lin_func
+    BL = -10
+    BR = 10
+    x_list = [-1.5,0,1.5] #x_list for later density plots
+    
+    continuous_type = 'continuous_uniform_circle'
+    fname = continuous_type + str(c1[0]) + '_'+ str(c1[1])+'_'+ str(c2[0]) \
+    +'_' +str(c2[1])+'_'+str(int(100*pi1)) +'percent'
+    
 else:
     sys.exit("Wrong configuration number!")
 
-if config != '7':
+if float(config) <7 :
     fname = func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
     +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
     fname = fname.replace('.','dot')
@@ -138,30 +173,38 @@ x_list_dense = np.arange(-1,3.1,0.1)
 
 #----------------------True-------------------------------------------#
 
-sigma = pd.read_csv('./../data/{}/sigma_true.csv'.format(fname), header = None).values.ravel()
-    
-if config != '7': 
-    B1 = pd.read_csv('./../data/{}/B_true.csv'.format(fname), header = None).values
-    alpha1 = pd.read_csv('./../data/{}/alpha_true.csv'.format(fname), header = None).values
+sigma_true = pd.read_csv('./../data/{}/sigma_true.csv'.format(fname), header = None).values.ravel()
+B_true = pd.read_csv('./../data/{}/B_true.csv'.format(fname), header = None).values
+alpha_true = pd.read_csv('./../data/{}/alpha_true.csv'.format(fname), header = None).values
    
+    
+if float(config) < 7: 
+
     # set up range of y 
     min_ = -1
     max_ = 5
     for i in range(len(x_list_dense)):
         x = x_list_dense[i]
-        min_ = min(min_, min([func([1,x],B1[:,i]) for i in range(len(B1[0]))]))
-        max_ = max(max_, max([func([1,x],B1[:,i]) for i in range(len(B1[0]))]))
+        min_ = min(min_, min([func([1,x],B_true[:,i]) for i in range(len(B_true[0]))]))
+        max_ = max(max_, max([func([1,x],B_true[:,i]) for i in range(len(B_true[0]))]))
     min_ = float(int(min_))
     max_ = float(int(max_))
         
-    df_true = density_ridgeline_plot(x_list_dense,sigma,\
-                                        B1,alpha1,fname,min_,max_,func , approach = 'true')  
-else:
+    df_true = density_ridgeline_plot(x_list_dense,sigma_true,\
+                                        B_true,alpha_true,fname,min_,max_,func, approach = 'true')  
+elif config == '7':
+    # continuous case
     min_ = -2
     max_ = 8
     df_true = density_ridgeline_plot_continuous(x_list_dense,sigma,\
                         meanb1,covb1, meanb2,covb2,df_,pi1,fname, min_,max_,func, approach = 'true')
- 
+elif config == '8':
+    # continuous case
+    min_ = -2
+    max_ = 8
+    df_true = density_ridgeline_plot_uniform_circle(x_list_dense,sigma,\
+                        c1,r1, c2,r2,,pi1,fname, min_,max_,func, approach = 'true')
+    
 #----------------------NPMLE-sigma --------------------------------------#
 B1 = pd.read_csv('./../data/{}/B_NPMLEsigma.csv'.format(fname), header = None).values
 alpha1 = pd.read_csv('./../data/{}/alpha_NPMLEsigma.csv'.format(fname), header = None).values
@@ -182,7 +225,7 @@ df_NPMLE = density_ridgeline_plot(x_list_dense,sigma_cv,\
 
 
 #-----------------------   EM-true  -------------------------------------#
-if func.__name__ == 'lin_func' and config != '7':
+if func.__name__ == 'lin_func' and float(config) < 7 :
     B4 = pd.read_csv('./../data/{}/B_EM.csv'.format(fname), header = None).values
     alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
     sigma_EM = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values.ravel()
@@ -213,6 +256,7 @@ else:
 
 fig = plt.figure(figsize = (5*len(plt_index)-5,5))
 axes = fig.subplots(nrows=1, ncols=len(plt_index)-1)
+
 
 j_ = 0 
 for ax in fig.axes:
