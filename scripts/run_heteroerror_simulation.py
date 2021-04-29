@@ -101,7 +101,7 @@ elif config == '3-negative':
     b3 = (-1,0.5)
     pi1 = 0.3
     pi2 = 0.3
-    B_true = [[4,1,-1],[-1,1.5,0.5]]
+    B_true = [[3,1,-1],[-1,1.5,0.5]]
     alpha_true = [0.3,0.3,0.4]
     func = lin_func
     BL = -10
@@ -137,7 +137,7 @@ X,y,C = generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func)
 
 #-------------------------------------------------------------#
 # EM algorithms need to specify the number of vomponents
-num_component = int(float(config)/3) + 2
+num_component = int(float(config[0])/3) + 2
 #-------------------------------------------------------------#
 
 #-----------------------------------------------------------#
