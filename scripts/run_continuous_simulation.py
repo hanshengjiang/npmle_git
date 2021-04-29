@@ -308,14 +308,15 @@ def func_xy_int(x,y,meanb,covb,sigma,df_):
 #--------------------------------------#
 def func_xy_circ(x,y,c,r,sigma):
     # density function of G^* under continuous measure
-    def func(angle):
-        b = c.ravel()[0] + r * np.cos(angle)
-        k = c.ravel()[1] + r * np.sin(angle)
-        return 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y-b-k*x)**2/sigma**2) /(2*np.pi)
-    return func
+    def func_circ(angle):
+#        b = c.ravel()[0] + r * np.cos(angle)
+#        k = c.ravel()[1] + r * np.sin(angle)
+        return 1/(np.sqrt(2*np.pi) *sigma) *np.exp(-0.5*(y- float(c[0])-r*np.cos(angle)\
+                          -float(c[1])*x - r*np.sin(angle)*x)**2/sigma**2)/(2*np.pi)
+    return func_circ
 def func_xy_circ_int(x,y,c,r,sigma):
     # density function of y under continuous measure
-    return integrate.quad(func_xy_circ(x,y,c,r,sigma),0,2 * np.pi,epsrel = 1e-2)[0]
+    return integrate.quad(func_xy_circ(x,y,c,r,sigma),0.0001,2 * np.pi,epsrel = 1e-2)[0]
 
 
    
@@ -370,9 +371,9 @@ for i in range(len(x_list)):
         elif config == '2':
             with Pool(8) as integral_pool:
                 fy_true = pi1* integral_pool.starmap(func_xy_circ_int,\
-                            zip(repeat(x), repeat(y), repeat(c1), repeat(r1), repeat(sigma_cv)))\
+                            zip(repeat(x), y, repeat(c1), repeat(r1), repeat(sigma_cv)))\
                 + (1-pi1) * integral_pool.starmap(func_xy_circ_int,\
-                            zip(repeat(x), repeat(y), repeat(c2), repeat(r2), repeat(sigma_cv)))
+                            zip(repeat(x), y, repeat(c2), repeat(r2), repeat(sigma_cv)))
 
     elif pi1 == 1:
         if config == '1':
@@ -382,7 +383,7 @@ for i in range(len(x_list)):
         elif config == '2':
             with Pool(8) as integral_pool:
                 fy_true = integral_pool.starmap(func_xy_circ_int,\
-                            zip(repeat(x), repeat(y), repeat(c1), repeat(r1), repeat(sigma_cv)))
+                            zip(repeat(x), y, repeat(c1), repeat(r1), repeat(sigma_cv)))
                 
     fy_true = np.array(fy_true)
     plt.plot(y,fy_true.ravel(),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
