@@ -19,8 +19,12 @@ if __name__ == "__main__":
     if len(sys.argv) < 5:
         sigma = 0.5
         n = 500
-        config = '2' # '1'
-        run_cv = '0.51' # 1.04
+        config = '2'
+        run_cv = '0.51'
+        # or -----------
+        # config = '1'
+        # run_cv = '1.04'
+        #---------------
         cv_granularity = 0.01
         
     # otherwise take argyments from command line
