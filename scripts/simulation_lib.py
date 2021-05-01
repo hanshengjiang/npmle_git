@@ -19,7 +19,7 @@ def generate_test_data(n,iter, b1, b2, b3,pi1,pi2,sigma_list,func=lin_func):
     
     output
     ------
-    X (n,p)
+    X (n,*)
     y (n,1)
     C (n,1): labels of each datapoints
     
