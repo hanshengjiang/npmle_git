@@ -118,6 +118,32 @@ elif config == '6':
     BL = -10
     BR = 10
     x_list = [-1.5,0,1.5]
+elif config == '7':
+    #----------- configuration 7-----#
+    b1 = (1, 1, 1)
+    b2 = (1.5, 2, 3)
+    b3 = (0,0)
+    pi1 = 0.5
+    pi2 = 0.5
+    B_true = [[-0.5,-1.5],[1,1.5]]
+    alpha_true = [0.5,0.5]
+    func = sinusoid_func
+    BL = -10
+    BR = 10
+    x_list = [-1.5,0,1.5]
+elif config == '8':
+    #----------- configuration 8-----#
+    b1 = (1,1,1)
+    b2 = (2,0.5,3)
+    b3 = (0,0)
+    pi1 = 0.5
+    pi2 = 0.5
+    B_true = [[-0.5,-1.5],[1,1.5]]
+    alpha_true = [0.5,0.5]
+    func = piecelin_func
+    BL = -10
+    BR = 10
+    x_list = [-1.5,0,1.5]
 else:
     sys.exit("Wrong configuration number!")
 

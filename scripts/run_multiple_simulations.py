@@ -87,4 +87,24 @@ elif exp_type == 'sin':
     # re-run cross-validation
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '6' + ' ' + '0.5'+ ' ' + '0.01' + ' '
     os.system("python " + filename + params_ + '&')
+
+elif exp_type == 'sinusoid_cv':
+    #  directly run with sigma selected by CV 
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '6' + ' ' + 'yes'+ ' ' + '0.01' + ' '
+    os.system("python " + filename + params_ + '&')
+
+elif exp_type == 'sinusoid':
+    # re-run cross-validation
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '6' + ' ' + '??'+ ' ' + '0.01' + ' '
+    os.system("python " + filename + params_ + '&')
+   
+elif exp_type == 'piecelin_cv':
+    #  directly run with sigma selected by CV 
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '6' + ' ' + 'yes'+ ' ' + '0.01' + ' '
+    os.system("python " + filename + params_ + '&')
+
+elif exp_type == 'piecelin':
+    # re-run cross-validation
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '6' + ' ' + '??'+ ' ' + '0.01' + ' '
+    os.system("python " + filename + params_ + '&')
    
