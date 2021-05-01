@@ -25,8 +25,8 @@ Ridgeline plots
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 3:
-        config = '3-negative'
-        error_type = 'hetero' # error type can be hetero for config = 1,2,3
+        config = '3'
+        error_type = 'homo' # error type can be hetero for config = 1,2,3
     # otherwise take argyments from command line
     else:
         #sys_argv[0] is the name of the .py file
@@ -124,7 +124,7 @@ elif config == '6':
     func = sin_func
     BL = -10
     BR = 10
-elif config == '7':
+elif config == 'cont-1':
     #----------- continuous case-----#
     meanb1 = [1,0.5]
     covb1 = np.array([[0.5,0.2],[0.2,0.3]])
@@ -143,7 +143,7 @@ elif config == '7':
     fname = continuous_type + str(meanb1[0]) + '_'+ str(meanb1[1])+'_'+ str(meanb2[0]) \
     +'_' +str(meanb2[1])+'_'+str(int(100*pi1)) +'percent'
 
-elif config == '8':
+elif config == 'cont-2':
     #----------- configuration -----#
     c1 = [0,0]
     r1 = 2
@@ -164,7 +164,7 @@ elif config == '8':
 else:
     sys.exit("Wrong configuration number!")
 
-if float(config[0]) <7 :
+if config[:4] != 'cont' :
     fname = func.__name__[:-4] + str(b1[0]) + '_'+ str(b1[1])+'_'+ str(b2[0]) \
     +'_' +str(b2[1])+'_'+str(int(100*pi1)) +'percent'
     fname = fname.replace('.','dot')
@@ -180,7 +180,7 @@ x_list_dense = np.arange(-1,3.1,0.1)
 
 #----------------------True-------------------------------------------#
 
-if float(config[0]) < 7: 
+if config[:4] != 'cont': 
     
     sigma_true = pd.read_csv('./../data/{}/sigma_true.csv'.format(fname), header = None).values.ravel()
     B_true = pd.read_csv('./../data/{}/B_true.csv'.format(fname), header = None).values
@@ -199,13 +199,13 @@ if float(config[0]) < 7:
         
     df_true = density_ridgeline_plot(x_list_dense,sigma_true,\
                                         B_true,alpha_true,fname,min_,max_,func, approach = 'true')  
-elif config == '7':
+elif config == 'cont-1':
     # continuous case
     min_ = -2
     max_ = 8
     df_true = density_ridgeline_plot_continuous(x_list_dense,sigma,\
                         meanb1,covb1, meanb2,covb2,df_,pi1,fname, min_,max_,func, approach = 'true')
-elif config == '8':
+elif config == 'cont-2':
     # continuous case
     min_ = -5
     max_ = 5
@@ -232,7 +232,7 @@ df_NPMLE = density_ridgeline_plot(x_list_dense,sigma_cv,\
 
 
 #-----------------------   EM-true  -------------------------------------#
-if func.__name__ == 'lin_func' and float(config[0]) < 7 :
+if func.__name__ == 'lin_func' and config[:4] != 'cont':
     B4 = pd.read_csv('./../data/{}/B_EM.csv'.format(fname), header = None).values
     alpha4 = pd.read_csv('./../data/{}/alpha_EM.csv'.format(fname), header = None).values
     sigma_EM = pd.read_csv('./../data/{}/sigma_EM.csv'.format(fname), header = None).values.ravel()
@@ -254,7 +254,7 @@ name_list = ['Truth',r'NPMLE-$\sigma$','NPMLE-CV', 'EM-true']
 
 plot_config_list = [[True, False, False], [False, True, False], [False, False, True]]
 
-if func.__name__ == 'lin_func' and float(config[0]) < 7:
+if func.__name__ == 'lin_func' and config[:4] != 'cont':
     y = np.linspace(min_ -1, max_ + 1, 100)
     plt_index = [0,1,2,3]
 else:
