@@ -105,6 +105,6 @@ elif exp_type == 'piecelin_cv':
 
 elif exp_type == 'piecelin':
     # re-run cross-validation
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '8' + ' ' + '??'+ ' ' + '0.01' + ' '
+    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '8' + ' ' + '0.49'+ ' ' + '0.01' + ' '
     os.system("python " + filename + params_ + '&')
    
