@@ -163,7 +163,8 @@ def test(X,y,C, n,iter, b1, b2, b3,pi1,pi2,sigma_est,BL,BR,fname,func=lin_func):
     '''
 
     #set parameters
-    p =2    #number of components (currently we only consider 2 component)
+    p = len(b1)   # dimension of unknown parameters
+    
     #sigma = 0.8 # standard deviation
     threprob = 0.01
     

@@ -108,7 +108,8 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR, func = lin_func):
     
     '''  
     n = len(X)
-    p = len(X[0])
+    
+    p = func.p
     
     L_rec = []
     curvature_rec = []
