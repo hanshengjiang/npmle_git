@@ -59,9 +59,9 @@ if config == '2':
     #----------- configuration 2-----#
     c1 = [0,0]
     r1 = 2
-    c2 = [0,2]
-    r2 = 2
-    pi1 = 1.0
+    c2 = [0,0]
+    r2 = 1
+    pi1 = 0.5
     
     func = lin_func
     BL = -10
@@ -156,8 +156,12 @@ pd.DataFrame(np.repeat(sigma_cv,len(alpha2))).\
 pd.DataFrame(B2).to_csv('./../data/{}/B_NPMLE.csv'.format(fname), index = False, header = False)
 pd.DataFrame(alpha2).to_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), index = False, header = False)
 pd.DataFrame(L_rec2).to_csv('./../data/{}/L_rec_NPMLE.csv'.format(fname), index = False, header = False)
-    
- 
+
+# alternatively read from previous runs
+#B2 = pd.read_csv('./../data/{}/B_NPMLE.csv'.format(fname), header = None).values
+#alpha2 = pd.read_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), header = None).values
+#L_rec2 = pd.read_csv('./../data/{}/L_rec_NPMLE.csv'.format(fname), header = None).values
+# 
 #------------------------------------------------------------#    
 fig_raw = plt.figure(figsize = (8,8))
 plt.scatter(X[:,1],y,color = 'black',marker = 'o',label = 'Noisy data', facecolors = 'None');
