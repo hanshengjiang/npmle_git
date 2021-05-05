@@ -12,9 +12,9 @@ Plotting library that generates nice scatter and line plots
 
 IMPORTANT
 ---------
-Some plot legends does not automatically changes atogether with r(x,beta)
+Some plot legends does not automatically changes altogether with r(x,beta)
 therefore need to be manually recalibrated
-whenever funcrions in regression_func_lib changes
+whenever functions in regression_func_lib changes
 
 '''
 

@@ -458,26 +458,26 @@ for i in range(len(x_list)):
     if pi1 < 1:
         if config == '1':
             with Pool(8) as integral_pool:
-                fy_true = pi1* integral_pool.starmap(func_xy_int, \
-                        zip(repeat(x), y, repeat(np.array(meanb1)), repeat(np.array(covb1)),repeat(sigma_cv),repeat(df_) ))\
-                                                     + (1-pi1)*integral_pool.starmap(func_xy, \
-                        zip(repeat(x), y, repeat(np.array(meanb2)), repeat(np.array(covb2)),repeat(sigma_cv),repeat(df_) ))
+                fy_true = pi1* np.array(integral_pool.starmap(func_xy_int, \
+                        zip(repeat(x), y, repeat(np.array(meanb1)), repeat(np.array(covb1)),repeat(sigma_cv),repeat(df_) )))\
+                                                     + (1-pi1)*np.array(integral_pool.starmap(func_xy, \
+                        zip(repeat(x), y, repeat(np.array(meanb2)), repeat(np.array(covb2)),repeat(sigma_cv),repeat(df_) )))
         elif config == '2':
             with Pool(8) as integral_pool:
-                fy_true = pi1* integral_pool.starmap(func_xy_circ_int,\
-                            zip(repeat(x), y, repeat(c1), repeat(r1), repeat(sigma_cv)))\
-                + (1-pi1) * integral_pool.starmap(func_xy_circ_int,\
-                            zip(repeat(x), y, repeat(c2), repeat(r2), repeat(sigma_cv)))
+                fy_true = pi1* np.array(integral_pool.starmap(func_xy_circ_int,\
+                            zip(repeat(x), y, repeat(c1), repeat(r1), repeat(sigma_cv))))\
+                + (1-pi1) *np.array( integral_pool.starmap(func_xy_circ_int,\
+                            zip(repeat(x), y, repeat(c2), repeat(r2), repeat(sigma_cv))))
 
     elif pi1 == 1:
         if config == '1':
             with Pool(8) as integral_pool:
-                fy_true = integral_pool.starmap(func_xy_int, \
-                    zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(sigma_cv),repeat(df_) ))
+                fy_true = np.array(integral_pool.starmap(func_xy_int, \
+                    zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(sigma_cv),repeat(df_) )))
         elif config == '2':
             with Pool(8) as integral_pool:
-                fy_true = integral_pool.starmap(func_xy_circ_int,\
-                            zip(repeat(x), y, repeat(c1), repeat(r1), repeat(sigma_cv)))
+                fy_true = np.array(integral_pool.starmap(func_xy_circ_int,\
+                            zip(repeat(x), y, repeat(c1), repeat(r1), repeat(sigma_cv))))
                 
     fy_true = np.array(fy_true)
     plt.plot(y,fy_true.ravel(),color = 'tab:blue',label = 'Truth',linestyle =line_styles[0])
