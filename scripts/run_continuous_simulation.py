@@ -119,7 +119,7 @@ if run_cv == 'yes':
     idx_min = np.argmin(CV_result[:,1])
     CV_min = CV_result[idx_min,1]
     
-    epsilon = 0.0 # epsilon = 0.0 then normal selection
+    epsilon = 0.01 # epsilon = 0.0 then normal selection
     # positive epsilon allows smaller sigma
     
     idx_approx_set = np.argwhere(CV_result[:,1] <= CV_min + epsilon * CV_min)
