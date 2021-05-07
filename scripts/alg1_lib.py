@@ -155,11 +155,14 @@ def NPMLE_FW(X,y,iter,sigma,BL,BR, func = lin_func):
         B = np.append(B,beta_sol,axis = 1)
         
         f_old = np.copy(f)
+        
         #fully corrective step wrt current active set P
         f, alpha = FW_FC(f,alpha,P,n)
         
+        # linear search (ls) version of f
+        f_ls = t/(t+2)*f_old + 2/(t+2)*g
         # calculate the "curvature constant"
-        curvature_temp = np.sum(np.log(1/f)) -  np.sum(np.log(1/f_old)) + np.dot(f.T,1/f_old) -np.dot(f_old.T,1/f_old)
+        curvature_temp = np.sum(np.log(f_old)) -  np.sum(np.log(f_ls)) + 2/(t+2)* np.dot(g.T,1/f_old) - 2/(t+2)*np.dot(f_old.T,1/f_old)
         curvature_rec.append(float(curvature_temp) * (t+2)**2/2)
         print("C_L", t, ":",curvature_rec[-1])
         
