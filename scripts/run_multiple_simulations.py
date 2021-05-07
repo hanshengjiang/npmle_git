@@ -97,8 +97,9 @@ elif exp_type == 'sinusoid':
     # re-run cross-validation
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '7' + ' ' + '??'+ ' ' + '0.01' + ' '
     os.system("python " + filename + params_ + '&')
+    
 
-elif exp_type == 'C_L_plot':
+elif exp_type == 'plot_C_L':
     for config in ['1','2','3']:
         for error_type in ['homo','hetero']:
             params_ = ' ' + config + ' ' + error_type + ' '
