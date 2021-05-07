@@ -268,8 +268,8 @@ plt.savefig('./../pics/%s_fitted.png'%fname, dpi = 300, bbox_extra_artists=(lgd,
 fig3 = plt.figure(figsize = (6,5))
 ax = plt.gca()
 ax.set_xlabel(r"Iteration")
-ax.set_ylabel(r'$\log C_L$')
-plt.plot(np.log(np.array(L_rec)));
+ax.set_ylabel(r'$C_L$')
+plt.plot(np.array(L_rec));
 plt.savefig('./../pics/%s_C_L.png'%fname, dpi = 300, bbox_inches='tight')
 
 #-----------------------------------#

@@ -163,8 +163,8 @@ def lin_plot(X,y,C,b1,b2,b3,pi1,pi2,sigma,B,alpha,L_rec,fname,threprob,func = li
     fig3 = plt.figure(figsize = (6,5))
     ax = plt.gca()
     ax.set_xlabel(r"Iteration")
-    ax.set_ylabel(r'$\log C_L$')
-    plt.plot(np.log(np.array(L_rec)));
+    ax.set_ylabel(r'$C_L$')
+    plt.plot(np.array(L_rec));
     plt.savefig('./../pics/%s_C_L.png'%fname, dpi = 300, bbox_inches='tight')
     
     #mixing weights
