@@ -180,11 +180,12 @@ if error_type == 'hetero':
 # read data 
 L_rec = pd.read_csv('./../data/{}/L_rec_NPMLE.csv'.format(fname), header = None).values
 
+print(fname)
 fig3 = plt.figure(figsize = (6,5))
 ax = plt.gca()
 ax.set_xlabel(r"Iteration")
-ax.set_ylabel(r'$C_L$')
-plt.plot(np.array(L_rec));
+ax.set_ylabel(r'$\log C_L$')
+plt.plot(np.log(np.array(L_rec)+1e-10));
 plt.savefig('./../pics/%s_C_L.png'%fname, dpi = 300, bbox_inches='tight')
   
     
