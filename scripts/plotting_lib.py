@@ -803,14 +803,14 @@ def density_ridgeline_plot_continuous(x_list,sigma,meanb1,covb1, meanb2,covb2,df
         x = x_list[i]
         if pi1 < 1:
             with Pool(8) as integral_pool:
-                fy = pi1* integral_pool.starmap(func_xy_int, \
-                    zip(repeat(x), y, repeat(np.array(meanb1)), repeat(np.array(covb1)),repeat(sigma), repeat(df_) ))\
-                                                 + (1-pi1)*integral_pool.starmap(func_xy, \
-                    zip(repeat(x), y, repeat(np.array(meanb2)), repeat(np.array(covb2)),repeat(sigma),repeat(df_) ))
+                fy = pi1* np.array(integral_pool.starmap(func_xy_int, \
+ zip(repeat(x), y, repeat(np.array(meanb1)), repeat(np.array(covb1)),repeat(sigma), repeat(df_) )))\
+                                + (1-pi1)* np.array(integral_pool.starmap(func_xy, \
+                    zip(repeat(x), y, repeat(np.array(meanb2)), repeat(np.array(covb2)),repeat(sigma),repeat(df_) )))
         else: 
             with Pool(8) as integral_pool:
-                fy = integral_pool.starmap(func_xy_int, \
-                zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(sigma),repeat(df_) ))
+                fy = np.array(integral_pool.starmap(func_xy_int, \
+                zip(repeat(x), y, repeat(meanb1), repeat(covb1),repeat(sigma),repeat(df_) )))
         density_array[:,i] = np.array(fy).ravel()
             
     #----------Ridgeplot-------------------#
@@ -888,15 +888,15 @@ def density_ridgeline_plot_uniform_circle(x_list,sigma,c1,r1,c2,r2, pi1,fname, m
         x = x_list[i]
         if pi1 < 1:
             with Pool(8) as integral_pool:
-                fy = pi1* integral_pool.starmap(func_xy_circ_int,\
-                                    zip(repeat(x), y, repeat(c1), repeat(r1), repeat(sigma)))\
-                        + (1-pi1) * integral_pool.starmap(func_xy_circ_int,\
-                                    zip(repeat(x), y, repeat(c2), repeat(r2), repeat(sigma)))
+                fy = pi1* np.array(integral_pool.starmap(func_xy_circ_int,\
+                        zip(repeat(x), y, repeat(c1), repeat(r1), repeat(sigma))))\
+                        + (1-pi1) * np.array(integral_pool.starmap(func_xy_circ_int,\
+                         zip(repeat(x), y, repeat(c2), repeat(r2), repeat(sigma))))
 
         else: 
             with Pool(8) as integral_pool:
-                fy = integral_pool.starmap(func_xy_circ_int,\
-                                        zip(repeat(x), y, repeat(c1), repeat(r1), repeat(sigma)))
+                fy = np.array(integral_pool.starmap(func_xy_circ_int,\
+                            zip(repeat(x), y, repeat(c1), repeat(r1), repeat(sigma))))
         density_array[:,i] = np.array(fy).ravel()
             
     #----------Ridgeplot-------------------#

@@ -20,7 +20,7 @@ if __name__ == "__main__":
         sigma = 0.5
         n = 500
         config = '2'
-        run_cv = '0.51'
+        run_cv = 'yes'
         # or -----------
         # config = '1'
         # run_cv = '1.04'
@@ -119,7 +119,7 @@ if run_cv == 'yes':
     idx_min = np.argmin(CV_result[:,1])
     CV_min = CV_result[idx_min,1]
     
-    epsilon = 0.01 # epsilon = 0.0 then normal selection
+    epsilon = 0.005 # epsilon = 0.0 then normal selection
     # positive epsilon allows smaller sigma
     
     idx_approx_set = np.argwhere(CV_result[:,1] <= CV_min + epsilon * CV_min)
@@ -139,7 +139,7 @@ print("sigma:{},sigma_cv:{}".format(sigma,sigma_cv))
 #-------------------NPMLE-sigma----------------#
 np.random.seed(626)
 # needs sigma as input
-f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,iter,sigma,BL,BR,func)
+f1, B1, alpha1, L_rec1, L_final1 = NPMLE_FW(X,y,200,sigma,BL,BR,func)
 pd.DataFrame(np.repeat(sigma,len(alpha1))).\
         to_csv("./../data/{}/sigma_NPMLEsigma.csv".format(fname), index = False, header = False)
 pd.DataFrame(B1).to_csv('./../data/{}/B_NPMLEsigma.csv'.format(fname), index = False, header = False)
@@ -147,10 +147,10 @@ pd.DataFrame(alpha1).to_csv('./../data/{}/alpha_NPMLEsigma.csv'.format(fname), i
 pd.DataFrame(L_rec1).to_csv('./../data/{}/L_rec_NPMLEsigma.csv'.format(fname), index = False, header = False) 
     
 #------------------------------------------------------------#    
-#    
+
 #-------------------NPMLE-CV ----------------#
 np.random.seed(626)
-f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,iter,sigma_cv,BL,BR,func)
+f2, B2, alpha2, L_rec2, L_final2 = NPMLE_FW(X,y,200,sigma_cv,BL,BR,func)
 pd.DataFrame(np.repeat(sigma_cv,len(alpha2))).\
         to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
 pd.DataFrame(B2).to_csv('./../data/{}/B_NPMLE.csv'.format(fname), index = False, header = False)
@@ -162,6 +162,28 @@ pd.DataFrame(L_rec2).to_csv('./../data/{}/L_rec_NPMLE.csv'.format(fname), index 
 #alpha2 = pd.read_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), header = None).values
 #L_rec2 = pd.read_csv('./../data/{}/L_rec_NPMLE.csv'.format(fname), header = None).values
 # 
+
+
+#------------------plot probability measures ----------------#
+# true
+fig_g = plt.figure(figsize = (8,8))
+ax_g = fig_g.add_subplot(1,1,1)
+ax_g.scatter(B1[0],B1[1],s = 2000*alpha1.ravel(), color ='tab:green', \
+             alpha = 0.5 , label = r'NPMLE-$\sigma$')
+ax_g.scatter(B2[0],B2[1],s = 2000*alpha1.ravel(), color ='tab:orange', \
+             alpha = 0.5, label = 'NPMLE-CV')
+theta = np.linspace(-np.pi, np.pi, 200)
+ax_g.plot(c1[0] + r1 * np.cos(theta), c1[1] + r1 * np.sin(theta), color = 'tab:gray',label = 'Truth')
+ax_g.plot(c2[0] + r2 *np.cos(theta), c2[1] + r2*np.sin(theta), color = 'tab:gray')
+ax_g.set_xlabel(r"$\beta_1$")
+ax_g.set_ylabel(r"$\beta_2$")
+ax_g.set_xlim([c1[0] - r1 - 0.5,c1[1] +r1 + 0.5])
+ax_g.set_ylim([c1[0] - r1 - 0.5,c1[1] +r1 + 0.5])
+ax_g.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
+fig_g.savefig('./../pics/%s_measures.png'%fname, dpi = 300, bbox_inches='tight')
+#------------------------------------------------------------#  
+ 
+
 #------------------------------------------------------------#    
 fig_raw = plt.figure(figsize = (8,8))
 plt.scatter(X[:,1],y,color = 'black',marker = 'o',label = 'Noisy data', facecolors = 'None');

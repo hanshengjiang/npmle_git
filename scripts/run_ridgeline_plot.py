@@ -25,7 +25,7 @@ Ridgeline plots
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 3:
-        config = '3'
+        config = 'cont-2'
         error_type = 'homo' # error type can be hetero for config = 1,2,3
     # otherwise take argyments from command line
     else:
@@ -147,9 +147,9 @@ elif config == 'cont-2':
     #----------- configuration -----#
     c1 = [0,0]
     r1 = 2
-    c2 = [0,2]
-    r2 = 2
-    pi1 = 1.0
+    c2 = [0,0]
+    r2 = 1
+    pi1  = 0.5
     
     func = lin_func
     BL = -10
