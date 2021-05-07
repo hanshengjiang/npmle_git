@@ -97,14 +97,27 @@ elif exp_type == 'sinusoid':
     # re-run cross-validation
     params_ = ' '+'0.5' + ' ' + '500' + ' ' + '7' + ' ' + '??'+ ' ' + '0.01' + ' '
     os.system("python " + filename + params_ + '&')
-   
-elif exp_type == 'piecelin_cv':
-    #  directly run with sigma selected by CV 
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '8' + ' ' + 'yes'+ ' ' + '0.01' + ' '
-    os.system("python " + filename + params_ + '&')
 
-elif exp_type == 'piecelin':
-    # re-run cross-validation
-    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '8' + ' ' + '0.49'+ ' ' + '0.01' + ' '
-    os.system("python " + filename + params_ + '&')
+elif exp_type == 'C_L_plot':
+    for config in ['1','2','3']:
+        for error_type in ['homo','hetero']:
+            params_ = ' ' + config + ' ' + error_type + ' '
+            os.system("python " + filename + params_ + '&')
+    error_type = 'homo'
+    for config in ['4','5','6']:
+        params_ = ' ' + config + ' ' + error_type + ' '
+        os.system("python " + filename + params_ + '&')
+    
+#elif exp_type == 'piecelin_cv':
+#    #  directly run with sigma selected by CV 
+#    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '8' + ' ' + 'yes'+ ' ' + '0.01' + ' '
+#    os.system("python " + filename + params_ + '&')
+#
+#elif exp_type == 'piecelin':
+#    # re-run cross-validation
+#    params_ = ' '+'0.5' + ' ' + '500' + ' ' + '8' + ' ' + '0.49'+ ' ' + '0.01' + ' '
+#    os.system("python " + filename + params_ + '&')
+
+   
+
    
