@@ -109,11 +109,15 @@ if run_cv == 'yes':
     cv_sigma_list = np.arange(sigma_min, sigma_max, cv_granularity)
     
     kfold = 5 # number of fold in CV procedure
-    CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
-    pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False, header = False)
-   
-    # CV_result = pd.read_csv('./../data/{}/CV_result.csv'.format(fname), header = None).values
-    #
+    
+    #--------------------#
+    # either run CV again
+#    CV_result = cross_validation_parallel(X,y,cv_sigma_list,kfold,BL,BR)
+#    pd.DataFrame(CV_result).to_csv("./../data/{}/CV_result.csv".format(fname), index = False, header = False)
+#    # or read from previous runs
+    CV_result = pd.read_csv('./../data/{}/CV_result.csv'.format(fname), header = None).values
+    #--------------------#
+    
     #--------------------------------------------#
     # choose sigma according to CV_result
     idx_min = np.argmin(CV_result[:,1])
@@ -145,7 +149,13 @@ pd.DataFrame(np.repeat(sigma,len(alpha1))).\
 pd.DataFrame(B1).to_csv('./../data/{}/B_NPMLEsigma.csv'.format(fname), index = False, header = False)
 pd.DataFrame(alpha1).to_csv('./../data/{}/alpha_NPMLEsigma.csv'.format(fname), index = False, header = False)
 pd.DataFrame(L_rec1).to_csv('./../data/{}/L_rec_NPMLEsigma.csv'.format(fname), index = False, header = False) 
-    
+
+# alternatively read from previous runs
+#B1 = pd.read_csv('./../data/{}/B_NPMLEsigma.csv'.format(fname), header = None).values
+#alpha1 = pd.read_csv('./../data/{}/alpha_NPMLEsigma.csv'.format(fname), header = None).values
+#L_rec1 = pd.read_csv('./../data/{}/L_rec_NPMLEsigma.csv'.format(fname), header = None).values
+# 
+
 #------------------------------------------------------------#    
 
 #-------------------NPMLE-CV ----------------#
@@ -188,8 +198,8 @@ fig_g.savefig('./../pics/%s_measures.png'%fname, dpi = 300, bbox_inches='tight')
 fig_raw = plt.figure(figsize = (8,8))
 plt.scatter(X[:,1],y,color = 'black',marker = 'o',label = 'Noisy data', facecolors = 'None');
 ax = plt.gca()
-ax.set_xlim([-2,4])
-ax.set_ylim([-4,6])
+ax.set_xlim([-1.5,3.5])
+ax.set_ylim([-8,8])
 ax.set_xlabel(r'$x$')
 ax.set_ylabel(r'$y$')
 lgd = ax.legend(loc=2, bbox_to_anchor=(0., -0.11),borderaxespad=0.);
@@ -255,8 +265,8 @@ for i in range(len(y)):
                         #  , 'NPMLE component'#, 'OLS'#
                         # ],loc=0);
 ax = plt.gca()
-ax.set_xlim([-2,4])
-ax.set_ylim([-3,8])
+ax.set_xlim([-1.5,3.5])
+ax.set_ylim([-8,8])
 ax.set_xlabel(r'$x$')
 ax.set_ylabel(r'$y$')
 lgd = ax.legend(loc=2, bbox_to_anchor=(1.05,1.0),borderaxespad=0.);
@@ -275,7 +285,7 @@ plt.savefig('./../pics/%s_C_L.png'%fname, dpi = 300, bbox_inches='tight')
 #-----------------------------------#
 #                                   # 
 #                                   #
-#    empirical bayes                #
+#    oracle/empirical Bayes                #
 #                                   #
 #                                   #
 #-----------------------------------#
@@ -329,9 +339,23 @@ for i in range(n):
         # only consider pi1 =1 case for simplicity
         b_temp = func_xy_beta_circ_int(X[i,1],y[i],c1,r1,sigma)
         Bn_ob[i,:] = b_temp/func_xy_circ_int(X[i,1],y[i],c1,r1,sigma)
+    else:
+        # only consider pi1 =1 case for simplicity
+        b_temp = pi1* func_xy_beta_circ_int(X[i,1],y[i],c1,r1,sigma) + \
+        (1-pi1)* func_xy_beta_circ_int(X[i,1],y[i],c2,r2,sigma)
+        Bn_ob[i,:] = b_temp/(pi1 * func_xy_circ_int(X[i,1],y[i],c1,r1,sigma) +\
+             (1-pi1) * func_xy_circ_int(X[i,1],y[i],c2,r2,sigma))
+
 fig_ob = plt.figure(figsize = (8,8))
 ax_ob = fig_ob.add_subplot(1,1,1)
+
+
 ax_ob.scatter(Bn_ob[:,0],Bn_ob[:,1], marker = '.')
+
+#ax_ob.scatter(Bn[:,0],Bn[:,1], marker = '.', color = 'r')
+#ax_ob.plot([Bn_ob[j,0],Bn[j,0]], [Bn_ob[j,1],Bn[j,1]], color = 'green')
+
+
 ax_ob.set_xlabel(r"$\beta_1$")
 ax_ob.set_ylabel(r"$\beta_2$")
 fig_ob.savefig('./../pics/EB_test/%s_OB.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
@@ -361,13 +385,41 @@ for i in range(n):
             b = b + B2[:,j]*np.exp(temp_[j])/np.sum(np.exp(temp_))
     Bn_eb[i,:] = b
     
+# save to csv
+    
 fig_eb = plt.figure(figsize = (8,8))
 ax_eb = fig_eb.add_subplot(1,1,1)
+ax_eb.set_xlim([-2.5,2.5])
+ax_eb.set_ylim([-2.5,2.5])
 ax_eb.scatter(Bn_eb[:,0],Bn_eb[:,1], marker = '.')
 ax_eb.set_xlabel(r"$\beta_1$")
 ax_eb.set_ylabel(r"$\beta_2$")
 fig_eb.savefig('./../pics/EB_test/%s_EB.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
+
+#-------------
+fig_eob1 = plt.figure(figsize = (8,8))
+ax_eob1 = fig_eob1.add_subplot(1,1,1)
+ax_eob1.set_xlim([-2.5,2.5])
+ax_eob1.set_ylim([-2.5,2.5])
+ax_eob1.scatter(Bn_ob[:,0],Bn_eb[:,0], marker = '.', color = 'black')
+# benchmark line
+ax_eob1.plot([-2.5,2.5],[-2.5,2.5], color = 'gray')
+ax_eob1.set_xlabel(r"$\hat{\beta}_{\mathrm{OB},1}$")
+ax_eob1.set_ylabel(r"$\hat{\beta}_{\mathrm{EB},1}$")
+fig_eob1.savefig('./../pics/EB_test/%s_EBverusOB_1.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+
+
+fig_eob2 = plt.figure(figsize = (8,8))
+ax_eob2 = fig_eob2.add_subplot(1,1,1)
+ax_eob2.set_xlim([-2.5,2.5])
+ax_eob2.set_ylim([-2.5,2.5])
+ax_eob2.scatter(Bn_ob[:,1],Bn_eb[:,1], marker = '.', color = 'black')
+# benchmark line
+ax_eob2.plot([-2.5,2.5],[-2.5,2.5], color = 'gray')
+ax_eob2.set_xlabel(r"$\hat{\beta}_{\mathrm{OB},2}$")
+ax_eob2.set_ylabel(r"$\hat{\beta}_{\mathrm{EB},2}$")
+fig_eob2.savefig('./../pics/EB_test/%s_EBverusOB_2.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
 
 
