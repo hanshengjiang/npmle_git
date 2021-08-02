@@ -394,7 +394,7 @@ ax_eb.set_ylim([-2.5,2.5])
 ax_eb.scatter(Bn_eb[:,0],Bn_eb[:,1], marker = '.')
 ax_eb.set_xlabel(r"$\beta_1$")
 ax_eb.set_ylabel(r"$\beta_2$")
-fig_eb.savefig('./../pics/EB_test/%s_EB.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+fig_eb.savefig('./../pics/EB_test/%s_EB.png'%fname, dpi = 300, bbox_inches='tight')
 
 
 #-------------
@@ -407,7 +407,7 @@ ax_eob1.scatter(Bn_ob[:,0],Bn_eb[:,0], marker = '.', color = 'black')
 ax_eob1.plot([-2.5,2.5],[-2.5,2.5], color = 'gray')
 ax_eob1.set_xlabel(r"$\hat{\beta}_{\mathrm{OB},1}$")
 ax_eob1.set_ylabel(r"$\hat{\beta}_{\mathrm{EB},1}$")
-fig_eob1.savefig('./../pics/EB_test/%s_EBverusOB_1.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+fig_eob1.savefig('./../pics/EB_test/%s_EBverusOB_1.png'%fname, dpi = 300, bbox_inches='tight')
 
 
 fig_eob2 = plt.figure(figsize = (8,8))
@@ -419,7 +419,7 @@ ax_eob2.scatter(Bn_ob[:,1],Bn_eb[:,1], marker = '.', color = 'black')
 ax_eob2.plot([-2.5,2.5],[-2.5,2.5], color = 'gray')
 ax_eob2.set_xlabel(r"$\hat{\beta}_{\mathrm{OB},2}$")
 ax_eob2.set_ylabel(r"$\hat{\beta}_{\mathrm{EB},2}$")
-fig_eob2.savefig('./../pics/EB_test/%s_EBverusOB_2.png'%fname, dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+fig_eob2.savefig('./../pics/EB_test/%s_EBverusOB_2.png'%fname, dpi = 300, bbox_inches='tight')
 
 
 
