@@ -1,5 +1,5 @@
 ## Overview
-This repository contains code and data for numerical implementation in the paper [A Nonparametric Maximum Likelihood Approach to Mixture of Regression](https://arxiv.org/abs/2108.09816). Most scripts are in Python except one R script. These files have been developed and tested in Python version 3.7.4 and R version 3.6.1.
+This repository contains code and data for numerical implementation in the paper [A Nonparametric Maximum Likelihood Approach to Mixture of Regression](https://arxiv.org/abs/2108.09816){target="_blank"}. Most scripts are in Python except one R script. These files have been developed and tested in Python version 3.7.4 and R version 3.6.1.
 
 ## Folder
 - `scripts/`: (1) scripts (named '\*\_lib.py') that implement the NPMLE procedures, including set-ups for simulation and plotting; (2) scripts (named 'run\_\*.py') that carry out simulations and real data analysis
