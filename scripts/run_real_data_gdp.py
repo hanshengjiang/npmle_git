@@ -15,7 +15,7 @@ import sys
 if __name__ == "__main__":
     # default
     if len(sys.argv) < 2:
-        run_cv = 'yes' # chosen by cross-validation procedure
+        run_cv = '0.3' # chosen by cross-validation procedure
         cv_granularity = 0.1
     # otherwise take argyments from command line
     else:
@@ -72,6 +72,21 @@ f, B, alpha, L_rec, L_final = NPMLE_FW(X,y,iter,sigma_cv, -10, 10)
 print("number of components", len(alpha))
 ##########IMPORTANT subproblem initializes with beta = 0
 
+# save estimation results to files
+fname = 'gdp'
+pd.DataFrame(np.repeat(sigma_cv,len(alpha))).\
+        to_csv("./../data/{}/sigma_CV.csv".format(fname), index = False, header = False)
+pd.DataFrame(B).to_csv('./../data/{}/B_NPMLE.csv'.format(fname), index = False, header = False)
+pd.DataFrame(alpha).to_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), index = False, header = False)
+pd.DataFrame(L_rec).to_csv('./../data/{}/L_rec_NPMLE.csv'.format(fname), index = False, header = False)
+  
+# read estimation results from file
+#B = pd.read_csv('./../data/{}/B_NPMLE.csv'.format(fname), header = None).values
+#alpha = pd.read_csv('./../data/{}/alpha_NPMLE.csv'.format(fname), header = None).values
+#sigma_cv = pd.read_csv('./../data/{}/sigma_CV.csv'.format(fname), header = None).values.ravel()
+#
+
+
 #plot
 print("final neg log likelihood is ", L_final)
 print("number of components is", len(alpha))
@@ -112,3 +127,47 @@ ax.set_xlabel(r'$x$ ($\rm{GDP}$)')
 ax.set_ylabel(r'$y$ ($\rm{CO_2}$)')
 lgd = ax.legend(loc=9, bbox_to_anchor=(1.43, 1),borderaxespad=0.) 
 plt.savefig('./../pics/co2_gdp.png', dpi = 300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+
+
+#######################################
+#
+#   Empirical Bayes
+#
+######################################
+
+Bn_eb = np.zeros((n,p))
+for i in range(n):
+    # B2 is estimation from NPMLE-CV
+    # read from storage earlier
+    k = len(B2[0])
+    
+    prob_ = np.zeros(k)
+    temp_ = np.zeros(k)
+    
+    for j in range(k):
+        temp_[j] = -0.5*(y[i] - np.dot(X[i],B[:,j]))**2/(sigma_cv**2)
+    max_ = max(temp_)
+    b = np.zeros(p)
+    for j in range(k):
+        if temp_[j] - max_ > -10:
+            b = b + B[:,j]*np.exp(temp_[j])/np.sum(np.exp(temp_))
+    Bn_eb[i,:] = b
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
