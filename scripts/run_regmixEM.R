@@ -3,7 +3,7 @@
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # check if R package "mixtools" is installed
-if("mixtools" %in% rownames(installed.packages()) == FALSE) {install.packages("xtable")}
+if("mixtools" %in% rownames(installed.packages()) == FALSE) {install.packages("mixtools")}
 require("mixtools")
 
 # receive arguments from command line
