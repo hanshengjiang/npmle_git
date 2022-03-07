@@ -32,6 +32,7 @@ from scipy.integrate import quad
 from scipy.integrate import dblquad
 from sympy import sin, cos, symbols
 import pandas as pd
+import itertools
 
 
 # change plot fonts

@@ -20,7 +20,7 @@ def beta_round(beta, BL,BR, epsilon):
         vector to be approximated
     BL : float
         lower bound of area
-    BR : TYPE
+    BR : float
         upper bound of area
     epsilon : float
         discretization accuracy
@@ -49,11 +49,11 @@ def idx_to_beta(idx, BL,BR, epsilon):
     '''
     Parameters
     ----------
-    idx : TYPE
-        DESCRIPTION.
+    idx : numpy array
+        coordinate over the epsilon net
     BL : float
          lower bound of area
-    BR : TYPE
+    BR : float
          upper bound of area
     epsilon : float
          discretization accuracy
@@ -64,6 +64,7 @@ def idx_to_beta(idx, BL,BR, epsilon):
 
     '''
     p = len(idx)
+    print(p)
     beta = np.zeros(p)
     for i in range(p):
         beta[i] = BL + epsilon * idx[i]
@@ -72,7 +73,7 @@ def idx_to_beta(idx, BL,BR, epsilon):
 
 #===========================================================================================================
 
-def beta_find(X,y,sigma,f,BL,BR,func = lin_func, option = 'max'):
+def beta_find(X,y,sigma,f,BL,BR,epsilon,func = lin_func, option = 'max'):
     '''
 
     '''
@@ -85,7 +86,9 @@ def beta_find(X,y,sigma,f,BL,BR,func = lin_func, option = 'max'):
     value_map = np.zeros(np.repeat(M+1,p)) 
     # g_map =  np.zeros(np.concatenate(np.repeat(M+1,p), [n])) 
     
-    for idx in itertools.product([np.arange(0,M+1,1)] * p):
+    for idx_iter in itertools.product([np.arange(0,M+1,1)] * p):
+        
+        idx = idx_iter[0]
         
         beta = idx_to_beta(idx, BL, BR, epsilon)
 
@@ -178,7 +181,7 @@ def VDM(X,y,iter,sigma,BL,BR,epsilon, func = lin_func):
         
         option = 'max'
         #solve LMO
-        g, beta_sol = beta_find(X,y,sigma,f,BL,BR,func, option )
+        g, beta_sol = beta_find(X,y,sigma,f,BL,BR,epsilon,func, option )
         
         
         #check stopping criterion
