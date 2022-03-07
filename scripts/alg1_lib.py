@@ -20,7 +20,7 @@ def lmo(beta,X,y,sigma,f,func = lin_func):
 #===============================================================================================
 def sollmo(X,y,sigma,f,BL,BR,func = lin_func):
     '''solve linear minimization oracle
-    this is an nonconvex problem with respect to beta, the result is approximal
+    this is an nonconvex problem with respect to beta, the result is only approximate (heuristic)
     return a new supporting vector g and corresponding beta
     
     '''
@@ -46,7 +46,10 @@ def sollmo(X,y,sigma,f,BL,BR,func = lin_func):
     opt_x = np.zeros((num_rdn,p))
     for rdn in range(num_rdn):
         beta0 = np.reshape(np.random.uniform(BL,BR,p),(p,1))
-        OptResult = minimize(lmo, beta0, args = (X,y,sigma,f,func),method = 'Powell')
+        OptResult = minimize(lmo, beta0, args = (X,y,sigma,f,func),
+                             method = 'Powell'
+                            #,options={'disp':False, 'xtol':0.01, 'ftol':0.001}  #use options to improve running speed
+                            )
         if OptResult.success == False:
             opt_fun[rdn] = np.inf
             opt_x[rdn] = beta0.ravel()
