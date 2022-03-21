@@ -64,7 +64,6 @@ def idx_to_beta(idx, BL,BR, epsilon):
 
     '''
     p = len(idx)
-    print(p)
     beta = np.zeros(p)
     for i in range(p):
         beta[i] = BL + epsilon * idx[i]
@@ -73,48 +72,50 @@ def idx_to_beta(idx, BL,BR, epsilon):
 
 #===========================================================================================================
 
-def beta_find(X,y,sigma,f,BL,BR,epsilon,func = lin_func, option = 'max'):
-    '''
+# def beta_find(X,y,sigma,f,BL,BR,epsilon,func = lin_func, option = 'max'):
+#     '''
 
-    '''
-    n = len(X)
-    p = len(X[0])
+#     '''
+#     n = len(X)
+#     p = len(X[0])
     
-    M = int((BR-BL)/epsilon)
+#     M = int((BR-BL)/epsilon)
     
     
-    value_map = np.zeros(np.repeat(M+1,p)) 
-    # g_map =  np.zeros(np.concatenate(np.repeat(M+1,p), [n])) 
+#     value_map = np.zeros(np.repeat(M+1,p)) 
+#     # g_map =  np.zeros(np.concatenate(np.repeat(M+1,p), [n])) 
     
-    for idx_iter in itertools.product([np.arange(0,M+1,1)] * p):
+#     for idx_iter in itertools.product([np.arange(0,M+1,1)] * p):
         
-        idx = idx_iter[0]
+#         idx = idx_iter[0]
         
-        beta = idx_to_beta(idx, BL, BR, epsilon)
+#         beta = idx_to_beta(idx, BL, BR, epsilon)
 
-        g = np.zeros((n,1))
-        for i in range(n):
-            g[i] = 1/(np.sqrt(2*np.pi)*sigma)* np.exp(-0.5*(y[i] - func(X[i],beta))**2 /(sigma**2))
+#         g = np.zeros((n,1))
+#         for i in range(n):
+#             g[i] = 1/(np.sqrt(2*np.pi)*sigma)* np.exp(-0.5*(y[i] - func(X[i],beta))**2 /(sigma**2))
         
-        # record value
-        # g_map[idx,:] = g.ravel()
-        value_map[idx] =  np.dot(g.T,1/f)
-    if option == 'max':
-        idx_ext = np.argmax(value_map)
-        beta_ext = idx_to_beta(idx_ext, BL, BR, epsilon)
+#         # record value
+#         # g_map[idx,:] = g.ravel()
+#         value_map[idx] =  np.dot(g.T,1/f)
+#     if option == 'max':
+#         idx_ext = np.argmax(value_map)
+#         beta_ext = idx_to_beta(idx_ext, BL, BR, epsilon)
         
-        g_ext = np.zeros((n,1))
-        for i in range(n):
-            g_ext[i] = 1/(np.sqrt(2*np.pi)*sigma)* np.exp(-0.5*(y[i] - func(X[i],beta_ext))**2 /(sigma**2))
-    if option == 'min':
-        idx_ext = np.argmin(value_map)
-        beta_ext = idx_to_beta(idx_ext, BL, BR, epsilon)
+#         g_ext = np.zeros((n,1))
+#         for i in range(n):
+#             g_ext[i] = 1/(np.sqrt(2*np.pi)*sigma)* np.exp(-0.5*(y[i] - func(X[i],beta_ext))**2 /(sigma**2))
+#     if option == 'min':
+#         idx_ext = np.argmin(value_map)
+#         beta_ext = idx_to_beta(idx_ext, BL, BR, epsilon)
         
-        g_ext = np.zeros((n,1))
-        for i in range(n):
-            g_ext[i] = 1/(np.sqrt(2*np.pi)*sigma)* np.exp(-0.5*(y[i] - func(X[i],beta_ext))**2 /(sigma**2))
+#         g_ext = np.zeros((n,1))
+#         for i in range(n):
+#             g_ext[i] = 1/(np.sqrt(2*np.pi)*sigma)* np.exp(-0.5*(y[i] - func(X[i],beta_ext))**2 /(sigma**2))
             
-    return g_ext,beta_ext
+#     return g_ext,beta_ext
+
+
 
 
 
@@ -180,6 +181,9 @@ def VDM(X,y,iter,sigma,BL,BR,epsilon, func = lin_func):
     for t in range(1,iter):
         
         option = 'max'
+        
+        # first create and store g_map
+        
         #solve LMO
         g, beta_sol = beta_find(X,y,sigma,f,BL,BR,epsilon,func, option )
         
