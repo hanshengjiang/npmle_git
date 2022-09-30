@@ -1,4 +1,4 @@
-# Software Package for Nonparametric Estimation of Random Coefficient Regression
+# Software Package for Nonparametric Estimation of Mixture of Regression
 
 ## Overview
 This repository contains reproduction code and data for numerical implementation in the paper [A Nonparametric Maximum Likelihood Approach to Mixture of Regression](https://arxiv.org/abs/2108.09816). Most scripts are in Python except one R script. These files have been developed and tested in Python version 3.7.4 and R version 3.6.1.
